@@ -7,22 +7,24 @@ import CartPage from "./Pages/CartPage";
 
 function App() {
   return (
-    <Router>
-      <Switch>
-        <Route exact path="/">
-          <HomePage />
-        </Route>
-        <Route path="/products">
-          <ProductsPage />
-        </Route>
-        <Route path="/product">
-          <SingleProductPage />
-        </Route>
-        <Route path="/cart">
-          <CartPage />
-        </Route>
-      </Switch>
-    </Router>
+    <main>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <HomePage />
+          </Route>
+          <Route path="/products">
+            <ProductsPage />
+          </Route>
+          <Route path="/product">
+            <SingleProductPage />
+          </Route>
+          <Route path="/cart">
+            <CartPage />
+          </Route>
+        </Switch>
+      </Router>
+    </main>
   );
 }
 
