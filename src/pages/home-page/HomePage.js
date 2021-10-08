@@ -1,10 +1,10 @@
-import Header from "../../Components/Header";
-import Footer from "../../Components/Footer";
-import { HEADER_HEIGHT_OFFSET } from "../../Constant";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
+import { HEADER_HEIGHT_OFFSET } from "../../constant";
 import styled from "styled-components";
 import { useState } from "react";
-import { ReactComponent as heart } from "../../Imgs/Pages/HomePage/HotSellingItem/heart.svg";
-import { ReactComponent as heartFilled } from "../../Imgs/Pages/HomePage/HotSellingItem/heart-fill.svg";
+import { ReactComponent as heart } from "../../imgs/pages/home-page/hot-selling-item/heart.svg";
+import { ReactComponent as heartFilled } from "../../imgs/pages/home-page/hot-selling-item/heart-fill.svg";
 import { Carousel } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import {

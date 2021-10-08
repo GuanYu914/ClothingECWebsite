@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import HomePage from "./Pages/HomePage";
-import ProductsPage from "./Pages/ProductsPage";
-import SingleProductPage from "./Pages/SingleProductPage";
-import CartPage from "./Pages/CartPage";
+import HomePage from "./pages/home-page";
+import ProductsPage from "./pages/products-page";
+import SingleProductPage from "./pages/single-product-page";
+import CartPage from "./pages/cart-page";
 
 function App() {
   return (

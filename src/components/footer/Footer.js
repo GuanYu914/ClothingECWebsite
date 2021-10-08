@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { ReactComponent as github } from "../../Imgs/Components/Footer/github.svg";
-import { ReactComponent as mail } from "../../Imgs/Components/Footer/mailbox2.svg";
+import { ReactComponent as github } from "../../imgs/components/footer/github.svg";
+import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";
 
 const Container = styled.div.attrs(() => ({
   className: "mob-h3 color-secondary3 bg-secondary1",

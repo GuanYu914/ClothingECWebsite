@@ -1,7 +1,7 @@
-import { ReactComponent as logo } from "../../Imgs/Components/Header/bootstrap.svg";
-import { ReactComponent as list } from "../../Imgs/Components/Header/list.svg";
+import { ReactComponent as logo } from "../../imgs/components/header/bootstrap.svg";
+import { ReactComponent as list } from "../../imgs/components/header/list.svg";
 import styled from "styled-components";
-import { HEADER_HEIGHT_OFFSET, Z_INDEX_LV6 } from "../../Constant";
+import { HEADER_HEIGHT_OFFSET, Z_INDEX_LV6 } from "../../constant";
 
 const Container = styled.div``;
 
