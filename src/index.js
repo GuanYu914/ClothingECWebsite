@@ -1,6 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+// 添加自定義的 css 檔案
+import "./Utils/reset.css";
+import "./Utils/font.css";
+import "./Utils/color.css";
+import "./Utils/global.css";
 import App from "./App";
 
 ReactDOM.render(
