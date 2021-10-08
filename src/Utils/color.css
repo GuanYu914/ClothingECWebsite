@@ -1,0 +1,41 @@
+/* 透過特定 class name，定義主題色 */
+
+.color-primary1 {
+  color: #9DCBDF;
+}
+
+.color-primary2 {
+  color: #F07759;
+}
+
+.color-secondary1 {
+  color: #C4C4C4;
+}
+
+.color-secondary2 {
+  color: #1F1E1C;
+}
+
+.color-secondary3 {
+  color: #FFFFFF;
+}
+
+.bg-primary1 {
+  background-color: #9DCBDF;
+}
+
+.bg-primary2 {
+  background-color: #F07759;
+}
+
+.bg-secondary1 {
+  background-color: #C4C4C4;
+}
+
+.bg-secondary2 {
+  background-color: #1F1E1C;
+}
+
+.bg-secondary3 {
+  background-color: #FFFFFF;
+}
