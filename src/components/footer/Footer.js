@@ -4,7 +4,7 @@ import { ReactComponent as github } from "../../imgs/components/footer/github.sv
 import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";
 
 const Container = styled.div.attrs(() => ({
-  className: "mob-h3 color-secondary3 bg-secondary1",
+  className: "color-secondary3 bg-secondary1",
 }))`
   width: 100%;
   height: 8rem;
