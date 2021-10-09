@@ -30,6 +30,7 @@ import {
   UserComment,
   UserAvatar,
 } from "./styled-user-comment";
+import { BREAKPOINT_PAD } from "../../constant";
 
 const PageContainer = styled.div`
   // 從頁面頂端計算 Header Component 目前的高度，並從這當作起點開始 render
@@ -80,14 +81,22 @@ const FavoriteFilledIcon = styled(heartFilled)`
 `;
 
 const LoadMoreButton = styled.div.attrs(() => ({
-  className: "mob-h3-mid bg-secondary1 color-secondary3",
+  className: "fs-h2 bg-secondary1 color-secondary3",
 }))`
+  // 文字水平垂直置中
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 1.4rem;
-  text-align: center;
-  padding: 0.5rem;
-  width: 6.8rem;
-  height: 2.8rem;
+  width: 8.6rem;
+  height: 3.2rem;
   margin: 3rem auto 0;
+  cursor: pointer;
+
+  ${BREAKPOINT_PAD} {
+    width: 10.6rem;
+    height: 3.6rem;
+  }
 `;
 
 export default function HomePage() {
@@ -136,12 +145,24 @@ export default function HomePage() {
               <HotSellingItemPrice>NTD 269</HotSellingItemPrice>
             </HotSellingItemInfo>
           </HotSellingItem>
+          <HotSellingItem>
+            <HotSellingItemInfo>
+              <HotSellingItemHeader>
+                <HotSellingItemName>牛仔短褲</HotSellingItemName>
+                <FavoriteFilledIcon />
+              </HotSellingItemHeader>
+              <HotSellingItemPrice>NTD 799</HotSellingItemPrice>
+            </HotSellingItemInfo>
+          </HotSellingItem>
         </HotSellingItemsContainer>
         <LoadMoreButton>載入更多</LoadMoreButton>
       </HotSellingItemBlock>
       <UserCommentBlock>
         <UserCommentTitle>顧客評價</UserCommentTitle>
         <UserCommentsContainer>
+          <UserComment>
+            “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
+          </UserComment>
           <UserComment>
             “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
           </UserComment>
