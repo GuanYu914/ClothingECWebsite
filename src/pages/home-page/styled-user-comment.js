@@ -1,13 +1,18 @@
+import { Z_INDEX_LV1, BREAKPOINT_LAPTOP, BREAKPOINT_PAD } from "../../constant";
 import styled from "styled-components";
 
 export const UserCommentBlock = styled.div.attrs(() => ({
   className: "bg-secondary1, color-primary3",
 }))`
   margin-top: 5rem;
+
+  ${BREAKPOINT_PAD} {
+    margin-top: 10rem;
+  }
 `;
 
 export const UserCommentTitle = styled.h2.attrs(() => ({
-  className: "color-secondary2 mob-h2",
+  className: "color-secondary2 fs-h1",
 }))`
   text-align: center;
 `;
@@ -16,10 +21,15 @@ export const UserCommentsContainer = styled.div`
   margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
+  // 限制最大寬度為 90 * 16px = 1440px
+  max-width: 90rem;
+  // 水平置中
+  margin-left: auto;
+  margin-right: auto;
 `;
 
 export const UserComment = styled.div.attrs(() => ({
-  className: "bg-secondary1 color-secondary3 mob-h3-mid",
+  className: "bg-secondary1 color-secondary3 fs-h3",
 }))`
   width: 18rem;
   height: 10rem;
@@ -29,11 +39,19 @@ export const UserComment = styled.div.attrs(() => ({
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   position: relative;
+  cursor: pointer;
 
   &:last-child {
     margin-bottom: 2rem;
+  }
+
+  ${BREAKPOINT_LAPTOP} {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.2);
+    }
   }
 `;
 
@@ -41,11 +59,12 @@ export const UserAvatar = styled.div.attrs(() => ({
   className: "bg-secondary3",
 }))`
   border-radius: 50%;
-  width: 4rem;
-  height: 4rem;
+  width: 4.2rem;
+  height: 4.2rem;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: -2rem;
-  z-index: 999;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  z-index: ${Z_INDEX_LV1};
 `;
