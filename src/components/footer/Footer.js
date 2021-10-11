@@ -11,6 +11,8 @@ const Container = styled.div.attrs(() => ({
   text-align: center;
   // 預設為 margin-top: 4rem
   margin-top: ${(props) => props.marginTop || "4rem"};
+  // 預設為 margin-bottom: 0
+  margin-bottom: ${(props) => props.marginBottom || 0};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,9 +30,9 @@ const MailLink = styled(mail)`
   margin: 0 0.4rem;
 `;
 
-export default function Footer({ marginTop }) {
+export default function Footer({ marginTop, marginBottom }) {
   return (
-    <Container marginTop={marginTop}>
+    <Container marginTop={marginTop} marginBottom={marginBottom}>
       <GithubLink />
       <MailLink />
     </Container>
@@ -39,4 +41,5 @@ export default function Footer({ marginTop }) {
 
 Footer.propTypes = {
   marginTop: PropTypes.string,
+  marginBottom: PropTypes.string,
 };
