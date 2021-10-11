@@ -1,6 +1,10 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer";
-import { HEADER_HEIGHT_OFFSET } from "../../constant";
+import {
+  BREAKPOINT_MOBILE,
+  HEADER_HEIGHT_MOBILE,
+  HEADER_HEIGHT_PAD,
+} from "../../constant";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/home-page/hot-selling-item/heart.svg";
@@ -29,11 +33,23 @@ import {
   UserComment,
   UserAvatar,
 } from "./styled-user-comment";
-import { BREAKPOINT_PAD } from "../../constant";
+import { BREAKPOINT_PAD, MAX_CONTAINER_WIDTH } from "../../constant";
 
-const PageContainer = styled.div`
+const PageContainer = styled.div``;
+const ContentContainer = styled.div`
+  // 設定容器最大寬度
+  max-width: ${MAX_CONTAINER_WIDTH};
+  margin-left: auto;
+  margin-right: auto;
+
   // 從頁面頂端計算 Header Component 目前的高度，並從這當作起點開始 render
-  margin-top: ${HEADER_HEIGHT_OFFSET};
+  ${BREAKPOINT_MOBILE} {
+    margin-top: ${HEADER_HEIGHT_MOBILE};
+  }
+
+  ${BREAKPOINT_PAD} {
+    margin-top: ${HEADER_HEIGHT_PAD};
+  }
 `;
 
 const FavoriteIcon = styled(heart)`
@@ -94,78 +110,80 @@ export default function HomePage() {
   return (
     <PageContainer>
       <Header />
-      <BSCarousel slides={slides} />
-      <CategoryBlock>
-        <CategoryTitle>商品分類</CategoryTitle>
-        <CategoriesContainer>
-          <Category>男裝</Category>
-          <Category>女裝</Category>
-          <Category>小孩</Category>
-          <Category>飾品</Category>
-          <Category>鞋子</Category>
-          <Category>包包</Category>
-        </CategoriesContainer>
-      </CategoryBlock>
-      <HotSellingItemBlock>
-        <HotSellingItemTitle>熱賣品項</HotSellingItemTitle>
-        <HotSellingItemsContainer>
-          <HotSellingItem>
-            <HotSellingItemInfo>
-              <HotSellingItemHeader>
-                <HotSellingItemName>長版針織衣</HotSellingItemName>
-                <FavoriteIcon />
-              </HotSellingItemHeader>
-              <HotSellingItemPrice>NTD 489</HotSellingItemPrice>
-            </HotSellingItemInfo>
-          </HotSellingItem>
-          <HotSellingItem>
-            <HotSellingItemInfo>
-              <HotSellingItemHeader>
-                <HotSellingItemName>短版刺繡上衣</HotSellingItemName>
-                <FavoriteFilledIcon />
-              </HotSellingItemHeader>
-              <HotSellingItemPrice>NTD 329</HotSellingItemPrice>
-            </HotSellingItemInfo>
-          </HotSellingItem>
-          <HotSellingItem>
-            <HotSellingItemInfo>
-              <HotSellingItemHeader>
-                <HotSellingItemName>涼感襯衫</HotSellingItemName>
-                <FavoriteFilledIcon />
-              </HotSellingItemHeader>
-              <HotSellingItemPrice>NTD 269</HotSellingItemPrice>
-            </HotSellingItemInfo>
-          </HotSellingItem>
-          <HotSellingItem>
-            <HotSellingItemInfo>
-              <HotSellingItemHeader>
-                <HotSellingItemName>牛仔短褲</HotSellingItemName>
-                <FavoriteFilledIcon />
-              </HotSellingItemHeader>
-              <HotSellingItemPrice>NTD 799</HotSellingItemPrice>
-            </HotSellingItemInfo>
-          </HotSellingItem>
-        </HotSellingItemsContainer>
-        <LoadMoreButton>載入更多</LoadMoreButton>
-      </HotSellingItemBlock>
-      <UserCommentBlock>
-        <UserCommentTitle>顧客評價</UserCommentTitle>
-        <UserCommentsContainer>
-          <UserComment>
-            “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
-          </UserComment>
-          <UserComment>
-            “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
-          </UserComment>
-          <UserComment>
-            “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
-          </UserComment>
-          <UserComment>
-            “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
-          </UserComment>
-        </UserCommentsContainer>
-        <LoadMoreButton>載入更多</LoadMoreButton>
-      </UserCommentBlock>
+      <ContentContainer>
+        <BSCarousel slides={slides} />
+        <CategoryBlock>
+          <CategoryTitle>商品分類</CategoryTitle>
+          <CategoriesContainer>
+            <Category>男裝</Category>
+            <Category>女裝</Category>
+            <Category>小孩</Category>
+            <Category>飾品</Category>
+            <Category>鞋子</Category>
+            <Category>包包</Category>
+          </CategoriesContainer>
+        </CategoryBlock>
+        <HotSellingItemBlock>
+          <HotSellingItemTitle>熱賣品項</HotSellingItemTitle>
+          <HotSellingItemsContainer>
+            <HotSellingItem>
+              <HotSellingItemInfo>
+                <HotSellingItemHeader>
+                  <HotSellingItemName>長版針織衣</HotSellingItemName>
+                  <FavoriteIcon />
+                </HotSellingItemHeader>
+                <HotSellingItemPrice>NTD 489</HotSellingItemPrice>
+              </HotSellingItemInfo>
+            </HotSellingItem>
+            <HotSellingItem>
+              <HotSellingItemInfo>
+                <HotSellingItemHeader>
+                  <HotSellingItemName>短版刺繡上衣</HotSellingItemName>
+                  <FavoriteFilledIcon />
+                </HotSellingItemHeader>
+                <HotSellingItemPrice>NTD 329</HotSellingItemPrice>
+              </HotSellingItemInfo>
+            </HotSellingItem>
+            <HotSellingItem>
+              <HotSellingItemInfo>
+                <HotSellingItemHeader>
+                  <HotSellingItemName>涼感襯衫</HotSellingItemName>
+                  <FavoriteFilledIcon />
+                </HotSellingItemHeader>
+                <HotSellingItemPrice>NTD 269</HotSellingItemPrice>
+              </HotSellingItemInfo>
+            </HotSellingItem>
+            <HotSellingItem>
+              <HotSellingItemInfo>
+                <HotSellingItemHeader>
+                  <HotSellingItemName>牛仔短褲</HotSellingItemName>
+                  <FavoriteFilledIcon />
+                </HotSellingItemHeader>
+                <HotSellingItemPrice>NTD 799</HotSellingItemPrice>
+              </HotSellingItemInfo>
+            </HotSellingItem>
+          </HotSellingItemsContainer>
+          <LoadMoreButton>載入更多</LoadMoreButton>
+        </HotSellingItemBlock>
+        <UserCommentBlock>
+          <UserCommentTitle>顧客評價</UserCommentTitle>
+          <UserCommentsContainer>
+            <UserComment>
+              “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
+            </UserComment>
+            <UserComment>
+              “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
+            </UserComment>
+            <UserComment>
+              “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
+            </UserComment>
+            <UserComment>
+              “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
+            </UserComment>
+          </UserCommentsContainer>
+          <LoadMoreButton>載入更多</LoadMoreButton>
+        </UserCommentBlock>
+      </ContentContainer>
       <Footer marginTop={"6rem"} />
     </PageContainer>
   );

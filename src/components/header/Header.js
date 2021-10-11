@@ -7,8 +7,9 @@ import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
-  HEADER_HEIGHT_OFFSET,
   Z_INDEX_LV6,
+  HEADER_HEIGHT_MOBILE,
+  HEADER_HEIGHT_PAD,
 } from "../../constant";
 
 const NavBarContainer = styled.nav.attrs(() => ({
@@ -20,7 +21,7 @@ const NavBarContainer = styled.nav.attrs(() => ({
   right: 0;
   width: 100%;
   z-index: ${Z_INDEX_LV6};
-  height: ${HEADER_HEIGHT_OFFSET};
+  height: ${HEADER_HEIGHT_MOBILE};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,7 +33,7 @@ const NavBarContainer = styled.nav.attrs(() => ({
   }
 
   ${BREAKPOINT_PAD} {
-    height: 5.6rem;
+    height: ${HEADER_HEIGHT_PAD};
   }
 
   // 裝置尺寸為 1440px 寬時，將 NavBar 固定為 1440px 寬

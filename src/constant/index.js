@@ -1,5 +1,6 @@
 // Component Header 相關常數
-export const HEADER_HEIGHT_OFFSET = "4rem";
+export const HEADER_HEIGHT_MOBILE = "4rem";
+export const HEADER_HEIGHT_PAD = "5.6rem";
 
 // Z-Index 相關常數
 // 利用等級區分，方便之後管理
@@ -14,3 +15,5 @@ export const Z_INDEX_LV6 = "999999";
 export const BREAKPOINT_MOBILE = "@media (min-width: 320px)";
 export const BREAKPOINT_PAD = "@media (min-width: 768px)";
 export const BREAKPOINT_LAPTOP = "@media (min-width: 1440px)";
+
+export const MAX_CONTAINER_WIDTH = "1440px";

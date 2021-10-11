@@ -19,11 +19,6 @@ export const HotSellingItemsContainer = styled.div`
   margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
-  // 限制最大寬度為 90 * 16px = 1440px
-  max-width: 90rem;
-  // 水平置中
-  margin-left: auto;
-  margin-right: auto;
 `;
 
 export const HotSellingItem = styled.div.attrs(() => ({

@@ -20,11 +20,6 @@ export const CategoriesContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  // 限制最大寬度為 90 * 16px = 1440px
-  max-width: 90rem;
-  // 水平置中
-  margin-left: auto;
-  margin-right: auto;
 `;
 
 export const Category = styled.div.attrs(() => ({
