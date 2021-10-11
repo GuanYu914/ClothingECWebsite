@@ -2,11 +2,10 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import { HEADER_HEIGHT_OFFSET } from "../../constant";
 import styled from "styled-components";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/home-page/hot-selling-item/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/home-page/hot-selling-item/heart-fill.svg";
-import { Carousel } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
+import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import {
   CategoryBlock,
   CategoryTitle,
@@ -36,39 +35,6 @@ const PageContainer = styled.div`
   // 從頁面頂端計算 Header Component 目前的高度，並從這當作起點開始 render
   margin-top: ${HEADER_HEIGHT_OFFSET};
 `;
-
-const CarouselImage = styled.img.attrs((props) => ({
-  src: props.src,
-  alt: props.alt,
-}))`
-  display: block;
-  width: 100%;
-  height: auto;
-  max-height: 30rem;
-`;
-
-// 使用 react-bootstrap5 Carousel 原生組件
-function ControlledCarousel() {
-  const [index, setIndex] = useState(0);
-
-  const handleSelect = (selectedIndex) => {
-    setIndex(selectedIndex);
-  };
-
-  return (
-    <Carousel activeIndex={index} onSelect={handleSelect}>
-      <Carousel.Item>
-        <CarouselImage src="https://i.imgur.com/RVnJagG.jpg" alt="Banner1" />
-      </Carousel.Item>
-      <Carousel.Item>
-        <CarouselImage src="https://i.imgur.com/Eyg3mUD.jpg" alt="Banner2" />
-      </Carousel.Item>
-      <Carousel.Item>
-        <CarouselImage src="https://i.imgur.com/wHozlKZ.jpg" alt="Banner3" />
-      </Carousel.Item>
-    </Carousel>
-  );
-}
 
 const FavoriteIcon = styled(heart)`
   width: 1.4rem;
@@ -100,10 +66,35 @@ const LoadMoreButton = styled.div.attrs(() => ({
 `;
 
 export default function HomePage() {
+  const [slides, setSlides] = useState([]);
+  useEffect(() => {
+    const slideStyle = {};
+    setSlides([
+      {
+        id: 1,
+        src: "https://i.imgur.com/wHozlKZ.jpg",
+        alt: "banner1",
+        style: slideStyle,
+      },
+      {
+        id: 2,
+        src: "https://i.imgur.com/Eyg3mUD.jpg",
+        alt: "banner2",
+        style: slideStyle,
+      },
+      {
+        id: 3,
+        src: "https://i.imgur.com/RVnJagG.jpg",
+        alt: "banner3",
+        style: slideStyle,
+      },
+    ]);
+  }, []);
+
   return (
     <PageContainer>
       <Header />
-      <ControlledCarousel />
+      <BSCarousel slides={slides} />
       <CategoryBlock>
         <CategoryTitle>商品分類</CategoryTitle>
         <CategoriesContainer>
