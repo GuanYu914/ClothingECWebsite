@@ -1,0 +1,4 @@
+/* 添加一些常用的 css 效果 */
+.none-pointer {
+  cursor: default !important;
+}

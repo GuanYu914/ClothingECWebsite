@@ -5,6 +5,7 @@ import "./utils/reset.css";
 import "./utils/font.css";
 import "./utils/color.css";
 import "./utils/global.css";
+import "./utils/effect.css";
 import App from "./App";
 
 ReactDOM.render(
