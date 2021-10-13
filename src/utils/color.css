@@ -19,6 +19,26 @@
 .color-secondary3 {
   color: #FFFFFF;
 }
+/* border 顏色屬性 */
+.br-primary1 {
+  border-color: #9DCBDF;
+}
+
+.br-primary2 {
+  border-color: #F07759;
+}
+
+.br-secondary1 {
+  border-color: #C4C4C4;
+}
+
+.br-secondary2 {
+  border-color: #1F1E1C;
+}
+
+.br-secondary3 {
+  border-color: #FFFFFF;
+}
 
 .bg-primary1 {
   background-color: #9DCBDF;
@@ -38,4 +58,9 @@
 
 .bg-secondary3 {
   background-color: #FFFFFF;
+}
+
+/* 提供給 product picker 使用 */
+.bg-offcanva {
+  background-color: rgba(53, 53, 53, 0.8);
 }
