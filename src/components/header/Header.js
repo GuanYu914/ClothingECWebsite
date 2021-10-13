@@ -7,7 +7,7 @@ import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
-  Z_INDEX_LV6,
+  Z_INDEX_LV4,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
 } from "../../constant";
@@ -20,7 +20,7 @@ const NavBarContainer = styled.nav.attrs(() => ({
   left: 0;
   right: 0;
   width: 100%;
-  z-index: ${Z_INDEX_LV6};
+  z-index: ${Z_INDEX_LV4};
   height: ${HEADER_HEIGHT_MOBILE};
   display: flex;
   justify-content: space-between;
