@@ -2,6 +2,7 @@ import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import styled from "styled-components";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
+import CardContainer from "../../components/card-container";
 import ProductPicker from "./styled-product-picker";
 import { useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
@@ -13,6 +14,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
+  Z_INDEX_LV2,
 } from "../../constant";
 
 const PageContainer = styled.div``;
@@ -42,6 +44,7 @@ const ContentContainer = styled.div`
 const ProductCategoryPath = styled.h3.attrs(() => ({
   className: "fs-h3 color-secondary2",
 }))`
+  margin-bottom: 1rem;
   // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
   ${BREAKPOINT_MOBILE} {
     margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
@@ -53,10 +56,6 @@ const ProductCategoryPath = styled.h3.attrs(() => ({
 `;
 
 const ProductInfoContainer = styled.div`
-  margin-top: 1rem;
-`;
-
-const ProductInfoHeader = styled.div`
   margin-top: 2rem;
   display: flex;
   justify-content: space-between;
@@ -79,19 +78,27 @@ const FavoriteFilledIcon = styled(heartFilled)`
   cursor: pointer;
 `;
 
-const ProductBody = styled.div`
+const DetailInfoContainer = styled.div`
   margin-top: 3rem;
 `;
 
-const BodyTitle = styled.h2.attrs(() => ({
+const DetailInfoTitle = styled.h2.attrs(() => ({
   className: "fs-h2 color-secondary2",
 }))``;
 
-const BodyContent = styled.h3.attrs(() => ({
+const DetailInfoDesc = styled.h3.attrs(() => ({
   className: "fs-h3 color-secondary2",
 }))`
   margin-top: 1rem;
 `;
+
+const WatchedItemsContainer = styled.div`
+  margin-top: 2rem;
+`;
+
+const WatchedItemsTitle = styled.h2.attrs(() => ({
+  className: "fs-h2 color-secondary2",
+}))``;
 
 const ProductAddButton = styled.div.attrs(() => ({
   className: "fs-h2 bg-primary1 color-secondary3",
@@ -106,6 +113,7 @@ const ProductAddButton = styled.div.attrs(() => ({
   text-align: center;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.04) 0px -3px 5px;
+  z-index: ${Z_INDEX_LV2};
 `;
 
 export default function SingleProductPage() {
@@ -129,6 +137,27 @@ export default function SingleProductPage() {
   ]);
   const [pickerEnable, setPickerEnable] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  // 使用假資料
+  const [watchedItems, setWatchItems] = useState([
+    {
+      id: 1,
+      product: { name: "牛仔短褲", price: "489" },
+      isLiked: false,
+    },
+    {
+      id: 2,
+      product: { name: "修身寬褲", price: "699" },
+      isLiked: true,
+    },
+    {
+      id: 3,
+      product: {
+        name: "迪士尼聯名短袖",
+        price: "899",
+      },
+      isLiked: true,
+    },
+  ]);
 
   function handleProductAdd() {
     // 叫出 offcanva picker
@@ -139,6 +168,15 @@ export default function SingleProductPage() {
     setIsLiked(!isLiked);
   }
 
+  // 更新 watchedItems 裡面物件的 isLiked 屬性
+  function handleUpdateItemLikedState(id) {
+    setWatchItems(
+      watchedItems.map((item) =>
+        item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
+      )
+    );
+  }
+
   return (
     <PageContainer>
       <Header />
@@ -146,20 +184,26 @@ export default function SingleProductPage() {
         <ProductCategoryPath>
           首頁 &gt; 分類 &gt; 女裝 &gt; 秋冬款
         </ProductCategoryPath>
+        <BSCarousel slides={slides} />
         <ProductInfoContainer>
-          <BSCarousel slides={slides} />
-          <ProductInfoHeader>
-            <ProductName>女版襯衫</ProductName>
-            {isLiked && <FavoriteFilledIcon onClick={handleAddToLikedItems} />}
-            {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
-          </ProductInfoHeader>
-          <ProductBody>
-            <BodyTitle>詳細資訊</BodyTitle>
-            <BodyContent>
-              這邊會需要提供運費、尺寸、商品材質以及清洗注意事項
-            </BodyContent>
-          </ProductBody>
+          <ProductName>女版襯衫</ProductName>
+          {isLiked && <FavoriteFilledIcon onClick={handleAddToLikedItems} />}
+          {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
         </ProductInfoContainer>
+        <DetailInfoContainer>
+          <DetailInfoTitle>詳細資訊</DetailInfoTitle>
+          <DetailInfoDesc>
+            這邊會需要提供運費、尺寸、商品材質以及清洗注意事項
+          </DetailInfoDesc>
+        </DetailInfoContainer>
+        <WatchedItemsContainer>
+          <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>
+          <CardContainer
+            items={watchedItems}
+            handleLiked={handleUpdateItemLikedState}
+            marginLeft={"0"}
+          />
+        </WatchedItemsContainer>
       </ContentContainer>
       <ProductAddButton onClick={handleProductAdd}>
         選擇商品規格
