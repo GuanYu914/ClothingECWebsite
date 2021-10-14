@@ -1,0 +1,136 @@
+import styled from "styled-components";
+import PropTypes from "prop-types";
+import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
+import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
+import { BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
+
+const ItemsContainer = styled.div`
+  margin-top: 1.5rem;
+  width: 100%;
+  display: flex;
+  justify-content: ${(props) => props.horizontalAlign || "flex-start"};
+  flex-wrap: wrap;
+`;
+
+const ItemContainer = styled.div.attrs(() => ({
+  className: "bg-secondary1",
+}))`
+  width: 18rem;
+  height: 14rem;
+  border-radius: 1.2rem;
+  position: relative;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  margin-left: ${(props) => props.marginLeft || "1rem"};
+  margin-right: 1rem;
+  margin-bottom: 2rem;
+  cursor: pointer;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  ${BREAKPOINT_PAD} {
+    box-shadow: none;
+
+    &:hover {
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    }
+  }
+`;
+
+const ItemHeader = styled.div.attrs(() => ({
+  className: "bg-secondary3",
+}))`
+  width: 100%;
+  height: fit-content;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  bottom: 0;
+  z-index: ${Z_INDEX_LV1};
+  padding: 0.6rem;
+  border-radius: 0 0 1.2rem 1.2rem;
+`;
+
+const ItemInfo = styled.div`
+  display: block;
+  flex-shrink: 1;
+`;
+
+const ItemName = styled.h3.attrs(() => ({
+  className: "fs-h3",
+}))``;
+
+const ItemPrice = styled.h3.attrs(() => ({
+  className: "fs-h3",
+}))`
+  margin-top: 0.4rem;
+`;
+
+const FavoriteIcon = styled(heart)`
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+`;
+
+const FavoriteFilledIcon = styled(heartFilled)`
+  width: 1.4rem;
+  height: 1.4rem;
+  flex-shrink: 0;
+`;
+
+/*  props 參數
+    item: {
+      id: number,
+      product: {
+        name: string,
+        price: string
+      },
+      isLiked: boolean
+    }
+    handleLinked: toggle item 物件的 isLiked 屬性
+    horizontalAlign: 決定 ItemsContainer 是否 justify-content: center
+    marginLeft: 設置 ItemContainer 的 margin-left，預設為 1rem
+*/
+export default function CardContainer({
+  items,
+  handleLiked,
+  horizontalAlign,
+  marginLeft,
+}) {
+  return (
+    <ItemsContainer horizontalAlign={horizontalAlign}>
+      {items.map((item) => (
+        <ItemContainer key={item.id} marginLeft={marginLeft}>
+          <ItemHeader>
+            <ItemInfo>
+              <ItemName>{item.product.name}</ItemName>
+              <ItemPrice>NTD {item.product.price}</ItemPrice>
+            </ItemInfo>
+            {item.isLiked && (
+              <FavoriteFilledIcon
+                onClick={() => {
+                  handleLiked(item.id);
+                }}
+              />
+            )}
+            {!item.isLiked && (
+              <FavoriteIcon
+                onClick={() => {
+                  handleLiked(item.id);
+                }}
+              />
+            )}
+          </ItemHeader>
+        </ItemContainer>
+      ))}
+    </ItemsContainer>
+  );
+}
+
+CardContainer.propTypes = {
+  items: PropTypes.array,
+  horizontalAlign: PropTypes.string,
+  marginLeft: PropTypes.string,
+  handleLiked: PropTypes.func,
+};
