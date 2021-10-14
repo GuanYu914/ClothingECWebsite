@@ -6,9 +6,7 @@ import {
   HEADER_HEIGHT_PAD,
 } from "../../constant";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
-import { ReactComponent as heart } from "../../imgs/pages/home-page/hot-selling-item/heart.svg";
-import { ReactComponent as heartFilled } from "../../imgs/pages/home-page/hot-selling-item/heart-fill.svg";
+import { useState } from "react";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import {
   CategoryBlock,
@@ -16,16 +14,7 @@ import {
   CategoriesContainer,
   Category,
 } from "./styled-category";
-import {
-  HotSellingItemBlock,
-  HotSellingItemTitle,
-  HotSellingItemsContainer,
-  HotSellingItem,
-  HotSellingItemInfo,
-  HotSellingItemHeader,
-  HotSellingItemName,
-  HotSellingItemPrice,
-} from "./styled-hot-selling-item";
+
 import {
   UserCommentBlock,
   UserCommentTitle,
@@ -34,6 +23,7 @@ import {
   UserAvatar,
 } from "./styled-user-comment";
 import { BREAKPOINT_PAD, MAX_CONTAINER_WIDTH } from "../../constant";
+import CardContainer from "../../components/card-container";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -50,16 +40,6 @@ const ContentContainer = styled.div`
   ${BREAKPOINT_PAD} {
     margin-top: ${HEADER_HEIGHT_PAD};
   }
-`;
-
-const FavoriteIcon = styled(heart)`
-  width: 1.4rem;
-  height: 1.4rem;
-`;
-
-const FavoriteFilledIcon = styled(heartFilled)`
-  width: 1.4rem;
-  height: 1.4rem;
 `;
 
 const LoadMoreButton = styled.div.attrs(() => ({
@@ -81,31 +61,76 @@ const LoadMoreButton = styled.div.attrs(() => ({
   }
 `;
 
+const HotSellingItemBlock = styled.div`
+  margin-top: 5rem;
+
+  ${BREAKPOINT_PAD} {
+    margin-top: 10rem;
+  }
+`;
+
+const HotSellingItemTitle = styled.h1.attrs(() => ({
+  className: "fs-h1",
+}))`
+  text-align: center;
+`;
+
+const HotSellingItemsContainer = styled.div`
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: ${MAX_CONTAINER_WIDTH};
+`;
+
 export default function HomePage() {
-  const [slides, setSlides] = useState([]);
-  useEffect(() => {
-    const slideStyle = {};
-    setSlides([
-      {
-        id: 1,
-        src: "https://i.imgur.com/wHozlKZ.jpg",
-        alt: "banner1",
-        style: slideStyle,
-      },
-      {
-        id: 2,
-        src: "https://i.imgur.com/Eyg3mUD.jpg",
-        alt: "banner2",
-        style: slideStyle,
-      },
-      {
-        id: 3,
-        src: "https://i.imgur.com/RVnJagG.jpg",
-        alt: "banner3",
-        style: slideStyle,
-      },
-    ]);
-  }, []);
+  const slideStyle = {};
+  const [slides, setSlides] = useState([
+    {
+      id: 1,
+      src: "https://i.imgur.com/wHozlKZ.jpg",
+      alt: "banner1",
+      style: slideStyle,
+    },
+    {
+      id: 2,
+      src: "https://i.imgur.com/Eyg3mUD.jpg",
+      alt: "banner2",
+      style: slideStyle,
+    },
+    {
+      id: 3,
+      src: "https://i.imgur.com/RVnJagG.jpg",
+      alt: "banner3",
+      style: slideStyle,
+    },
+  ]);
+  // 使用假資料
+  const [hotItems, SetHotItems] = useState([
+    {
+      id: 1,
+      product: { name: "針織上衣", price: "599" },
+      isLiked: false,
+    },
+    {
+      id: 2,
+      product: { name: "短版 T-Shirt", price: "389" },
+      isLiked: true,
+    },
+    {
+      id: 3,
+      product: { name: "古著髮帶", price: "189" },
+      isLiked: false,
+    },
+  ]);
+
+  // 更新 hotItems 裡面物件的 isLiked 屬性
+  function handleUpdateItemLikedState(id) {
+    SetHotItems(
+      hotItems.map((item) =>
+        item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
+      )
+    );
+  }
 
   return (
     <PageContainer>
@@ -126,42 +151,11 @@ export default function HomePage() {
         <HotSellingItemBlock>
           <HotSellingItemTitle>熱賣品項</HotSellingItemTitle>
           <HotSellingItemsContainer>
-            <HotSellingItem>
-              <HotSellingItemInfo>
-                <HotSellingItemHeader>
-                  <HotSellingItemName>長版針織衣</HotSellingItemName>
-                  <FavoriteIcon />
-                </HotSellingItemHeader>
-                <HotSellingItemPrice>NTD 489</HotSellingItemPrice>
-              </HotSellingItemInfo>
-            </HotSellingItem>
-            <HotSellingItem>
-              <HotSellingItemInfo>
-                <HotSellingItemHeader>
-                  <HotSellingItemName>短版刺繡上衣</HotSellingItemName>
-                  <FavoriteFilledIcon />
-                </HotSellingItemHeader>
-                <HotSellingItemPrice>NTD 329</HotSellingItemPrice>
-              </HotSellingItemInfo>
-            </HotSellingItem>
-            <HotSellingItem>
-              <HotSellingItemInfo>
-                <HotSellingItemHeader>
-                  <HotSellingItemName>涼感襯衫</HotSellingItemName>
-                  <FavoriteFilledIcon />
-                </HotSellingItemHeader>
-                <HotSellingItemPrice>NTD 269</HotSellingItemPrice>
-              </HotSellingItemInfo>
-            </HotSellingItem>
-            <HotSellingItem>
-              <HotSellingItemInfo>
-                <HotSellingItemHeader>
-                  <HotSellingItemName>牛仔短褲</HotSellingItemName>
-                  <FavoriteFilledIcon />
-                </HotSellingItemHeader>
-                <HotSellingItemPrice>NTD 799</HotSellingItemPrice>
-              </HotSellingItemInfo>
-            </HotSellingItem>
+            <CardContainer
+              items={hotItems}
+              horizontalAlign={"center"}
+              handleLiked={handleUpdateItemLikedState}
+            />
           </HotSellingItemsContainer>
           <LoadMoreButton>載入更多</LoadMoreButton>
         </HotSellingItemBlock>
