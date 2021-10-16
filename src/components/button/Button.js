@@ -3,10 +3,8 @@ import { BREAKPOINT_PAD } from "../../constant";
 
 const CTAPrimaryStyle = "color-secondary3 bg-primary1";
 const CTASecondaryStyle = "color-secondary3 bg-secondary1";
-const GhostPrimaryStyle =
-  "color-primary1 br-primary1 bg-secondary3 none-pointer";
-const GhostSecondaryStyle =
-  "color-secondary1 br-secondary1 bg-secondary3 none-pointer";
+const GhostPrimaryStyle = "color-primary1 br-primary1 bg-secondary3";
+const GhostSecondaryStyle = "color-secondary1 br-secondary1 bg-secondary3";
 
 // 一般樣式使用
 const DefaultButton = styled.div.attrs(() => ({
@@ -17,7 +15,6 @@ const DefaultButton = styled.div.attrs(() => ({
   align-items: center;
   width: 8.6rem;
   height: 3.2rem;
-  cursor: pointer;
 
   ${BREAKPOINT_PAD} {
     width: 10.6rem;
@@ -30,6 +27,7 @@ export const CTAPrimaryButton = styled(DefaultButton).attrs(() => ({
 }))`
   border-radius: ${(props) => props.isRounded && "1.4rem"};
   margin: ${(props) => props.margin || "0"};
+  cursor: pointer;
 `;
 
 export const CTASecondaryButton = styled(DefaultButton).attrs(() => ({
@@ -46,6 +44,7 @@ export const GhostPrimaryButton = styled(DefaultButton).attrs(() => ({
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
   border-width: 0.4rem;
+  cursor: pointer;
 `;
 
 export const GhostSecondaryButton = styled(DefaultButton).attrs(() => ({
@@ -66,12 +65,13 @@ const DefaultPickerButton = styled.div.attrs(() => ({
   justify-content: center;
   align-items: center;
   height: 4rem;
-  cursor: pointer;
 `;
 
 export const PickerCTAPrimaryButton = styled(DefaultPickerButton).attrs(() => ({
   className: CTAPrimaryStyle,
-}))``;
+}))`
+  cursor: pointer;
+`;
 
 export const PickerCTASecondaryButton = styled(DefaultPickerButton).attrs(
   () => ({
@@ -86,6 +86,7 @@ export const PickerGhostPrimaryButton = styled(DefaultPickerButton).attrs(
 )`
   border-style: solid;
   border-width: 0.4rem;
+  cursor: pointer;
 `;
 
 export const PickerGhostSecondaryButton = styled(DefaultPickerButton).attrs(
