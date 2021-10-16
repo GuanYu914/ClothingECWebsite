@@ -1,13 +1,18 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components/macro";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
 import { ReactComponent as minusSquare } from "../../imgs/pages/single-product-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/single-product-page/plus-square.svg";
 import { ReactComponent as close } from "../../imgs/pages/single-product-page/x-lg.svg";
-import { Z_INDEX_LV6, Z_INDEX_LV5 } from "../../constant";
+import { Z_INDEX_LV6, Z_INDEX_LV5, BREAKPOINT_PAD } from "../../constant";
+import {
+  PickerGhostSecondaryButton,
+  PickerCTASecondaryButton,
+  PickerGhostPrimaryButton,
+  PickerCTAPrimaryButton,
+} from "../../components/button";
 import { slideInUp } from "react-animations";
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
 
 const slideInUpAnimation = keyframes`${slideInUp}`;
 
@@ -22,6 +27,11 @@ const BackgroundContainer = styled.div.attrs(() => ({
   right: 0;
   bottom: 0;
   z-index: ${Z_INDEX_LV5};
+
+  // 平板以上禁止顯示
+  ${BREAKPOINT_PAD} {
+    display: none;
+  }
 `;
 
 const PickerContainer = styled.div.attrs(() => ({
@@ -37,10 +47,6 @@ const PickerContainer = styled.div.attrs(() => ({
   // 對 picker 套用 slide up 效果
   animation: 1s ${slideInUpAnimation};
 `;
-
-const PickerActionName = styled.h2.attrs(() => ({
-  className: "fs-h2",
-}))``;
 
 const PickerPaddingContainer = styled.div`
   padding: 1rem;
@@ -183,7 +189,7 @@ const QuantityPlus = styled(plusSquare)`
   margin-left: 2rem;
 `;
 
-const QuantityNumber = styled.h2.attrs(() => ({
+const PickerQuantityNumber = styled.h2.attrs(() => ({
   className: "fs-h2 color-secondary2",
 }))``;
 
@@ -198,134 +204,44 @@ const PickerPriceName = styled.h2.attrs(() => ({
   margin-right: 1rem;
 `;
 
-const PriceNumber = styled.h3.attrs(() => ({
+const PickerPriceNumber = styled.h3.attrs(() => ({
   className: "fs-h2 color-secondary2",
 }))``;
 
 const PickerOPButtons = styled.div`
   margin-top: 2rem;
   display: flex;
-  height: 4rem;
 `;
 
-const AddToBag = styled.div.attrs((props) => ({
-  // 預設屬性為不可點擊，且設置顏色為 secondary
-  className:
-    props.state || "color-secondary1 br-secondary1 bg-secondary3 none-pointer",
-}))`
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  border-style: solid;
-  border-width: 0.4rem;
-  cursor: pointer;
-`;
-
-const Purchase = styled.div.attrs((props) => ({
-  // 預設屬性為不可點擊，且設置顏色為 secondary
-  className: props.state || "color-secondary3 bg-secondary1 none-pointer",
-}))`
-  width: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  cursor: pointer;
-`;
+// 定義一些可以共用的 styled-component 元件
+export const SharedPickerColorContainer = styled(PickerColorContainer)``;
+export const SharedPickerColorName = styled(PickerColorName)``;
+export const SharedPickerColors = styled(PickerColors)``;
+export const SharedPickerColor = styled(PickerColor)``;
+export const SharedPickerSizeContainer = styled(PickerSizeContainer)``;
+export const SharedPickerSizeName = styled(PickerSizeName)``;
+export const SharedPickerSizes = styled(PickerSizes)``;
+export const SharedPickerSize = styled(PickerSize)``;
+export const SharedPickerQuantityContainer = styled(PickerQuantityContainer)``;
+export const SharedPickerQuantityName = styled(PickerQuantityName)``;
+export const SharedQuantityMinus = styled(QuantityMinus)``;
+export const SharedPickerQuantityNumber = styled(PickerQuantityNumber)``;
+export const SharedQuantityPlus = styled(QuantityPlus)``;
+export const SharedPickerPriceShower = styled(PickerPriceShower)``;
+export const SharedPickerPriceName = styled(PickerPriceName)``;
+export const SharedPickerPriceNumber = styled(PickerPriceNumber)``;
 
 export default function ProductPicker({
-  setPickerEnable,
+  picker,
+  handleSelectPickerColor,
+  handleSelectPickerSize,
+  handleIncreaseQuantity,
+  handleDecreaseQuantity,
+  activeOpState,
+  setMobilePickerState,
   isLiked,
   handleAddToLikedItems,
 }) {
-  // 使用假資料
-  const [picker, setPicker] = useState({
-    colors: [
-      { id: 1, hexcode: "#ffce30", selected: false },
-      { id: 2, hexcode: "#e83845", selected: false },
-      { id: 3, hexcode: "#e389b9", selected: false },
-      { id: 4, hexcode: "#746ab0", selected: false },
-      { id: 5, hexcode: "#288ba8", selected: false },
-    ],
-    sizes: [
-      { id: 1, name: "XS", selected: false },
-      { id: 2, name: "S", selected: false },
-      { id: 3, name: "M", selected: false },
-      { id: 4, name: "L", selected: false },
-      { id: 5, name: "XL", selected: false },
-      { id: 6, name: "2L", selected: false },
-    ],
-    quantity: 1,
-    unitPrice: 490,
-  });
-  const [activeOPState, setActiveOPState] = useState(false);
-
-  function handleSelectPickerColor(id) {
-    setPicker({
-      ...picker,
-      colors: picker.colors.map((color) =>
-        color.id === id
-          ? { ...color, selected: true }
-          : { ...color, selected: false }
-      ),
-    });
-  }
-
-  function handleSelectPickerSize(id) {
-    setPicker({
-      ...picker,
-      sizes: picker.sizes.map((size) =>
-        size.id === id
-          ? { ...size, selected: true }
-          : { ...size, selected: false }
-      ),
-    });
-  }
-
-  useEffect(() => {
-    // 這裡可以檢查目前 picker 狀態
-    console.log(picker);
-    // 每一次 render 完檢查是否可以進入到 "加入購物車" 跟 "直接購買" 等操作
-    setActiveOPState(checkOP());
-  }, [picker]);
-
-  function handleIncreaseQuantity() {
-    setPicker({
-      ...picker,
-      quantity: picker.quantity + 1,
-    });
-  }
-
-  function handleDecreaseQuantity() {
-    if (picker.quantity == 1) return;
-    setPicker({
-      ...picker,
-      quantity: picker.quantity - 1,
-    });
-  }
-
-  // 檢查 picker 中的 color 跟 size 是否有被選取
-  function checkOP() {
-    let colorChecked = false;
-    let sizeChecked = false;
-    for (let i = 0; i < picker.colors.length; i++) {
-      if (picker.colors[i].selected) {
-        colorChecked = true;
-        break;
-      }
-    }
-    for (let j = 0; j < picker.sizes.length; j++) {
-      if (picker.sizes[j].selected) {
-        sizeChecked = true;
-        break;
-      }
-    }
-
-    return colorChecked && sizeChecked;
-  }
-
   return (
     <BackgroundContainer>
       <PickerContainer>
@@ -334,12 +250,22 @@ export default function ProductPicker({
             <PickerProductName>女版襯衫</PickerProductName>
             <PickerHeaderButton>
               {isLiked && (
-                <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+                <FavoriteFilledIcon
+                  onClick={() => {
+                    handleAddToLikedItems();
+                  }}
+                />
               )}
-              {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
+              {!isLiked && (
+                <FavoriteIcon
+                  onClick={() => {
+                    handleAddToLikedItems();
+                  }}
+                />
+              )}
               <CloseButton
                 onClick={() => {
-                  setPickerEnable(false);
+                  setMobilePickerState(false);
                 }}
               />
             </PickerHeaderButton>
@@ -380,36 +306,38 @@ export default function ProductPicker({
             </PickerSizeContainer>
             <PickerQuantityContainer>
               <PickerQuantityName>數量</PickerQuantityName>
-              <QuantityMinus onClick={handleDecreaseQuantity} />
-              <QuantityNumber>{picker.quantity}</QuantityNumber>
-              <QuantityPlus onClick={handleIncreaseQuantity} />
+              <QuantityMinus
+                onClick={() => {
+                  handleDecreaseQuantity();
+                }}
+              />
+              <PickerQuantityNumber>{picker.quantity}</PickerQuantityNumber>
+              <QuantityPlus
+                onClick={() => {
+                  handleIncreaseQuantity();
+                }}
+              />
             </PickerQuantityContainer>
           </PickerSpecContainer>
           <PickerPriceShower>
             <PickerPriceName>價格</PickerPriceName>
-            <PriceNumber>{picker.quantity * picker.unitPrice}</PriceNumber>
+            <PickerPriceNumber>
+              {picker.quantity * picker.unitPrice}
+            </PickerPriceNumber>
           </PickerPriceShower>
         </PickerPaddingContainer>
         {/* 可以操作 "加入購物車" 跟 "直接購買" 等操作 */}
-        {activeOPState && (
+        {activeOpState && (
           <PickerOPButtons>
-            <AddToBag state={"color-primary1 br-primary1 bg-secondary3"}>
-              <PickerActionName>加入購物車</PickerActionName>
-            </AddToBag>
-            <Purchase state={"color-secondary3 bg-primary1"}>
-              <PickerActionName>直接購買</PickerActionName>
-            </Purchase>
+            <PickerGhostPrimaryButton>加入購物車</PickerGhostPrimaryButton>
+            <PickerCTAPrimaryButton>直接購買</PickerCTAPrimaryButton>
           </PickerOPButtons>
         )}
         {/* 不可以操作 "加入購物車" 跟 "直接購買" 等操作 */}
-        {!activeOPState && (
+        {!activeOpState && (
           <PickerOPButtons>
-            <AddToBag>
-              <PickerActionName>加入購物車</PickerActionName>
-            </AddToBag>
-            <Purchase>
-              <PickerActionName>直接購買</PickerActionName>
-            </Purchase>
+            <PickerGhostSecondaryButton>加入購物車</PickerGhostSecondaryButton>
+            <PickerCTASecondaryButton>直接購買</PickerCTASecondaryButton>
           </PickerOPButtons>
         )}
       </PickerContainer>
@@ -418,7 +346,13 @@ export default function ProductPicker({
 }
 
 ProductPicker.propTypes = {
-  setPickerEnable: PropTypes.func,
+  picker: PropTypes.object,
+  handleSelectPickerColor: PropTypes.func,
+  handleSelectPickerSize: PropTypes.func,
+  handleIncreaseQuantity: PropTypes.func,
+  handleDecreaseQuantity: PropTypes.func,
+  activeOpState: PropTypes.bool,
+  setMobilePickerState: PropTypes.func,
   isLiked: PropTypes.bool,
   handleAddToLikedItems: PropTypes.func,
 };
