@@ -1,5 +1,5 @@
 import { Z_INDEX_LV1, BREAKPOINT_LAPTOP, BREAKPOINT_PAD } from "../../constant";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 export const UserCommentBlock = styled.div.attrs(() => ({
   className: "bg-secondary1, color-primary3",

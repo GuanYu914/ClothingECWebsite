@@ -2,7 +2,7 @@ import { ReactComponent as logo } from "../../imgs/components/header/bootstrap.s
 import { ReactComponent as list } from "../../imgs/components/header/list.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,

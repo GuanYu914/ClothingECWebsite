@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as github } from "../../imgs/components/footer/github.svg";
 import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";

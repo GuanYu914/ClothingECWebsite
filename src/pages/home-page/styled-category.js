@@ -1,5 +1,5 @@
 import { BREAKPOINT_PAD } from "../../constant";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 export const CategoryBlock = styled.div`
   margin-top: 5rem;
