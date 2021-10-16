@@ -99,8 +99,7 @@ const ProductInfoContainer = styled.div`
     display: block;
     margin-top: 0;
     flex-grow: 1;
-    padding-left: 1.4rem;
-    padding-right: 1.4rem;
+    padding-left: 0.8rem;
   }
 `;
 
