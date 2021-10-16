@@ -5,7 +5,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
 } from "../../constant";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useState } from "react";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import {
@@ -24,6 +24,7 @@ import {
 } from "./styled-user-comment";
 import { BREAKPOINT_PAD, MAX_CONTAINER_WIDTH } from "../../constant";
 import CardContainer from "../../components/card-container";
+import { CTASecondaryButton } from "../../components/button";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -39,25 +40,6 @@ const ContentContainer = styled.div`
 
   ${BREAKPOINT_PAD} {
     margin-top: ${HEADER_HEIGHT_PAD};
-  }
-`;
-
-const LoadMoreButton = styled.div.attrs(() => ({
-  className: "fs-h2 bg-secondary1 color-secondary3",
-}))`
-  // 文字水平垂直置中
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 1.4rem;
-  width: 8.6rem;
-  height: 3.2rem;
-  margin: 3rem auto 0;
-  cursor: pointer;
-
-  ${BREAKPOINT_PAD} {
-    width: 10.6rem;
-    height: 3.6rem;
   }
 `;
 
@@ -83,27 +65,26 @@ const HotSellingItemsContainer = styled.div`
 `;
 
 export default function HomePage() {
-  const slideStyle = {};
-  const [slides, setSlides] = useState([
-    {
-      id: 1,
-      src: "https://i.imgur.com/wHozlKZ.jpg",
-      alt: "banner1",
-      style: slideStyle,
-    },
-    {
-      id: 2,
-      src: "https://i.imgur.com/Eyg3mUD.jpg",
-      alt: "banner2",
-      style: slideStyle,
-    },
-    {
-      id: 3,
-      src: "https://i.imgur.com/RVnJagG.jpg",
-      alt: "banner3",
-      style: slideStyle,
-    },
-  ]);
+  const [slides, setSlides] = useState({
+    frame: {},
+    slide: [
+      {
+        id: 1,
+        src: "https://i.imgur.com/wHozlKZ.jpg",
+        alt: "banner1",
+      },
+      {
+        id: 2,
+        src: "https://i.imgur.com/Eyg3mUD.jpg",
+        alt: "banner2",
+      },
+      {
+        id: 3,
+        src: "https://i.imgur.com/RVnJagG.jpg",
+        alt: "banner3",
+      },
+    ],
+  });
   // 使用假資料
   const [hotItems, SetHotItems] = useState([
     {
@@ -157,7 +138,9 @@ export default function HomePage() {
               handleLiked={handleUpdateItemLikedState}
             />
           </HotSellingItemsContainer>
-          <LoadMoreButton>載入更多</LoadMoreButton>
+          <CTASecondaryButton isRounded={true} margin={"3rem auto 0"}>
+            載入更多
+          </CTASecondaryButton>
         </HotSellingItemBlock>
         <UserCommentBlock>
           <UserCommentTitle>顧客評價</UserCommentTitle>
@@ -175,7 +158,9 @@ export default function HomePage() {
               “ 衣服品質真的不錯，已加入下次購物清單 “<UserAvatar></UserAvatar>
             </UserComment>
           </UserCommentsContainer>
-          <LoadMoreButton>載入更多</LoadMoreButton>
+          <CTASecondaryButton isRounded={true} margin={"3rem auto 0"}>
+            載入更多
+          </CTASecondaryButton>
         </UserCommentBlock>
       </ContentContainer>
       <Footer marginTop={"6rem"} />
