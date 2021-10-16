@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
@@ -79,19 +79,6 @@ const FavoriteFilledIcon = styled(heartFilled)`
   flex-shrink: 0;
 `;
 
-/*  props 參數
-    item: {
-      id: number,
-      product: {
-        name: string,
-        price: string
-      },
-      isLiked: boolean
-    }
-    handleLinked: toggle item 物件的 isLiked 屬性
-    horizontalAlign: 決定 ItemsContainer 是否 justify-content: center
-    marginLeft: 設置 ItemContainer 的 margin-left，預設為 1rem
-*/
 export default function CardContainer({
   items,
   handleLiked,
@@ -128,9 +115,38 @@ export default function CardContainer({
   );
 }
 
+/*  props 參數
+    items (required) {
+      id: number      (required)
+      product: {
+        name: string  (required)
+        price: string (required)
+      },
+      isLiked: boolean(required)
+    }
+
+    handleLinked: function (required)
+    ps. toggle item 物件的 isLiked 屬性
+
+    horizontalAlign: string (optional)
+    ps. 決定 ItemsContainer 是否 justify-content: center
+
+    marginLeft: string (optional) 
+    ps. 設置 ItemContainer 的 margin-left，預設為 1rem
+*/
+
 CardContainer.propTypes = {
-  items: PropTypes.array,
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      product: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        price: PropTypes.string.isRequired,
+      }),
+      isLiked: PropTypes.bool.isRequired,
+    })
+  ),
   horizontalAlign: PropTypes.string,
   marginLeft: PropTypes.string,
-  handleLiked: PropTypes.func,
+  handleLiked: PropTypes.func.isRequired,
 };
