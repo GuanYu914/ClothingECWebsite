@@ -1,6 +1,6 @@
 import { Carousel } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useState } from "react";
 import PropTypes from "prop-types";
 
@@ -8,14 +8,17 @@ const CarouselImage = styled.img.attrs((props) => ({
   src: props.src,
   alt: props.alt || "slide",
 }))`
-  display: block;
-  width: ${(prop) => prop.width || "100%"};
-  height: ${(prop) => prop.height || "auto"};
-  max-height: ${(prop) => prop.maxHeight || "30rem"};
-  border-radius: ${(prop) => prop.borderRadius || "unset"};
+  width: 100%;
+  height: auto;
+  max-height: ${(props) => props.maxHeight || "30rem"};
+  border-radius: ${(props) => props.borderRadius || "unset"};
 `;
 
-// 使用 react-bootstrap5 Carousel 原生組件
+const StyledCarousel = styled(Carousel)`
+  width: ${(props) => props.width || "100%"};
+  height: fit-content;
+`;
+
 export default function BSCarousel({ slides }) {
   const [index, setIndex] = useState(0);
 
@@ -24,23 +27,54 @@ export default function BSCarousel({ slides }) {
   };
 
   return (
-    <Carousel activeIndex={index} onSelect={handleSelect}>
-      {slides.map((slide) => (
+    <StyledCarousel
+      activeIndex={index}
+      onSelect={handleSelect}
+      width={slides.frame.width}
+    >
+      {slides.slide.map((slide) => (
         <Carousel.Item key={slide.id}>
           <CarouselImage
             src={slide.src}
             alt={slide.alt}
-            width={slide.style.width}
-            height={slide.style.height}
-            maxHeight={slide.style.maxHeight}
-            borderRadius={slide.style.borderRadius}
+            maxHeight={slides.frame.maxHeight}
+            borderRadius={slides.frame.borderRadius}
           />
         </Carousel.Item>
       ))}
-    </Carousel>
+    </StyledCarousel>
   );
 }
 
+// 使用 react-bootstrap5 Carousel 原生組件
+// Prop 參數
+/**
+ * slides (required) [{
+ *  frame: {
+ *    maxHeight:    string (optional)
+ *    borderRadius: string (optional)
+ *  }
+ *  slide: [
+ *    {
+ *      id:  number (required)
+ *      src: string (required)
+ *      alt: string (required)
+ *    }
+ *  ]
+ * }]
+ */
+
 BSCarousel.propTypes = {
-  slides: PropTypes.array,
+  slides: PropTypes.object.isRequired,
+};
+
+StyledCarousel.propTypes = {
+  width: PropTypes.string,
+};
+
+CarouselImage.propTypes = {
+  src: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+  maxHeight: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
