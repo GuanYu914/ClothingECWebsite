@@ -5,11 +5,12 @@ import { ReactComponent as heartFilled } from "../../imgs/components/card-contai
 import { BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
 
 const ItemsContainer = styled.div`
-  margin-top: 1.5rem;
+  margin-top: ${(props) => props.marginTop || "1.5rem"};
   width: 100%;
   display: flex;
   justify-content: ${(props) => props.horizontalAlign || "flex-start"};
   flex-wrap: wrap;
+  align-self: baseline;
 `;
 
 const ItemContainer = styled.div.attrs(() => ({
@@ -83,10 +84,11 @@ export default function CardContainer({
   items,
   handleLiked,
   horizontalAlign,
+  marginTop,
   marginLeft,
 }) {
   return (
-    <ItemsContainer horizontalAlign={horizontalAlign}>
+    <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
         <ItemContainer key={item.id} marginLeft={marginLeft}>
           <ItemHeader>
@@ -147,6 +149,7 @@ CardContainer.propTypes = {
     })
   ),
   horizontalAlign: PropTypes.string,
+  marginTop: PropTypes.string,
   marginLeft: PropTypes.string,
   handleLiked: PropTypes.func.isRequired,
 };
