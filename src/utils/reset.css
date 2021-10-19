@@ -1,2 +1,12 @@
 /* 添加 react 的 normalizer... */
 @import-normalize; 
+
+/* reset bootstrap ol, ul settings  */
+.list-reset {
+  padding-left: 0;
+}
+
+/* reset button appearance setting */
+.btn-reset {
+  all: unset;
+}
