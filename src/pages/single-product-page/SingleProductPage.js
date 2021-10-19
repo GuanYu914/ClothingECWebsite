@@ -3,34 +3,10 @@ import Footer from "../../components/footer/Footer";
 import styled from "styled-components/macro";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import CardContainer from "../../components/card-container";
-import ProductPicker from "./styled-product-picker";
+import ProductPicker from "../../components/product-picker";
 import { useEffect, useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
-import {
-  SharedPickerColorContainer,
-  SharedPickerColorName,
-  SharedPickerColors,
-  SharedPickerColor,
-  SharedPickerSizeContainer,
-  SharedPickerSizeName,
-  SharedPickerSizes,
-  SharedPickerSize,
-  SharedPickerQuantityContainer,
-  SharedPickerQuantityName,
-  SharedQuantityMinus,
-  SharedPickerQuantityNumber,
-  SharedQuantityPlus,
-  SharedPickerPriceShower,
-  SharedPickerPriceName,
-  SharedPickerPriceNumber,
-} from "./styled-product-picker";
-import {
-  CTAPrimaryButton,
-  GhostPrimaryButton,
-  CTASecondaryButton,
-  GhostSecondaryButton,
-} from "../../components/button";
 import {
   BREAKPOINT_MOBILE,
   BREAKPOINT_LAPTOP,
@@ -80,6 +56,8 @@ const ProductCategoryPath = styled.h3.attrs(() => ({
 `;
 
 const ProductInfoForMobile = styled.div`
+  display: block;
+
   ${BREAKPOINT_MOBILE} {
     display: block;
   }
@@ -141,6 +119,8 @@ const DetailInfoDesc = styled.h3.attrs(() => ({
 `;
 
 const ProductInfoContainerForPad = styled.div`
+  display: none;
+
   ${BREAKPOINT_MOBILE} {
     display: none;
   }
@@ -148,13 +128,6 @@ const ProductInfoContainerForPad = styled.div`
   ${BREAKPOINT_PAD} {
     display: flex;
   }
-`;
-
-// 適用於 pad breakpoint
-const ProductPickerContainer = styled.div``;
-const ProductPickerOPButtons = styled.div`
-  margin-top: 2rem;
-  display: flex;
 `;
 
 const WatchedItemsContainer = styled.div`
@@ -224,7 +197,7 @@ export default function SingleProductPage() {
       },
     ],
   });
-  // mobile 裝置底下， styled-product-picker 元件啟用狀態
+  // mobile 裝置底下， product-picker 元件啟用狀態
   const [mobilePickerState, setMobilePickerState] = useState(false);
   // 儲存當前頁面，愛心是否被點擊狀態
   const [isLiked, setIsLiked] = useState(false);
@@ -281,7 +254,7 @@ export default function SingleProductPage() {
   }, [picker, activeOpState]);
 
   function handleProductAdd() {
-    // 叫出 mobile 裝置底下的 styled-product-picker 元件
+    // 叫出 mobile 裝置底下的 product-picker 元件
     setMobilePickerState(true);
   }
   // 更新當前頁面愛心狀態
@@ -385,86 +358,18 @@ export default function SingleProductPage() {
               )}
               {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
             </ProductHeaderContainer>
-            <ProductPickerContainer>
-              <SharedPickerColorContainer>
-                <SharedPickerColorName>顏色</SharedPickerColorName>
-                <SharedPickerColors>
-                  {picker.colors.map((color) => (
-                    <SharedPickerColor
-                      key={color.id}
-                      color={color.hexcode}
-                      selected={
-                        color.selected === true
-                          ? "0.2rem solid #1F1E1C"
-                          : "unset"
-                      }
-                      onClick={() => {
-                        handleSelectPickerColor(color.id);
-                      }}
-                    ></SharedPickerColor>
-                  ))}
-                </SharedPickerColors>
-              </SharedPickerColorContainer>
-              <SharedPickerSizeContainer>
-                <SharedPickerSizeName>尺寸</SharedPickerSizeName>
-                <SharedPickerSizes>
-                  {picker.sizes.map((size) => (
-                    <SharedPickerSize
-                      key={size.id}
-                      selected={size.selected === true ? "#9DCBDF" : "unset"}
-                      onClick={() => {
-                        handleSelectPickerSize(size.id);
-                      }}
-                    >
-                      {size.name}
-                    </SharedPickerSize>
-                  ))}
-                </SharedPickerSizes>
-              </SharedPickerSizeContainer>
-              <SharedPickerQuantityContainer>
-                <SharedPickerQuantityName>數量</SharedPickerQuantityName>
-                <SharedQuantityMinus
-                  onClick={() => {
-                    handleDecreaseQuantity();
-                  }}
-                ></SharedQuantityMinus>
-                <SharedPickerQuantityNumber>
-                  {picker.quantity}
-                </SharedPickerQuantityNumber>
-                <SharedQuantityPlus
-                  onClick={() => {
-                    handleIncreaseQuantity();
-                  }}
-                ></SharedQuantityPlus>
-              </SharedPickerQuantityContainer>
-              <SharedPickerPriceShower>
-                <SharedPickerPriceName>價格</SharedPickerPriceName>
-                <SharedPickerPriceNumber>
-                  {picker.quantity * picker.unitPrice}
-                </SharedPickerPriceNumber>
-              </SharedPickerPriceShower>
-              {/* 這邊要放按鈕 */}
-              {activeOpState && (
-                <ProductPickerOPButtons>
-                  <CTAPrimaryButton isRounded={true} margin={"0 0.4rem 0 0"}>
-                    直接購買
-                  </CTAPrimaryButton>
-                  <GhostPrimaryButton isRounded={true}>
-                    加入購物車
-                  </GhostPrimaryButton>
-                </ProductPickerOPButtons>
-              )}
-              {!activeOpState && (
-                <ProductPickerOPButtons>
-                  <CTASecondaryButton isRounded={true} margin={"0 0.4rem 0 0"}>
-                    直接購買
-                  </CTASecondaryButton>
-                  <GhostSecondaryButton isRounded={true}>
-                    加入購物車
-                  </GhostSecondaryButton>
-                </ProductPickerOPButtons>
-              )}
-            </ProductPickerContainer>
+            <ProductPicker
+              picker={picker}
+              usedOnPad={true}
+              handleSelectPickerColor={handleSelectPickerColor}
+              handleSelectPickerSize={handleSelectPickerSize}
+              handleIncreaseQuantity={handleIncreaseQuantity}
+              handleDecreaseQuantity={handleDecreaseQuantity}
+              activeOpState={activeOpState}
+              setMobilePickerState={handleProductAdd}
+              isLiked={isLiked}
+              handleAddToLikedItems={handleAddToLikedItems}
+            />
             <DetailInfoContainer>
               <DetailInfoTitle>詳細資訊</DetailInfoTitle>
               <DetailInfoDesc>
@@ -489,6 +394,7 @@ export default function SingleProductPage() {
         // 適用於 mobile breakpoint
         <ProductPicker
           picker={picker}
+          usedOnMobile={true}
           handleSelectPickerColor={handleSelectPickerColor}
           handleSelectPickerSize={handleSelectPickerSize}
           handleIncreaseQuantity={handleIncreaseQuantity}
