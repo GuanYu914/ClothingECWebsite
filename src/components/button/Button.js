@@ -26,6 +26,7 @@ export const CTAPrimaryButton = styled(DefaultButton).attrs(() => ({
   className: CTAPrimaryStyle,
 }))`
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   cursor: pointer;
 `;
@@ -34,6 +35,7 @@ export const CTASecondaryButton = styled(DefaultButton).attrs(() => ({
   className: CTASecondaryStyle,
 }))`
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
 
@@ -41,6 +43,7 @@ export const GhostPrimaryButton = styled(DefaultButton).attrs(() => ({
   className: GhostPrimaryStyle,
 }))`
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
   border-width: 0.4rem;
@@ -51,6 +54,7 @@ export const GhostSecondaryButton = styled(DefaultButton).attrs(() => ({
   className: GhostSecondaryStyle,
 }))`
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
   border-width: 0.4rem;
