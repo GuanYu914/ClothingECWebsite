@@ -48,8 +48,9 @@ export default function BSCarousel({ slides }) {
 // 使用 react-bootstrap5 Carousel 原生組件
 // Prop 參數
 /**
- * slides (required) [{
+ * slides (required) {
  *  frame: {
+ *    width:        string (optional)
  *    maxHeight:    string (optional)
  *    borderRadius: string (optional)
  *  }
@@ -60,20 +61,22 @@ export default function BSCarousel({ slides }) {
  *      alt: string (required)
  *    }
  *  ]
- * }]
+ * }
  */
 
 BSCarousel.propTypes = {
-  slides: PropTypes.object.isRequired,
-};
-
-StyledCarousel.propTypes = {
-  width: PropTypes.string,
-};
-
-CarouselImage.propTypes = {
-  src: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-  maxHeight: PropTypes.string,
-  borderRadius: PropTypes.string,
+  slides: PropTypes.shape({
+    frame: PropTypes.shape({
+      width: PropTypes.string,
+      maxHeight: PropTypes.string,
+      borderRadius: PropTypes.string,
+    }),
+    slide: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        src: PropTypes.string.isRequired,
+        alt: PropTypes.string.isRequired,
+      })
+    ),
+  }),
 };
