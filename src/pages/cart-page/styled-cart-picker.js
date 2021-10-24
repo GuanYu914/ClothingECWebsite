@@ -2,6 +2,11 @@ import styled from "styled-components/macro";
 import { ReactComponent as minusSquare } from "../../imgs/pages/single-product-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/single-product-page/plus-square.svg";
 import PropTypes from "prop-types";
+import {
+  COLOR_PRIMARY1,
+  BR_SECONDARY2,
+  COLOR_SECONDARY2,
+} from "../../constant";
 
 const Container = styled.div``;
 
@@ -32,7 +37,7 @@ const PickerColor = styled.div`
   margin-top: 0.8rem;
   margin-right: 1.4rem;
   background-color: ${(props) => props.color};
-  border: ${(props) => props.selected || "#1F1E1C"};
+  border: ${(props) => props.selected || BR_SECONDARY2};
 
   &:last-child {
     margin-right: 0;
@@ -67,7 +72,7 @@ const PickerSize = styled.h3.attrs(() => ({
   margin-top: 0.8rem;
   margin-right: 0.8rem;
   cursor: pointer;
-  color: ${(props) => props.selected || "#1F1E1C"};
+  color: ${(props) => props.selected || COLOR_SECONDARY2};
 
   &:last-child {
     margin-right: 0;
@@ -136,7 +141,9 @@ export default function CartPicker({
             <PickerColor
               key={color.id}
               color={color.hexcode}
-              selected={color.selected === true ? "0.2rem solid #1F1E1C" : ""}
+              selected={
+                color.selected === true ? `0.2rem solid ${BR_SECONDARY2}` : ""
+              }
               onClick={() => {
                 handleSelectPickerColor(productId, color.id);
               }}
@@ -150,7 +157,7 @@ export default function CartPicker({
           {picker.sizes.map((size) => (
             <PickerSize
               key={size.id}
-              selected={size.selected === true ? "#9DCBDF" : ""}
+              selected={size.selected === true ? COLOR_PRIMARY1 : ""}
               onClick={() => {
                 handleSelectPickerSize(productId, size.id);
               }}

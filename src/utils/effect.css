@@ -1,4 +1,8 @@
 /* 添加一些常用的 css 效果 */
-.none-pointer {
-  cursor: default !important;
+.box-shadow-light {
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+}
+
+.box-shadow-dark {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

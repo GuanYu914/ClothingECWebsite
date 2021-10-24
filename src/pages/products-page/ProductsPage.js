@@ -12,6 +12,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   BREAKPOINT_LAPTOP,
+  COLOR_PRIMARY1,
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
 import { useState } from "react";
@@ -108,10 +109,10 @@ const CategoryMainTitle = styled.ul.attrs(() => ({
   position: relative;
   user-select: none;
   cursor: pointer;
-  color: ${(props) => props.isSelected && "#9dcbdf"};
+  color: ${(props) => props.isSelected && COLOR_PRIMARY1};
 
   &:hover {
-    color: #9dcbdf;
+    color: ${COLOR_PRIMARY1};
   }
 `;
 
@@ -124,11 +125,11 @@ const CategorySubTitle = styled.ul.attrs(() => ({
   margin-left: 1rem;
   list-style: none;
   user-select: none;
-  color: ${(props) => props.isSelected && "#9dcbdf"};
+  color: ${(props) => props.isSelected && COLOR_PRIMARY1};
   animation: 0.8s ${fadeInAnimation};
 
   &:hover {
-    color: #9dcbdf;
+    color: ${COLOR_PRIMARY1};
   }
 `;
 
@@ -138,7 +139,7 @@ const CategoryDetailTitle = styled.li.attrs(() => ({
   margin-left: 1rem;
   list-style: none;
   user-select: none;
-  color: ${(props) => props.isSelected && "#9dcbdf"};
+  color: ${(props) => props.isSelected && COLOR_PRIMARY1};
   animation: 0.8s ${fadeInAnimation};
 
   &:hover {

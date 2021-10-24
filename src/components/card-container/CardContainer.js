@@ -2,7 +2,7 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
-import { BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
+import { BOX_SHADOW_DARK, BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
 
 const ItemsContainer = styled.div`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
@@ -14,13 +14,12 @@ const ItemsContainer = styled.div`
 `;
 
 const ItemContainer = styled.div.attrs(() => ({
-  className: "bg-secondary1",
+  className: "bg-secondary1 box-shadow-dark",
 }))`
   width: 18rem;
   height: 14rem;
   border-radius: 1.2rem;
   position: relative;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   margin-left: ${(props) => props.marginLeft || "1rem"};
   margin-right: 1rem;
   margin-bottom: 2rem;
@@ -34,7 +33,7 @@ const ItemContainer = styled.div.attrs(() => ({
     box-shadow: none;
 
     &:hover {
-      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+      box-shadow: ${BOX_SHADOW_DARK};
     }
   }
 `;

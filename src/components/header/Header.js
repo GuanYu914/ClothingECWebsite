@@ -10,6 +10,7 @@ import {
   Z_INDEX_LV4,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
+  BOX_SHADOW_LIGHT,
 } from "../../constant";
 
 const NavBarContainer = styled.nav.attrs(() => ({
@@ -25,7 +26,7 @@ const NavBarContainer = styled.nav.attrs(() => ({
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
+  box-shadow: ${BOX_SHADOW_LIGHT};
 
   ${BREAKPOINT_MOBILE} {
     padding-left: 1rem;

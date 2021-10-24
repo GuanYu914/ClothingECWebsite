@@ -4,7 +4,13 @@ import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-p
 import { ReactComponent as minusSquare } from "../../imgs/pages/single-product-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/single-product-page/plus-square.svg";
 import { ReactComponent as close } from "../../imgs/pages/single-product-page/x-lg.svg";
-import { Z_INDEX_LV6, Z_INDEX_LV5, BREAKPOINT_PAD } from "../../constant";
+import {
+  Z_INDEX_LV6,
+  Z_INDEX_LV5,
+  BREAKPOINT_PAD,
+  COLOR_PRIMARY1,
+  BR_SECONDARY2,
+} from "../../constant";
 import {
   GhostSecondaryButton,
   CTASecondaryButton,
@@ -274,7 +280,7 @@ export default function ProductPicker({
                         color={color.hexcode}
                         selected={
                           color.selected === true
-                            ? "0.2rem solid #1F1E1C"
+                            ? `0.2rem solid ${BR_SECONDARY2}`
                             : "unset"
                         }
                         onClick={() => {
@@ -290,7 +296,9 @@ export default function ProductPicker({
                     {picker.sizes.map((size) => (
                       <PickerSize
                         key={size.id}
-                        selected={size.selected === true ? "#9DCBDF" : "unset"}
+                        selected={
+                          size.selected === true ? COLOR_PRIMARY1 : "unset"
+                        }
                         onClick={() => {
                           handleSelectPickerSize(size.id);
                         }}
@@ -351,7 +359,9 @@ export default function ProductPicker({
                   key={color.id}
                   color={color.hexcode}
                   selected={
-                    color.selected === true ? "0.2rem solid #1F1E1C" : "unset"
+                    color.selected === true
+                      ? `0.2rem solid ${BR_SECONDARY2}`
+                      : "unset"
                   }
                   onClick={() => {
                     handleSelectPickerColor(color.id);
@@ -366,7 +376,7 @@ export default function ProductPicker({
               {picker.sizes.map((size) => (
                 <PickerSize
                   key={size.id}
-                  selected={size.selected === true ? "#9DCBDF" : "unset"}
+                  selected={size.selected === true ? COLOR_PRIMARY1 : "unset"}
                   onClick={() => {
                     handleSelectPickerSize(size.id);
                   }}

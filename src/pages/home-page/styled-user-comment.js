@@ -51,7 +51,7 @@ export const UserComment = styled.div.attrs(() => ({
 `;
 
 export const UserAvatar = styled.div.attrs(() => ({
-  className: "bg-secondary3",
+  className: "bg-secondary3 box-shadow-light",
 }))`
   border-radius: 50%;
   width: 4.2rem;
@@ -60,6 +60,5 @@ export const UserAvatar = styled.div.attrs(() => ({
   left: 50%;
   transform: translateX(-50%);
   bottom: -2rem;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   z-index: ${Z_INDEX_LV1};
 `;
