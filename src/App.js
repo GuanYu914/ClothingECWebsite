@@ -4,6 +4,8 @@ import HomePage from "./pages/home-page";
 import ProductsPage from "./pages/products-page";
 import SingleProductPage from "./pages/single-product-page";
 import CartPage from "./pages/cart-page";
+import LoginPage from "./pages/login-page";
+import PasswordReset from "./pages/password-reset-page";
 
 function App() {
   return (
@@ -12,6 +14,12 @@ function App() {
         <Switch>
           <Route exact path="/">
             <HomePage />
+          </Route>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Route path="/pass-reset">
+            <PasswordReset />
           </Route>
           <Route path="/products">
             <ProductsPage />
