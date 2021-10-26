@@ -2,6 +2,7 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as github } from "../../imgs/components/footer/github.svg";
 import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";
+import { BG_PRIMARY1, COLOR_SECONDARY3 } from "../../constant";
 
 const Container = styled.div.attrs(() => ({
   className: "color-secondary3 bg-secondary1",
@@ -16,25 +17,37 @@ const Container = styled.div.attrs(() => ({
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: ${(props) => props.bgColor || BG_PRIMARY1};
 `;
 
 const GithubLink = styled(github)`
   width: 2rem;
   height: 2rem;
   margin: 0 0.4rem;
+  color: ${(props) => props.icon_color || COLOR_SECONDARY3};
 `;
 
 const MailLink = styled(mail)`
   width: 2rem;
   height: 2rem;
   margin: 0 0.4rem;
+  color: ${(props) => props.icon_color || COLOR_SECONDARY3};
 `;
 
-export default function Footer({ marginTop, marginBottom }) {
+export default function Footer({
+  marginTop,
+  marginBottom,
+  bgColor,
+  iconColor,
+}) {
   return (
-    <Container marginTop={marginTop} marginBottom={marginBottom}>
-      <GithubLink />
-      <MailLink />
+    <Container
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      bgColor={bgColor}
+    >
+      <GithubLink icon_color={iconColor} />
+      <MailLink icon_color={iconColor} />
     </Container>
   );
 }
@@ -42,4 +55,6 @@ export default function Footer({ marginTop, marginBottom }) {
 Footer.propTypes = {
   marginTop: PropTypes.string,
   marginBottom: PropTypes.string,
+  bgColor: PropTypes.string,
+  iconColor: PropTypes.string,
 };
