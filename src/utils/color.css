@@ -8,6 +8,10 @@
   color: #F07759;
 }
 
+.color-primary3 {
+  color: #22B45F;
+}
+
 .color-secondary1 {
   color: #C4C4C4;
 }
@@ -28,6 +32,10 @@
   border-color: #F07759;
 }
 
+.br-primary3 {
+  color: #22B45F;
+}
+
 .br-secondary1 {
   border-color: #C4C4C4;
 }
@@ -46,6 +54,10 @@
 
 .bg-primary2 {
   background-color: #F07759;
+}
+
+.bg-primary3 {
+  color: #22B45F;
 }
 
 .bg-secondary1 {
