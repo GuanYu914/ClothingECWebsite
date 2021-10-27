@@ -38,14 +38,14 @@ const ContentContainer = styled.div`
   }
 `;
 
-const LoginTitle = styled.h1.attrs(() => ({
+const RegisterTitle = styled.h1.attrs(() => ({
   className: "fs-h1 color-secondary3",
 }))`
   padding-top: 1rem;
   margin-bottom: 0.5rem;
 `;
 
-const LoginSubTitle = styled.h3.attrs(() => ({
+const RegisterSubTitle = styled.h3.attrs(() => ({
   className: "fs-h3 color-secondary3",
 }))`
   margin-bottom: 1rem;
@@ -276,8 +276,8 @@ export default function RegisterPage() {
       <Header />
       <ContentContainer>
         <FormForMobile>
-          <LoginTitle>註冊</LoginTitle>
-          <LoginSubTitle>現在註冊就送 100 元購物金～</LoginSubTitle>
+          <RegisterTitle>註冊</RegisterTitle>
+          <RegisterSubTitle>現在註冊就送 100 元購物金～</RegisterSubTitle>
           <Form
             width={"100%"}
             formState={form}
@@ -291,7 +291,7 @@ export default function RegisterPage() {
           <BrandInfo>
             <BrandName>懶人購物網站</BrandName>
             <BrandSlogan>線上一點，送貨到家</BrandSlogan>
-            <LoginSubTitle>現在註冊就送 100 元購物金～</LoginSubTitle>
+            <RegisterSubTitle>現在註冊就送 100 元購物金～</RegisterSubTitle>
           </BrandInfo>
           <Form
             formState={form}
