@@ -98,6 +98,7 @@ export default function LoginPage() {
       maxLength: 12,
       field: "帳號",
       inputValue: "",
+      isValid: false,
     },
     {
       id: 2,
@@ -105,6 +106,7 @@ export default function LoginPage() {
       maxLength: 12,
       field: "密碼",
       inputValue: "",
+      isValid: false,
     },
   ]);
 
@@ -124,96 +126,84 @@ export default function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // 拿到帳號跟密碼的 inputValue
-    let postData = form.map((data) => data.inputValue);
-    // call api 送出 postData
-    console.log("送出");
+    // check all field's validation state
+    let postData = {
+      account: form.filter((formData) => formData.field === "帳號")[0]
+        .inputValue,
+      password: form.filter((formData) => formData.field === "密碼")[0]
+        .inputValue,
+    };
+
+    checkFieldValidation("帳號", postData.account);
+    checkFieldValidation("密碼", postData.password);
+
+    let allValidationState = form.map((formData) => formData.isValid);
+    let isValidPostData = false;
+    for (let i = 0; i < allValidationState.length; i++) {
+      if (!allValidationState[i]) {
+        isValidPostData = false;
+        break;
+      }
+      isValidPostData = true;
+    }
+
+    if (isValidPostData) {
+      console.log("送出", postData);
+    } else {
+      console.log("資料有誤");
+    }
   }
 
   function handleFocusOut(fieldName, e) {
-    const inputValue = e.target.value;
+    checkFieldValidation(fieldName, e.target.value);
+  }
+
+  function setFieldState(fieldName, helperMsg, helperColor, validationState) {
+    setForm(
+      form.map((formData) =>
+        formData.field === fieldName
+          ? {
+              ...formData,
+              helperMsg,
+              helperColor,
+              isValid: validationState,
+            }
+          : { ...formData }
+      )
+    );
+  }
+  // form field validation
+  function checkFieldValidation(fieldName, fieldValue) {
     if (fieldName === "帳號") {
-      if (inputValue === "") {
-        setForm(
-          form.map((formData) =>
-            formData.field === "帳號"
-              ? {
-                  ...formData,
-                  helperMsg: "帳號不得為空",
-                  helperColor: COLOR_PRIMARY2,
-                }
-              : { ...formData }
-          )
-        );
+      if (fieldValue === "") {
+        setFieldState("帳號", "帳號不得為空", COLOR_PRIMARY2, false);
       } else if (
-        inputValue.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[ ]).{8,20}/g) !==
+        fieldValue.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*[ ]).{8,12}/g) !==
         null
       ) {
-        setForm(
-          form.map((formData) =>
-            formData.field === "帳號"
-              ? {
-                  ...formData,
-                  helperMsg: "此帳號可以使用",
-                  helperColor: COLOR_PRIMARY3,
-                }
-              : { ...formData }
-          )
-        );
-        return;
+        setFieldState("帳號", "此帳號可以使用", COLOR_PRIMARY3, true);
       } else {
-        setForm(
-          form.map((formData) =>
-            formData.field === "帳號"
-              ? {
-                  ...formData,
-                  helperMsg:
-                    "至少 8 位數，由且包含一位英文大小寫跟數字組成，不得包含空白鍵",
-                  helperColor: COLOR_PRIMARY2,
-                }
-              : { ...formData }
-          )
+        setFieldState(
+          "帳號",
+          "為 8-12 位數，由且包含一位英文大小寫跟數字組成，不得包含空白鍵",
+          COLOR_PRIMARY2,
+          false
         );
       }
     }
     if (fieldName === "密碼") {
-      if (e.target.value === "") {
-        setForm(
-          form.map((formData) =>
-            formData.field === "密碼"
-              ? {
-                  ...formData,
-                  helperMsg: "密碼不得為空",
-                  helperColor: COLOR_PRIMARY2,
-                }
-              : { ...formData }
-          )
-        );
+      if (fieldValue === "") {
+        setFieldState("密碼", "密碼不得為空", COLOR_PRIMARY2, false);
       } else if (
-        inputValue.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/g) !== null
+        fieldValue.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,12}$/g) !== null
       ) {
-        setForm(
-          form.map((formData) =>
-            formData.field === "密碼"
-              ? {
-                  ...formData,
-                  helperMsg: "此密碼可以使用",
-                  helperColor: COLOR_PRIMARY3,
-                }
-              : { ...formData }
-          )
-        );
+        setFieldState("密碼", "密碼可以使用", COLOR_PRIMARY3, true);
       } else {
-        setForm(
-          form.map((formData) =>
-            formData.field === "密碼"
-              ? {
-                  ...formData,
-                  helperMsg: "至少 8 位數，由且包含一位英文大小寫跟數字",
-                  helperColor: COLOR_PRIMARY2,
-                }
-              : { ...formData }
-          )
+        setFieldState(
+          "密碼",
+          "為 8-12 位數，由且包含一位英文大小寫跟數字",
+          COLOR_PRIMARY2,
+          false
         );
       }
     }
