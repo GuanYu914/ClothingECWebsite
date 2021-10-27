@@ -55,22 +55,6 @@ const FormHelper = styled.h3.attrs(() => ({
 `;
 
 const ButtonContainer = styled.div``;
-const ForgetPassButton = styled.a.attrs(() => ({
-  className: "fs-h3 color-secondary1",
-  href: "/pass-reset",
-  target: "_blank",
-}))`
-  display: block;
-  text-decoration: none;
-  cursor: pointer;
-
-  &:visited {
-    color: ${COLOR_PRIMARY1};
-  }
-  &:hover {
-    color: ${COLOR_PRIMARY1};
-  }
-`;
 
 const RegisterButton = styled.a.attrs(() => ({
   className: "fs-h3 color-secondary1",
@@ -138,7 +122,6 @@ export default function Form({
       </FormContainer>
       {useForLogin && (
         <ButtonContainer>
-          <ForgetPassButton>忘記密碼？</ForgetPassButton>
           <RegisterButton>還沒成為會員嗎？點此註冊</RegisterButton>
           <CTAPrimaryButton
             width={"100%"}
