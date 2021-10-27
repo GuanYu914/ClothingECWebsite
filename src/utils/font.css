@@ -31,6 +31,24 @@
 /* pad */
 @media screen and (min-width: 768px){
   .fs-h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+  }
+
+  .fs-h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  .fs-h3 {
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+}
+
+/* desktop */
+@media screen and (min-width: 1440px) {
+  .fs-h1 {
     font-size: 2.4rem;
     font-weight: 700;
   }
@@ -42,24 +60,6 @@
 
   .fs-h3 {
     font-size: 1.2rem;
-    font-weight: 400;
-  }
-}
-
-/* desktop */
-@media screen and (min-width: 1440px) {
-  .fs-h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-  }
-
-  .fs-h2 {
-    font-size: 1.8rem;
-    font-weight: 500;
-  }
-
-  .fs-h3 {
-    font-size: 1.4rem;
     font-weight: 400;
   }
 }
