@@ -26,21 +26,21 @@ export const BOX_SHADOW_DARK = "rgba(149, 157, 165, 0.2) 0px 8px 24px";
 export const COLOR_PRIMARY1 = "#9DCBDF";
 export const COLOR_PRIMARY2 = "#F07759";
 export const COLOR_PRIMARY3 = "#22B45F";
-export const COLOR_SECONDARY1 = "#C4C4C4";
+export const COLOR_SECONDARY1 = "#909090";
 export const COLOR_SECONDARY2 = "#1F1E1C";
 export const COLOR_SECONDARY3 = "#FFFFFF";
 
 export const BR_PRIMARY1 = "#9DCBDF";
 export const BR_PRIMARY2 = "#F07759";
 export const BR_PRIMARY3 = "#22B45F";
-export const BR_SECONDARY1 = "#C4C4C4";
+export const BR_SECONDARY1 = "#909090";
 export const BR_SECONDARY2 = "#1F1E1C";
 export const BR_SECONDARY3 = "#FFFFFF";
 
 export const BG_PRIMARY1 = "#9DCBDF";
 export const BG_PRIMARY2 = "#F07759";
 export const BG_PRIMARY3 = "#22B45F";
-export const BG_SECONDARY1 = "#C4C4C4";
+export const BG_SECONDARY1 = "#909090";
 export const BG_SECONDARY2 = "#1F1E1C";
 export const BG_SECONDARY3 = "#FFFFFF";
 
