@@ -6,6 +6,7 @@ import SingleProductPage from "./pages/single-product-page";
 import CartPage from "./pages/cart-page";
 import LoginPage from "./pages/login-page";
 import PasswordReset from "./pages/password-reset-page";
+import RegisterPage from "./pages/register-page";
 
 function App() {
   return (
@@ -17,6 +18,9 @@ function App() {
           </Route>
           <Route path="/login">
             <LoginPage />
+          </Route>
+          <Route path="/register">
+            <RegisterPage />
           </Route>
           <Route path="/pass-reset">
             <PasswordReset />
