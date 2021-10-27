@@ -60,6 +60,7 @@ const ForgetPassButton = styled.a.attrs(() => ({
   href: "/pass-reset",
   target: "_blank",
 }))`
+  display: block;
   text-decoration: none;
   cursor: pointer;
 
@@ -70,6 +71,39 @@ const ForgetPassButton = styled.a.attrs(() => ({
     color: ${COLOR_PRIMARY1};
   }
 `;
+
+const RegisterButton = styled.a.attrs(() => ({
+  className: "fs-h3 color-secondary1",
+  href: "/register",
+  target: "_blank",
+}))`
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:visited {
+    color: ${COLOR_PRIMARY1};
+  }
+  &:hover {
+    color: ${COLOR_PRIMARY1};
+`;
+
+const LoginButton = styled.a.attrs(() => ({
+  className: "fs-h3 color-secondary1",
+  href: "/login",
+  target: "_blank",
+}))`
+  text-decoration: none;
+  cursor: pointer;
+
+  &:visited {
+    color: ${COLOR_PRIMARY1};
+  }
+  &:hover {
+    color: ${COLOR_PRIMARY1};
+  }
+`;
+
 export default function Form({
   width,
   formState,
@@ -105,6 +139,7 @@ export default function Form({
       {useForLogin && (
         <ButtonContainer>
           <ForgetPassButton>忘記密碼？</ForgetPassButton>
+          <RegisterButton>還沒成為會員嗎？點此註冊</RegisterButton>
           <CTAPrimaryButton
             width={"100%"}
             margin={"1.4rem auto 0"}
@@ -118,16 +153,19 @@ export default function Form({
         </ButtonContainer>
       )}
       {useForRegister && (
-        <CTAPrimaryButton
-          width={"100%"}
-          margin={"0 auto 0"}
-          isRounded={true}
-          onClick={(e) => {
-            handleSubmit(e);
-          }}
-        >
-          註冊
-        </CTAPrimaryButton>
+        <ButtonContainer>
+          <LoginButton>已經是會員了嗎？點此登入</LoginButton>
+          <CTAPrimaryButton
+            width={"100%"}
+            margin={"1.4rem auto 0"}
+            isRounded={true}
+            onClick={(e) => {
+              handleSubmit(e);
+            }}
+          >
+            註冊
+          </CTAPrimaryButton>
+        </ButtonContainer>
       )}
     </Container>
   );
