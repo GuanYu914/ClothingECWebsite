@@ -2,6 +2,8 @@ import { ReactComponent as logo } from "../../imgs/components/header/bootstrap.s
 import { ReactComponent as list } from "../../imgs/components/header/list.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
+import DropDown from "../../components/dropdown/DropDown";
+import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import {
   BREAKPOINT_LAPTOP,
@@ -11,7 +13,11 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   BOX_SHADOW_LIGHT,
+  COLOR_PRIMARY2,
+  COLOR_PRIMARY1,
+  COLOR_SECONDARY1,
 } from "../../constant";
+import { useState } from "react";
 
 const NavBarContainer = styled.nav.attrs(() => ({
   className: "bg-secondary3",
@@ -44,7 +50,9 @@ const NavBarContainer = styled.nav.attrs(() => ({
   }
 `;
 
-const BrandLogo = styled(logo)`
+const BrandLogo = styled(logo).attrs(() => ({
+  className: "color-secondary2",
+}))`
   width: 2rem;
   height: 2rem;
   cursor: pointer;
@@ -79,6 +87,7 @@ const ProfileContainer = styled.div`
     display: flex;
     align-items: center;
     margin-right: 2rem;
+    cursor: pointer;
   }
 `;
 
@@ -104,16 +113,60 @@ const ShoppingBag = styled(shopping_bag)`
 `;
 
 export default function Header() {
+  const [dropDownForProfile, setDropDownForProfile] = useState({
+    width: "10rem",
+    useForLinks: true,
+    options: [
+      { id: 1, name: "登入", url: "/login" },
+      { id: 2, name: "註冊", url: "/register" },
+      { id: 3, name: "登出", url: "/logout" },
+    ],
+  });
+  const [dropDownForBag, setDropDownForBag] = useState({
+    useForBag: true,
+    products: [
+      {
+        id: 1,
+        name: "連身套裝連身套裝連身套裝連身套裝連身套裝",
+        url: "https://i.imgur.com/RVnJagG.jpg",
+        color: COLOR_PRIMARY2,
+        size: "XL",
+        quantity: "2",
+      },
+      {
+        id: 2,
+        name: "黑色西裝外套",
+        url: "https://i.imgur.com/Eyg3mUD.jpg",
+        color: COLOR_PRIMARY1,
+        size: "M",
+        quantity: "1",
+      },
+      {
+        id: 3,
+        name: "針織細肩內衣",
+        url: "https://i.imgur.com/wHozlKZ.jpg",
+        color: COLOR_SECONDARY1,
+        size: "S",
+        quantity: "4",
+      },
+    ],
+  });
   return (
     <NavBarContainer>
-      <BrandLogo />
+      <Link to="/">
+        <BrandLogo />
+      </Link>
       <HamburgerButton />
       <FeatureContainer>
-        <ProfileContainer>
-          <ProfileIcon />
-          <UserNickname>冠宇</UserNickname>
-        </ProfileContainer>
-        <ShoppingBag />
+        <DropDown dropDownInfo={dropDownForProfile}>
+          <ProfileContainer>
+            <ProfileIcon />
+            <UserNickname>訪客</UserNickname>
+          </ProfileContainer>
+        </DropDown>
+        <DropDown dropDownInfo={dropDownForBag}>
+          <ShoppingBag />
+        </DropDown>
       </FeatureContainer>
     </NavBarContainer>
   );
