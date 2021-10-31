@@ -31,7 +31,7 @@ const Switcher = styled.div``;
 const BackgroundContainer = styled.div.attrs(() => ({
   className: "bg-offcanva",
 }))`
-  width: 100;
+  width: 100%;
   height: 100%;
   position: fixed;
   top: 0;
