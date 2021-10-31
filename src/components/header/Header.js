@@ -3,6 +3,7 @@ import { ReactComponent as list } from "../../imgs/components/header/list.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
 import DropDown from "../../components/dropdown/DropDown";
+import Offcanva from "../offcanva";
 import { Link } from "react-router-dom";
 import styled from "styled-components/macro";
 import {
@@ -62,15 +63,6 @@ const BrandLogo = styled(logo).attrs(() => ({
     height: 2.4rem;
   }
 `;
-const HamburgerButton = styled(list)`
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-
-  ${BREAKPOINT_PAD} {
-    display: none;
-  }
-`;
 
 const FeatureContainer = styled.div`
   display: none;
@@ -109,6 +101,22 @@ const ShoppingBag = styled(shopping_bag)`
     width: 2.4rem;
     height: 2.4rem;
     cursor: pointer;
+  }
+`;
+
+const NavForMobile = styled.div`
+  display: block;
+
+  ${BREAKPOINT_PAD} {
+    display: none;
+  }
+`;
+
+const NavForPad = styled.div`
+  display: none;
+
+  ${BREAKPOINT_PAD} {
+    display: block;
   }
 `;
 
@@ -151,23 +159,51 @@ export default function Header() {
       },
     ],
   });
+  const [offcanvaInfo, setOffcanvaInfo] = useState({
+    links: [
+      {
+        id: 1,
+        name: "註冊",
+        url: "/register",
+      },
+      {
+        id: 2,
+        name: "登入",
+        url: "/login",
+      },
+      {
+        id: 3,
+        name: "購物車",
+        url: "/cart",
+      },
+    ],
+    displayUserInfo: true,
+    user: {
+      isLogin: false,
+      name: "冠宇",
+    },
+  });
   return (
     <NavBarContainer>
       <Link to="/">
         <BrandLogo />
       </Link>
-      <HamburgerButton />
-      <FeatureContainer>
-        <DropDown dropDownInfo={dropDownForProfile}>
-          <ProfileContainer>
-            <ProfileIcon />
-            <UserNickname>訪客</UserNickname>
-          </ProfileContainer>
-        </DropDown>
-        <DropDown dropDownInfo={dropDownForBag}>
-          <ShoppingBag />
-        </DropDown>
-      </FeatureContainer>
+      <NavForMobile>
+        <Offcanva offcanvaInfo={offcanvaInfo} />
+      </NavForMobile>
+      <NavForPad>
+        <FeatureContainer>
+          <DropDown dropDownInfo={dropDownForProfile}>
+            <ProfileContainer>
+              <ProfileIcon />
+              <UserNickname>訪客</UserNickname>
+            </ProfileContainer>
+          </DropDown>
+          <DropDown dropDownInfo={dropDownForBag}>
+            <ShoppingBag />
+          </DropDown>
+        </FeatureContainer>
+      </NavForPad>
     </NavBarContainer>
   );
 }
