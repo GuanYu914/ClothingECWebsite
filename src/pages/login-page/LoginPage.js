@@ -124,8 +124,7 @@ export default function LoginPage() {
     );
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit() {
     // check all field's validation state
     let postData = {
       account: form.filter((formData) => formData.field === "帳號")[0]
@@ -159,8 +158,9 @@ export default function LoginPage() {
   }
 
   function setFieldState(fieldName, helperMsg, helperColor, validationState) {
-    setForm(
-      form.map((formData) =>
+    // 防止多次呼叫造成 state 資料被 overwrite
+    setForm((prevForm) => {
+      return prevForm.map((formData) =>
         formData.field === fieldName
           ? {
               ...formData,
@@ -169,8 +169,8 @@ export default function LoginPage() {
               isValid: validationState,
             }
           : { ...formData }
-      )
-    );
+      );
+    });
   }
   // form field validation
   function checkFieldValidation(fieldName, fieldValue) {

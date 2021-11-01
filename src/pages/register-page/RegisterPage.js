@@ -149,8 +149,7 @@ export default function RegisterPage() {
     );
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit() {
     // check all field's validation state
     let postData = {
       nickname: form.filter((formData) => formData.field === "暱稱")[0]
@@ -186,8 +185,9 @@ export default function RegisterPage() {
   }
 
   function setFieldState(fieldName, helperMsg, helperColor, validationState) {
-    setForm(
-      form.map((formData) =>
+    // 防止多次呼叫造成 state 資料被 overwrite
+    setForm((prevForm) => {
+      return prevForm.map((formData) =>
         formData.field === fieldName
           ? {
               ...formData,
@@ -196,8 +196,8 @@ export default function RegisterPage() {
               isValid: validationState,
             }
           : { ...formData }
-      )
-    );
+      );
+    });
   }
 
   function checkFieldValidation(fieldName, fieldValue) {
