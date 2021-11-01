@@ -96,6 +96,7 @@ export default function Form({
   handleFocusOut,
   useForLogin,
   useForRegister,
+  useForProfileEditing,
 }) {
   return (
     <Container width={width}>
@@ -105,6 +106,7 @@ export default function Form({
             <FormField>{formData.field}</FormField>
             <InputArea
               type={formData.type}
+              readOnly={formData.readOnly}
               maxLength={formData.maxLength}
               value={formData.inputValue}
               onChange={(e) => {
@@ -127,8 +129,8 @@ export default function Form({
             width={"100%"}
             margin={"1.4rem auto 0"}
             isRounded={true}
-            onClick={(e) => {
-              handleSubmit(e);
+            onClick={() => {
+              handleSubmit();
             }}
           >
             登入
@@ -142,17 +144,53 @@ export default function Form({
             width={"100%"}
             margin={"1.4rem auto 0"}
             isRounded={true}
-            onClick={(e) => {
-              handleSubmit(e);
+            onClick={() => {
+              handleSubmit();
             }}
           >
             註冊
           </CTAPrimaryButton>
         </ButtonContainer>
       )}
+      {useForProfileEditing && (
+        <ButtonContainer>
+          <CTAPrimaryButton
+            width={"100%"}
+            margin={"1.4rem auto 0"}
+            isRounded={true}
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            修改
+          </CTAPrimaryButton>
+        </ButtonContainer>
+      )}
     </Container>
   );
 }
+
+/**
+ *  Form PropTypes 屬性
+ *  Form: {
+ *    width: string,
+ *    formState: [
+ *      {
+ *        id: number,         (required)
+ *        type: string,       (required)
+ *        maxLength: number,  (required)
+ *        field: string,      (required)
+ *        inputValue: string, (required)
+ *      }
+ *    ],
+ *    handleInputChange: function,  (required)
+ *    handleSubmit: function,       (required)
+ *    handleFocusOut: function,     (required)
+ *    useForLogin: function,        (根據使用頁面決定，跟下列三個擇一即可)
+ *    useForRegister: function,
+ *    useForProfileEditing: function,
+ *  }
+ */
 
 Form.propTypes = {
   width: PropTypes.string,
@@ -170,4 +208,5 @@ Form.propTypes = {
   handleFocusOut: PropTypes.func.isRequired,
   useForLogin: PropTypes.bool,
   useForRegister: PropTypes.bool,
+  useForProfileEditing: PropTypes.bool,
 };
