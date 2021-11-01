@@ -6,7 +6,7 @@ import SingleProductPage from "./pages/single-product-page";
 import CartPage from "./pages/cart-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
-import ProfileEditPage from "./pages/profile-edit";
+import ProfileEditPage from "./pages/profile-edit-page";
 
 function App() {
   return (
