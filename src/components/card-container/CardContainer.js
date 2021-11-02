@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
 import { BOX_SHADOW_DARK, BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 
 const ItemsContainer = styled.div`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
@@ -86,6 +88,8 @@ export default function CardContainer({
   marginTop,
   marginLeft,
 }) {
+  // 透過 UserContext 拿到用戶資訊
+  const user = useContext(UserContext);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
@@ -95,19 +99,23 @@ export default function CardContainer({
               <ItemName>{item.product.name}</ItemName>
               <ItemPrice>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {item.isLiked && (
-              <FavoriteFilledIcon
-                onClick={() => {
-                  handleLiked(item.id);
-                }}
-              />
-            )}
-            {!item.isLiked && (
-              <FavoriteIcon
-                onClick={() => {
-                  handleLiked(item.id);
-                }}
-              />
+            {user !== null && (
+              <>
+                {item.isLiked && (
+                  <FavoriteFilledIcon
+                    onClick={() => {
+                      handleLiked(item.id);
+                    }}
+                  />
+                )}
+                {!item.isLiked && (
+                  <FavoriteIcon
+                    onClick={() => {
+                      handleLiked(item.id);
+                    }}
+                  />
+                )}
+              </>
             )}
           </ItemHeader>
         </ItemContainer>

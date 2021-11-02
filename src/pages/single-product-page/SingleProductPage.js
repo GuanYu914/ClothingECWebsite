@@ -4,7 +4,7 @@ import styled from "styled-components/macro";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import CardContainer from "../../components/card-container";
 import ProductPicker from "../../components/product-picker";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
 import {
@@ -16,6 +16,7 @@ import {
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV2,
 } from "../../constant";
+import { UserContext } from "../../context/UserContext";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -159,6 +160,8 @@ const ProductAddButton = styled.div.attrs(() => ({
 `;
 
 export default function SingleProductPage() {
+  // 透過 UserContext 拿到用戶資訊
+  const user = useContext(UserContext);
   // 根據螢幕寬度給不同 props 到 BSCarousel 元件
   // 使用假資料
   const [slidesForMobile, setSlidesForMobile] = useState({
@@ -338,8 +341,14 @@ export default function SingleProductPage() {
           <BSCarousel slides={slidesForMobile} />
           <ProductInfoContainer>
             <ProductName>女版襯衫</ProductName>
-            {isLiked && <FavoriteFilledIcon onClick={handleAddToLikedItems} />}
-            {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
+            {user !== null && (
+              <>
+                {isLiked && (
+                  <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+                )}
+                {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
+              </>
+            )}
           </ProductInfoContainer>
           <DetailInfoContainer>
             <DetailInfoTitle>詳細資訊</DetailInfoTitle>
