@@ -7,6 +7,7 @@ import CartPage from "./pages/cart-page";
 import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
+import FavoritePage from "./pages/favorite-page";
 
 function App() {
   return (
@@ -21,6 +22,9 @@ function App() {
           </Route>
           <Route path="/profile-edit">
             <ProfileEditPage />
+          </Route>
+          <Route path="/favorite">
+            <FavoritePage />
           </Route>
           <Route path="/register">
             <RegisterPage />
