@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import styled from "styled-components/macro";
 import Form from "../../components/form";
-import { useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   BG_SECONDARY3,
   COLOR_PRIMARY1,
@@ -16,7 +16,7 @@ import {
   COLOR_PRIMARY2,
   COLOR_PRIMARY3,
 } from "../../constant";
-import { useState } from "react";
+import { UserContext } from "../../context/UserContext";
 
 const PageContainer = styled.div.attrs(() => ({
   className: "bg-primary1",
@@ -88,12 +88,8 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function ProfileEditPage() {
-  // 應透過 WebAPI 拿到
-  const currentUserData = {
-    nickname: "冠宇",
-    account: "Emory0914",
-    pass: "Fish950914",
-  };
+  // 透過 UserContext 拿到用戶資訊
+  const user = useContext(UserContext);
 
   const [form, setForm] = useState([
     {
@@ -101,7 +97,7 @@ export default function ProfileEditPage() {
       type: "text",
       maxLength: 10,
       field: "暱稱",
-      inputValue: currentUserData.nickname,
+      inputValue: user.nickname,
       helperColor: COLOR_SECONDARY1,
       helperMsg: "最多 10 個字",
       isValid: true,
@@ -112,7 +108,7 @@ export default function ProfileEditPage() {
       maxLength: 12,
       readOnly: true,
       field: "帳號",
-      inputValue: currentUserData.account,
+      inputValue: user.account,
       helperColor: COLOR_PRIMARY2,
       helperMsg: "您不可更改帳號名稱",
       isValid: true,
@@ -158,7 +154,7 @@ export default function ProfileEditPage() {
     let postData = {
       nickname: form.filter((formData) => formData.field === "暱稱")[0]
         .inputValue,
-      account: currentUserData.account,
+      account: user.account,
       currentPassword: form.filter(
         (formData) => formData.field === "目前密碼"
       )[0].inputValue,
@@ -197,7 +193,7 @@ export default function ProfileEditPage() {
       if (fieldValue === "") {
         setFieldState("暱稱", "暱稱不能為空", COLOR_PRIMARY2, false);
       } else if (fieldValue.length > 0 && fieldValue.length <= 10) {
-        if (fieldValue === currentUserData.nickname) {
+        if (fieldValue === user.nickname) {
           setFieldState(
             "暱稱",
             "此暱稱並未修改，如果您不想變更，則忽略此訊息",
@@ -219,7 +215,7 @@ export default function ProfileEditPage() {
     if (fieldName === "目前密碼") {
       if (fieldValue === "") {
         setFieldState("目前密碼", "密碼不得為空", COLOR_PRIMARY2, false);
-      } else if (fieldValue === currentUserData.pass) {
+      } else if (fieldValue === user.pass) {
         setFieldState("目前密碼", "密碼輸入正確", COLOR_PRIMARY3, true);
       } else {
         setFieldState(
@@ -233,7 +229,7 @@ export default function ProfileEditPage() {
     if (fieldName === "新的密碼") {
       if (fieldValue === "") {
         setFieldState("新的密碼", "密碼不得為空", COLOR_PRIMARY2, false);
-      } else if (fieldValue === currentUserData.pass) {
+      } else if (fieldValue === user.pass) {
         setFieldState(
           "新的密碼",
           "目前新設的密碼與原本密碼相同，如果您不想變更，則忽略此訊息",
