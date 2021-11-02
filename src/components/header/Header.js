@@ -1,5 +1,4 @@
 import { ReactComponent as logo } from "../../imgs/components/header/bootstrap.svg";
-import { ReactComponent as list } from "../../imgs/components/header/list.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
 import DropDown from "../../components/dropdown/DropDown";
@@ -18,7 +17,8 @@ import {
   COLOR_PRIMARY1,
   COLOR_SECONDARY1,
 } from "../../constant";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 
 const NavBarContainer = styled.nav.attrs(() => ({
   className: "bg-secondary3",
@@ -121,14 +121,22 @@ const NavForPad = styled.div`
 `;
 
 export default function Header() {
+  // 透過 Context 拿到當前用戶資料
+  const user = useContext(UserContext);
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "10rem",
     useForLinks: true,
-    options: [
-      { id: 1, name: "登入", url: "/login" },
-      { id: 2, name: "註冊", url: "/register" },
-      { id: 3, name: "登出", url: "/logout" },
-    ],
+    options:
+      user === null
+        ? [
+            { id: 1, name: "登入", url: "/login" },
+            { id: 2, name: "註冊", url: "/register" },
+          ]
+        : [
+            { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
+            { id: 2, name: "收藏清單", url: "/favorite" },
+            { id: 3, name: "登出", url: "/logout" },
+          ],
   });
   const [dropDownForBag, setDropDownForBag] = useState({
     useForBag: true,
@@ -160,27 +168,23 @@ export default function Header() {
     ],
   });
   const [offcanvaInfo, setOffcanvaInfo] = useState({
-    links: [
-      {
-        id: 1,
-        name: "註冊",
-        url: "/register",
-      },
-      {
-        id: 2,
-        name: "登入",
-        url: "/login",
-      },
-      {
-        id: 3,
-        name: "購物車",
-        url: "/cart",
-      },
-    ],
+    links:
+      user === null
+        ? [
+            { id: 1, name: "登入", url: "/login" },
+            { id: 2, name: "註冊", url: "/register" },
+            { id: 3, name: "購物車", url: "/cart" },
+          ]
+        : [
+            { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
+            { id: 2, name: "收藏清單", url: "/favorite" },
+            { id: 3, name: "購物車", url: "/cart" },
+            { id: 4, name: "登出", url: "/logout" },
+          ],
     displayUserInfo: true,
     user: {
-      isLogin: false,
-      name: "冠宇",
+      isLogin: user === null ? false : true,
+      name: user === null ? "訪客" : user.nickname,
     },
   });
   return (
@@ -196,7 +200,9 @@ export default function Header() {
           <DropDown dropDownInfo={dropDownForProfile}>
             <ProfileContainer>
               <ProfileIcon />
-              <UserNickname>訪客</UserNickname>
+              <UserNickname>
+                {user === null ? "訪客" : user.nickname}
+              </UserNickname>
             </ProfileContainer>
           </DropDown>
           <DropDown dropDownInfo={dropDownForBag}>
