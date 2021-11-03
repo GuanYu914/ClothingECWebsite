@@ -4,7 +4,7 @@ import { ReactComponent as heart } from "../../imgs/components/card-container/he
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
 import { BOX_SHADOW_DARK, BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
 import { useContext } from "react";
-import { UserContext } from "../../context/UserContext";
+import { UserContext } from "../../context";
 
 const ItemsContainer = styled.div`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
@@ -89,7 +89,7 @@ export default function CardContainer({
   marginLeft,
 }) {
   // 透過 UserContext 拿到用戶資訊
-  const user = useContext(UserContext);
+  const userContext = useContext(UserContext);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
@@ -99,7 +99,7 @@ export default function CardContainer({
               <ItemName>{item.product.name}</ItemName>
               <ItemPrice>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {user !== null && (
+            {userContext !== null && (
               <>
                 {item.isLiked && (
                   <FavoriteFilledIcon

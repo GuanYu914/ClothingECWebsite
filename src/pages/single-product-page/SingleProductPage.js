@@ -16,7 +16,7 @@ import {
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV2,
 } from "../../constant";
-import { UserContext } from "../../context/UserContext";
+import { UserContext } from "../../context";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -161,7 +161,7 @@ const ProductAddButton = styled.div.attrs(() => ({
 
 export default function SingleProductPage() {
   // 透過 UserContext 拿到用戶資訊
-  const user = useContext(UserContext);
+  const userContext = useContext(UserContext);
   // 根據螢幕寬度給不同 props 到 BSCarousel 元件
   // 使用假資料
   const [slidesForMobile, setSlidesForMobile] = useState({
@@ -341,7 +341,7 @@ export default function SingleProductPage() {
           <BSCarousel slides={slidesForMobile} />
           <ProductInfoContainer>
             <ProductName>女版襯衫</ProductName>
-            {user !== null && (
+            {userContext !== null && (
               <>
                 {isLiked && (
                   <FavoriteFilledIcon onClick={handleAddToLikedItems} />
@@ -362,10 +362,14 @@ export default function SingleProductPage() {
           <ProductInfoContainer>
             <ProductHeaderContainer>
               <ProductName>女版襯衫</ProductName>
-              {isLiked && (
-                <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+              {userContext !== null && (
+                <>
+                  {isLiked && (
+                    <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+                  )}
+                  {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
+                </>
               )}
-              {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
             </ProductHeaderContainer>
             <ProductPicker
               picker={picker}
