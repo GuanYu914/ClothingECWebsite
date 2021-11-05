@@ -6,6 +6,7 @@ import {
   COLOR_SECONDARY3,
 } from "../../constant";
 import { CTAPrimaryButton } from "../button";
+import { Link, useHistory } from "react-router-dom";
 
 const DropDownContainer = styled.div`
   display: inline-block;
@@ -20,8 +21,9 @@ const DropDownContent = styled.div.attrs(() => ({
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
+  height: ${(props) => props.height || "fit-content"};
   width: ${(props) => props.width || "fit-content"};
-  overflow: visible;
+  overflow: auto;
   transition: all 0.2s ease-in-out;
   padding: 0.8rem;
 
@@ -34,7 +36,7 @@ const DropDownContent = styled.div.attrs(() => ({
   & a {
     display: block;
     color: ${COLOR_SECONDARY2};
-    padding: 0.5rem;
+    padding: 0.8rem;
     text-decoration: none;
   }
 
@@ -101,46 +103,67 @@ const ProductQuantity = styled.h3.attrs(() => ({
 }))``;
 
 export default function DropDown({ dropDownInfo, children }) {
+  const history = useHistory();
   return (
     <DropDownContainer>
       {children}
       {dropDownInfo.useForLinks && (
         <DropDownContent width={dropDownInfo.width}>
           {dropDownInfo.options.map((option) => (
-            <a key={option.id} href={option.url}>
+            <Link key={option.id} to={option.url}>
               {option.name}
-            </a>
+            </Link>
           ))}
         </DropDownContent>
       )}
-      {dropDownInfo.useForBag && (
-        <DropDownContent width={dropDownInfo.width}>
-          {dropDownInfo.products.map((product) => (
-            <CartProductsContainer key={product.id}>
-              <ProductThumbnail url={product.url} />
-              <ProductSpecs>
-                <ProductName>{product.name}</ProductName>
-                <ProductInfo>
-                  <ProductColor color={product.color} />
-                  <ProductSize>{product.size}</ProductSize>
-                </ProductInfo>
-              </ProductSpecs>
-              <ProductQuantity>{product.quantity}</ProductQuantity>
-            </CartProductsContainer>
-          ))}
-          <CTAPrimaryButton
-            margin={"1rem 0 0 auto"}
-            isRounded={true}
-            width={"100%"}
-            // 這邊使用 onClick 取代 React router Link，是因為 Link component 會受到 css 效果影響
-            onClick={() => {
-              window.location.href = "/cart";
-            }}
+      {dropDownInfo.useForCart &&
+        (dropDownInfo.products.length ? (
+          <DropDownContent
+            width={dropDownInfo.width}
+            height={dropDownInfo.height}
           >
-            查看購物車
-          </CTAPrimaryButton>
-        </DropDownContent>
-      )}
+            {dropDownInfo.products.map((product) => (
+              <CartProductsContainer key={product.id}>
+                <ProductThumbnail url={product.url} />
+                <ProductSpecs>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductInfo>
+                    <ProductColor color={product.color} />
+                    <ProductSize>{product.size}</ProductSize>
+                  </ProductInfo>
+                </ProductSpecs>
+                <ProductQuantity>{product.quantity}</ProductQuantity>
+              </CartProductsContainer>
+            ))}
+            <CTAPrimaryButton
+              margin={"1rem 0 0 auto"}
+              isRounded={true}
+              width={"100%"}
+              onClick={() => {
+                history.push("/cart");
+              }}
+            >
+              查看購物車
+            </CTAPrimaryButton>
+          </DropDownContent>
+        ) : (
+          <DropDownContent
+            width={dropDownInfo.width}
+            height={dropDownInfo.height}
+          >
+            購物車內並沒有任何產品喔
+            <CTAPrimaryButton
+              margin={"1rem 0 0 auto"}
+              isRounded={true}
+              width={"100%"}
+              onClick={() => {
+                history.push("/cart");
+              }}
+            >
+              查看購物車
+            </CTAPrimaryButton>
+          </DropDownContent>
+        ))}
     </DropDownContainer>
   );
 }
@@ -151,7 +174,7 @@ export default function DropDown({ dropDownInfo, children }) {
  *  dropDownInfo: {
  *    width: string,
  *    useForLinks: boolean, ( 跟 useForBag 則一傳入即可 )
- *    useForBag: boolean,   ( 跟 useForLinks 則一傳入即可 )
+ *    useForCart: boolean,   ( 跟 useForLinks 則一傳入即可 )
  *    options: [{           ( useForLinks 為 true 時必須傳入 )
  *      id: number,
  *      name: string,
@@ -163,7 +186,7 @@ export default function DropDown({ dropDownInfo, children }) {
  *      name: string,
  *      color: string,
  *      size: string,
- *      quantity: string,
+ *      quantity: number,
  *    }]
  *  }
  */
@@ -172,8 +195,9 @@ DropDown.propTypes = {
   children: PropTypes.element.isRequired,
   dropDownInfo: PropTypes.shape({
     width: PropTypes.string,
+    height: PropTypes.string,
     useForLinks: PropTypes.bool,
-    useForBag: PropTypes.bool,
+    useForCart: PropTypes.bool,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number,
@@ -183,12 +207,12 @@ DropDown.propTypes = {
     ),
     products: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.number,
-        url: PropTypes.string,
-        name: PropTypes.string,
-        color: PropTypes.string,
-        size: PropTypes.string,
-        quantity: PropTypes.string,
+        id: PropTypes.number.isRequired,
+        url: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        color: PropTypes.string.isRequired,
+        size: PropTypes.string.isRequired,
+        quantity: PropTypes.number.isRequired,
       })
     ),
   }),
