@@ -1,6 +1,6 @@
 import styled from "styled-components/macro";
-import { ReactComponent as minusSquare } from "../../imgs/pages/single-product-page/dash-square.svg";
-import { ReactComponent as plusSquare } from "../../imgs/pages/single-product-page/plus-square.svg";
+import { ReactComponent as minusSquare } from "../../imgs/pages/cart-page/dash-square.svg";
+import { ReactComponent as plusSquare } from "../../imgs/pages/cart-page/plus-square.svg";
 import PropTypes from "prop-types";
 import {
   COLOR_PRIMARY1,
