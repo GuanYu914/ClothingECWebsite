@@ -13,12 +13,9 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   BOX_SHADOW_LIGHT,
-  COLOR_PRIMARY2,
-  COLOR_PRIMARY1,
-  COLOR_SECONDARY1,
 } from "../../constant";
-import { useState, useContext } from "react";
-import { UserContext } from "../../context/UserContext";
+import { useEffect, useState, useContext } from "react";
+import { UserContext, CartContext } from "../../context";
 
 const NavBarContainer = styled.nav.attrs(() => ({
   className: "bg-secondary3",
@@ -122,12 +119,14 @@ const NavForPad = styled.div`
 
 export default function Header() {
   // 透過 Context 拿到當前用戶資料
-  const user = useContext(UserContext);
+  const userContext = useContext(UserContext);
+  // 透過 Context 拿到當前購物袋資訊
+  const { cartContext, setCartContext } = useContext(CartContext);
   const [dropDownForProfile, setDropDownForProfile] = useState({
-    width: "10rem",
+    width: "12rem",
     useForLinks: true,
     options:
-      user === null
+      userContext === null
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -138,38 +137,22 @@ export default function Header() {
             { id: 3, name: "登出", url: "/logout" },
           ],
   });
-  const [dropDownForBag, setDropDownForBag] = useState({
-    useForBag: true,
-    products: [
-      {
-        id: 1,
-        name: "連身套裝連身套裝連身套裝連身套裝連身套裝",
-        url: "https://i.imgur.com/RVnJagG.jpg",
-        color: COLOR_PRIMARY2,
-        size: "XL",
-        quantity: "2",
-      },
-      {
-        id: 2,
-        name: "黑色西裝外套",
-        url: "https://i.imgur.com/Eyg3mUD.jpg",
-        color: COLOR_PRIMARY1,
-        size: "M",
-        quantity: "1",
-      },
-      {
-        id: 3,
-        name: "針織細肩內衣",
-        url: "https://i.imgur.com/wHozlKZ.jpg",
-        color: COLOR_SECONDARY1,
-        size: "S",
-        quantity: "4",
-      },
-    ],
+  const [dropDownForCart, setDropDownForCart] = useState({
+    width: cartContext.length ? "fit-content" : "20rem",
+    height: cartContext.length ? "24rem" : "fit-content",
+    useForCart: true,
+    products: cartContext.map((product) => ({
+      id: product.id,
+      name: product.name,
+      url: product.urls[0].src,
+      color: product.colors.filter((item) => item.selected === true)[0].hexcode,
+      size: product.sizes.filter((item) => item.selected === true)[0].name,
+      quantity: product.quantity,
+    })),
   });
   const [offcanvaInfo, setOffcanvaInfo] = useState({
     links:
-      user === null
+      userContext === null
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -183,10 +166,27 @@ export default function Header() {
           ],
     displayUserInfo: true,
     user: {
-      isLogin: user === null ? false : true,
-      name: user === null ? "訪客" : user.nickname,
+      isLogin: userContext === null ? false : true,
+      name: userContext === null ? "訪客" : userContext.nickname,
     },
   });
+  useEffect(() => {
+    // 如果 cartContext 有更新的話，則更新購物車 dropdown 元件
+    setDropDownForCart({
+      width: cartContext.length ? "fit-content" : "20rem",
+      height: cartContext.length ? "24rem" : "fit-content",
+      useForCart: true,
+      products: cartContext.map((product) => ({
+        id: product.id,
+        name: product.name,
+        url: product.urls[0].src,
+        color: product.colors.filter((item) => item.selected === true)[0]
+          .hexcode,
+        size: product.sizes.filter((item) => item.selected === true)[0].name,
+        quantity: product.quantity,
+      })),
+    });
+  }, [cartContext]);
   return (
     <NavBarContainer>
       <Link to="/">
@@ -201,11 +201,11 @@ export default function Header() {
             <ProfileContainer>
               <ProfileIcon />
               <UserNickname>
-                {user === null ? "訪客" : user.nickname}
+                {userContext === null ? "訪客" : userContext.nickname}
               </UserNickname>
             </ProfileContainer>
           </DropDown>
-          <DropDown dropDownInfo={dropDownForBag}>
+          <DropDown dropDownInfo={dropDownForCart}>
             <ShoppingBag />
           </DropDown>
         </FeatureContainer>
