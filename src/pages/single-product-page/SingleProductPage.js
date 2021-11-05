@@ -7,6 +7,7 @@ import ProductPicker from "../../components/product-picker";
 import { useEffect, useState, useContext } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
+import { ReactComponent as cart } from "../../imgs/pages/single-product-page/cart.svg";
 import {
   BREAKPOINT_MOBILE,
   BREAKPOINT_LAPTOP,
@@ -15,8 +16,12 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV2,
+  Z_INDEX_LV6,
+  COLOR_PRIMARY1,
 } from "../../constant";
-import { UserContext } from "../../context";
+import { CartContext, UserContext } from "../../context";
+import { useTransition, animated } from "react-spring";
+import { useHistory } from "react-router";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -159,17 +164,47 @@ const ProductAddButton = styled.div.attrs(() => ({
   }
 `;
 
+const AddToCartReminderMsg = styled(animated.div)`
+  position: fixed;
+  // 為了讓 .svg 檔案能夠水平居中
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: ${Z_INDEX_LV6};
+  background-color: ${COLOR_PRIMARY1};
+  padding: 1.5rem;
+  border-radius: 0.8rem;
+`;
+
+const CartIcon = styled(cart).attrs(() => ({
+  className: "color-secondary3",
+}))`
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1rem;
+`;
+
+const ReminderMsg = styled.h2.attrs(() => ({
+  className: "fs-h3 color-secondary3",
+}))``;
+
 export default function SingleProductPage() {
   // 透過 UserContext 拿到用戶資訊
   const userContext = useContext(UserContext);
-  // 根據螢幕寬度給不同 props 到 BSCarousel 元件
-  // 使用假資料
-  const [slidesForMobile, setSlidesForMobile] = useState({
-    frame: {
-      maxHeight: "22rem",
-      borderRadius: "2rem",
-    },
-    slide: [
+  // 透過此 hook 換頁
+  const history = useHistory();
+  // 透過 CartContext 拿到購物車資訊
+  const { cartContext, setCartContext } = useContext(CartContext);
+  // 頁面產品資訊
+  const [productInfo, setProductInfo] = useState({
+    id: 1,
+    pid: 4784,
+    name: "女版襯衫",
+    detail: "這邊需要提供運費、尺寸、商品品質及清洗注意事項",
+    imgs: [
       {
         id: 1,
         src: "https://i.imgur.com/C7SYk0P.jpg",
@@ -181,32 +216,6 @@ export default function SingleProductPage() {
         alt: "product_pic",
       },
     ],
-  });
-
-  const [slidesForPad, setSlidesForPad] = useState({
-    frame: {
-      borderRadius: "2rem",
-    },
-    slide: [
-      {
-        id: 1,
-        src: "https://i.imgur.com/C7SYk0P.jpg",
-        alt: "product_pic",
-      },
-      {
-        id: 2,
-        src: "https://i.imgur.com/Dfav1Yk.jpg",
-        alt: "product_pic",
-      },
-    ],
-  });
-  // mobile 裝置底下， product-picker 元件啟用狀態
-  const [mobilePickerState, setMobilePickerState] = useState(false);
-  // 儲存當前頁面，愛心是否被點擊狀態
-  const [isLiked, setIsLiked] = useState(false);
-  // 給 picker 的資訊，適用於 mobile 跟 pad
-  // 使用假資料
-  const [picker, setPicker] = useState({
     colors: [
       { id: 1, hexcode: "#ffce30", selected: false },
       { id: 2, hexcode: "#e83845", selected: false },
@@ -225,7 +234,46 @@ export default function SingleProductPage() {
     quantity: 1,
     unitPrice: 490,
   });
+  // 根據螢幕寬度給不同 props 到 BSCarousel 元件
+  // 使用假資料
+  const [slidesForMobile, setSlidesForMobile] = useState({
+    frame: {
+      maxHeight: "22rem",
+      borderRadius: "2rem",
+    },
+    slide: productInfo.imgs,
+  });
+
+  const [slidesForPad, setSlidesForPad] = useState({
+    frame: {
+      borderRadius: "2rem",
+    },
+    slide: productInfo.imgs,
+  });
+  // mobile 裝置底下， product-picker 元件啟用狀態
+  const [mobilePickerState, setMobilePickerState] = useState(false);
+  // 儲存當前頁面，愛心是否被點擊狀態
+  const [isLiked, setIsLiked] = useState(false);
+  // 給 picker 的資訊，適用於 mobile 跟 pad
+  // 使用假資料
+  const [picker, setPicker] = useState({
+    colors: productInfo.colors,
+    sizes: productInfo.sizes,
+    quantity: productInfo.quantity,
+    unitPrice: productInfo.unitPrice,
+  });
   const [activeOpState, setActiveOpState] = useState(false);
+  // 加入購物車訊息動畫
+  const showCartReminderDuration = 500;
+  const [showCartReminder, setShowCartReminder] = useState(false);
+  const showCartReminderAnimation = useTransition(showCartReminder, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: {
+      duration: showCartReminderDuration,
+    },
+  });
   // 使用假資料
   const [watchedItems, setWatchItems] = useState([
     {
@@ -250,11 +298,19 @@ export default function SingleProductPage() {
 
   // Render 完會做的事
   useEffect(() => {
-    // 這裡可以檢查目前 picker 狀態
-    console.log(picker);
+    // 這裡可以檢查目前以下變數狀態
+    // console.log("picker 狀態", picker);
+    // console.log("cartContext 狀態", cartContext);
+    // console.log("showCartReminder 狀態", showCartReminder);
     // 更新底部按鈕配色
     setActiveOpState(checkOP());
-  }, [picker, activeOpState]);
+    // 自動隱藏加入購物車訊息
+    if (showCartReminder) {
+      setTimeout(() => {
+        setShowCartReminder(false);
+      }, showCartReminderDuration * 3);
+    }
+  }, [showCartReminder, cartContext, picker, activeOpState]);
 
   function handleProductAdd() {
     // 叫出 mobile 裝置底下的 product-picker 元件
@@ -321,6 +377,70 @@ export default function SingleProductPage() {
     return colorChecked && sizeChecked;
   }
 
+  function handleAddToCart(selectedPickerColor, selectedPickerSize) {
+    // 找尋購物車內是否有一樣產品規格
+    const sameProductIndex = cartContext.find((el) => {
+      if (el.pid === productInfo.pid) {
+        if (
+          el.colors.filter((color) => color.selected)[0].hexcode ===
+          selectedPickerColor
+        ) {
+          if (
+            el.sizes.filter((size) => size.selected)[0].name ===
+            selectedPickerSize
+          ) {
+            return true;
+          }
+        }
+      }
+    });
+    // 未找到相同規格的產品，新增到購物車頂端
+    if (sameProductIndex === undefined) {
+      // 複製 cartContext 內容，但 ref 不一樣，造成 react 去更新
+      const newCartContext = [...cartContext];
+      newCartContext.unshift({
+        id: cartContext.length + 1,
+        pid: productInfo.pid,
+        name: productInfo.name,
+        urls: productInfo.imgs,
+        colors: picker.colors,
+        sizes: picker.sizes,
+        quantity: picker.quantity,
+        unitPrice: picker.unitPrice,
+      });
+      setCartContext(newCartContext);
+    }
+    // 找到一樣規格的產品，更新該產品目前數量
+    else {
+      // 防止 state 被 batch，造成資料不是預期的
+      setCartContext((prevCartContext) => {
+        return prevCartContext.map((product) =>
+          product.pid === sameProductIndex.pid
+            ? {
+                ...product,
+                quantity: product.quantity + picker.quantity,
+              }
+            : { ...product }
+        );
+      });
+    }
+    setShowCartReminder(true);
+  }
+
+  function handleCheckout(
+    selectedPickerColor,
+    selectedPickerSize,
+    selectedPickerQuantity
+  ) {
+    // 加入到購物車且導引到 cart page
+    handleAddToCart(
+      selectedPickerColor,
+      selectedPickerSize,
+      selectedPickerQuantity
+    );
+    history.push("/cart");
+  }
+
   // 更新 watchedItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
     setWatchItems(
@@ -361,7 +481,7 @@ export default function SingleProductPage() {
           <BSCarousel slides={slidesForPad} />
           <ProductInfoContainer>
             <ProductHeaderContainer>
-              <ProductName>女版襯衫</ProductName>
+              <ProductName>{productInfo.name}</ProductName>
               {userContext !== null && (
                 <>
                   {isLiked && (
@@ -382,12 +502,12 @@ export default function SingleProductPage() {
               setMobilePickerState={handleProductAdd}
               isLiked={isLiked}
               handleAddToLikedItems={handleAddToLikedItems}
+              handleAddToCart={handleAddToCart}
+              handleCheckout={handleCheckout}
             />
             <DetailInfoContainer>
               <DetailInfoTitle>詳細資訊</DetailInfoTitle>
-              <DetailInfoDesc>
-                這邊會需要提供運費、尺寸、商品材質以及清洗注意事項
-              </DetailInfoDesc>
+              <DetailInfoDesc>{productInfo.detail}</DetailInfoDesc>
             </DetailInfoContainer>
           </ProductInfoContainer>
         </ProductInfoContainerForPad>
@@ -400,6 +520,7 @@ export default function SingleProductPage() {
           />
         </WatchedItemsContainer>
       </ContentContainer>
+      {/* 這是 mobile 裝置上的底部按鈕 */}
       <ProductAddButton onClick={handleProductAdd}>
         選擇商品規格
       </ProductAddButton>
@@ -416,7 +537,19 @@ export default function SingleProductPage() {
           setMobilePickerState={setMobilePickerState}
           isLiked={isLiked}
           handleAddToLikedItems={handleAddToLikedItems}
+          handleAddToCart={handleAddToCart}
+          handleCheckout={handleCheckout}
         />
+      )}
+      {/* 這是用來提醒用戶商品被加入購物車的訊息 */}
+      {showCartReminderAnimation(
+        (props, item) =>
+          item && (
+            <AddToCartReminderMsg style={props}>
+              <CartIcon />
+              <ReminderMsg>已加入購物車</ReminderMsg>
+            </AddToCartReminderMsg>
+          )
       )}
       <Footer marginTop="6rem" marginBottom="4rem" />
     </PageContainer>
