@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components/macro";
 import { fadeIn } from "react-animations";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import BSCarousel from "../../components/bs-carousel";
@@ -23,6 +23,7 @@ import {
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV1,
 } from "../../constant";
+import { CartContext } from "../../context";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -184,139 +185,54 @@ const CheckedAllButtonContainer = styled.div``;
 const CartProductsCheckedBlock = styled.div``;
 
 export default function CartPage() {
-  const [cartProducts, setCartProducts] = useState([
-    {
-      id: 1,
-      name: "女版針織衫",
+  // 透過 cartContext 拿到目前購物車內容
+  const { cartContext, setCartContext } = useContext(CartContext);
+  const [cartProducts, setCartProducts] = useState(
+    cartContext.map((product) => ({
+      id: product.id,
+      pid: product.pid,
+      name: product.name,
       slides: {
         frame: {
           maxHeight: "22rem",
           borderRadius: "2rem",
         },
-        slide: [
-          {
-            id: 1,
-            src: "https://i.imgur.com/C7SYk0P.jpg",
-            alt: "product_pic",
-          },
-          {
-            id: 2,
-            src: "https://i.imgur.com/Dfav1Yk.jpg",
-            alt: "product_pic",
-          },
-        ],
+        slide: product.urls.map((url) => ({
+          id: url.id,
+          src: url.src,
+          alt: url.alt,
+        })),
       },
       picker: {
-        colors: [
-          { id: 1, hexcode: "#ffce30", selected: false },
-          { id: 2, hexcode: "#e83845", selected: false },
-          { id: 3, hexcode: "#e389b9", selected: false },
-          { id: 4, hexcode: "#746ab0", selected: true },
-          { id: 5, hexcode: "#288ba8", selected: false },
-        ],
-        sizes: [
-          { id: 1, name: "XS", selected: false },
-          { id: 2, name: "S", selected: true },
-          { id: 3, name: "M", selected: false },
-          { id: 4, name: "L", selected: false },
-          { id: 5, name: "XL", selected: false },
-          { id: 6, name: "2L", selected: false },
-        ],
-        quantity: 1,
-        unitPrice: 490,
+        colors: product.colors,
+        sizes: product.sizes,
+        quantity: product.quantity,
+        unitPrice: product.unitPrice,
       },
       selected: false,
-    },
-    {
-      id: 2,
-      name: "男版針織衫",
-      slides: {
-        frame: {
-          maxHeight: "22rem",
-          borderRadius: "2rem",
-        },
-        slide: [
-          {
-            id: 1,
-            src: "https://i.imgur.com/C7SYk0P.jpg",
-            alt: "product_pic",
-          },
-          {
-            id: 2,
-            src: "https://i.imgur.com/Dfav1Yk.jpg",
-            alt: "product_pic",
-          },
-        ],
-      },
-      picker: {
-        colors: [
-          { id: 1, hexcode: "#ffce30", selected: false },
-          { id: 2, hexcode: "#e83845", selected: false },
-          { id: 3, hexcode: "#e389b9", selected: false },
-          { id: 4, hexcode: "#746ab0", selected: false },
-          { id: 5, hexcode: "#288ba8", selected: true },
-        ],
-        sizes: [
-          { id: 1, name: "XS", selected: false },
-          { id: 2, name: "S", selected: false },
-          { id: 3, name: "M", selected: false },
-          { id: 4, name: "L", selected: false },
-          { id: 5, name: "XL", selected: false },
-          { id: 6, name: "2L", selected: true },
-        ],
-        quantity: 2,
-        unitPrice: 790,
-      },
-      selected: false,
-    },
-    {
-      id: 3,
-      name: "針織衫外套",
-      slides: {
-        frame: {
-          maxHeight: "22rem",
-          borderRadius: "2rem",
-        },
-        slide: [
-          {
-            id: 1,
-            src: "https://i.imgur.com/C7SYk0P.jpg",
-            alt: "product_pic",
-          },
-          {
-            id: 2,
-            src: "https://i.imgur.com/Dfav1Yk.jpg",
-            alt: "product_pic",
-          },
-        ],
-      },
-      picker: {
-        colors: [
-          { id: 1, hexcode: "#ffce30", selected: false },
-          { id: 2, hexcode: "#e83845", selected: true },
-          { id: 3, hexcode: "#e389b9", selected: false },
-          { id: 4, hexcode: "#746ab0", selected: false },
-          { id: 5, hexcode: "#288ba8", selected: false },
-        ],
-        sizes: [
-          { id: 1, name: "XS", selected: false },
-          { id: 2, name: "S", selected: false },
-          { id: 3, name: "M", selected: false },
-          { id: 4, name: "L", selected: false },
-          { id: 5, name: "XL", selected: true },
-          { id: 6, name: "2L", selected: false },
-        ],
-        quantity: 4,
-        unitPrice: 1290,
-      },
-      selected: false,
-    },
-  ]);
+    }))
+  );
   const [checkedPrice, setCheckedPrice] = useState(0);
   const [checkedState, setCheckedState] = useState(false);
   const [checkedAllState, setCheckedAllState] = useState(false);
   useEffect(() => {
-    console.log(cartProducts);
+    // cartProducts 更新時，同步更新 CartContext 內容
+    setCartContext(
+      cartProducts.map((cartProduct) => ({
+        id: cartProduct.id,
+        pid: cartProduct.pid,
+        name: cartProduct.name,
+        urls: cartProduct.slides.slide.map((item) => ({
+          id: item.id,
+          src: item.src,
+          alt: item.alt,
+        })),
+        colors: cartProduct.picker.colors,
+        sizes: cartProduct.picker.sizes,
+        quantity: cartProduct.picker.quantity,
+        unitPrice: cartProduct.picker.unitPrice,
+      }))
+    );
     // 更新總金額、商品選取狀態
     setCheckedPrice(handleCalcAllSelectedProductPrice());
     setCheckedState(handleCheckAllSelectedState().checked);
