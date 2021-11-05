@@ -10,6 +10,7 @@ import {
   COLOR_SECONDARY1,
 } from "../../constant";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -58,9 +59,11 @@ const OffcanvaBody = styled(animated.div).attrs(() => ({
   }
 `;
 
-const OffcanvaLink = styled.a.attrs(() => ({
+const OffcanvaLink = styled.h2.attrs(() => ({
   className: "fs-h2 color-secondary1",
-}))``;
+}))`
+  padding: 0.4rem 0 0.4rem;
+`;
 
 const CloseButton = styled(close)`
   position: absolute;
@@ -174,9 +177,9 @@ export default function Offcanva({ offcanvaInfo }) {
                   }}
                 />
                 {offcanvaInfo.links.map((link) => (
-                  <OffcanvaLink key={link.id} href={link.url}>
-                    {link.name}
-                  </OffcanvaLink>
+                  <Link key={link.id} to={link.url}>
+                    <OffcanvaLink>{link.name}</OffcanvaLink>
+                  </Link>
                 ))}
               </OffcanvaBody>
             )
