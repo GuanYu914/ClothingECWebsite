@@ -1,9 +1,9 @@
 import styled, { keyframes } from "styled-components/macro";
-import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
-import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
-import { ReactComponent as minusSquare } from "../../imgs/pages/single-product-page/dash-square.svg";
-import { ReactComponent as plusSquare } from "../../imgs/pages/single-product-page/plus-square.svg";
-import { ReactComponent as close } from "../../imgs/pages/single-product-page/x-lg.svg";
+import { ReactComponent as heart } from "../../imgs/components/product-picker/heart.svg";
+import { ReactComponent as heartFilled } from "../../imgs/components/product-picker/heart-fill.svg";
+import { ReactComponent as minusSquare } from "../../imgs/components/product-picker/dash-square.svg";
+import { ReactComponent as plusSquare } from "../../imgs/components/product-picker/plus-square.svg";
+import { ReactComponent as close } from "../../imgs/components/product-picker/x-lg.svg";
 import {
   Z_INDEX_LV6,
   Z_INDEX_LV5,
@@ -239,6 +239,8 @@ export default function ProductPicker({
   setMobilePickerState,
   isLiked,
   handleAddToLikedItems,
+  handleAddToCart,
+  handleCheckout,
 }) {
   return (
     <Switcher>
@@ -333,8 +335,28 @@ export default function ProductPicker({
             {/* 可以操作 "加入購物車" 跟 "直接購買" 等操作 */}
             {activeOpState && (
               <PickerOPButtons>
-                <PickerGhostPrimaryButton>加入購物車</PickerGhostPrimaryButton>
-                <PickerCTAPrimaryButton>直接購買</PickerCTAPrimaryButton>
+                <PickerGhostPrimaryButton
+                  onClick={() => {
+                    handleAddToCart(
+                      picker.colors.filter((color) => color.selected)[0]
+                        .hexcode,
+                      picker.sizes.filter((size) => size.selected)[0].name
+                    );
+                  }}
+                >
+                  加入購物車
+                </PickerGhostPrimaryButton>
+                <PickerCTAPrimaryButton
+                  onClick={() => {
+                    handleCheckout(
+                      picker.colors.filter((color) => color.selected)[0]
+                        .hexcode,
+                      picker.sizes.filter((size) => size.selected)[0].name
+                    );
+                  }}
+                >
+                  直接購買
+                </PickerCTAPrimaryButton>
               </PickerOPButtons>
             )}
             {/* 不可以操作 "加入購物車" 跟 "直接購買" 等操作 */}
@@ -408,10 +430,28 @@ export default function ProductPicker({
           </PickerPriceShower>
           {activeOpState && (
             <PickerOPButtons>
-              <CTAPrimaryButton isRounded={true} margin={"0 0.4rem 0 0"}>
+              {/* 應導引到 cart page */}
+              <CTAPrimaryButton
+                isRounded={true}
+                onClick={() => {
+                  handleCheckout(
+                    picker.colors.filter((color) => color.selected)[0].hexcode,
+                    picker.sizes.filter((size) => size.selected)[0].name
+                  );
+                }}
+                margin={"0 0.4rem 0 0"}
+              >
                 直接購買
               </CTAPrimaryButton>
-              <GhostPrimaryButton isRounded={true}>
+              <GhostPrimaryButton
+                isRounded={true}
+                onClick={() => {
+                  handleAddToCart(
+                    picker.colors.filter((color) => color.selected)[0].hexcode,
+                    picker.sizes.filter((size) => size.selected)[0].name
+                  );
+                }}
+              >
                 加入購物車
               </GhostPrimaryButton>
             </PickerOPButtons>
@@ -450,6 +490,8 @@ export default function ProductPicker({
  *  setMobilePickerState: boolean (required)
  *  isLiked:              boolean (required)
  *  handleAddToLikedItems: function (required)
+ *  handleAddToCart: function (required)
+ *  handleCheckout: function (required)
  */
 
 ProductPicker.propTypes = {
@@ -469,4 +511,6 @@ ProductPicker.propTypes = {
   setMobilePickerState: PropTypes.func.isRequired,
   isLiked: PropTypes.bool.isRequired,
   handleAddToLikedItems: PropTypes.func.isRequired,
+  handleAddToCart: PropTypes.func.isRequired,
+  handleCheckout: PropTypes.func.isRequired,
 };
