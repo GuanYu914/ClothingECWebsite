@@ -379,23 +379,34 @@ export default function SingleProductPage() {
 
   function handleAddToCart(selectedPickerColor, selectedPickerSize) {
     // 找尋購物車內是否有一樣產品規格
-    const sameProductIndex = cartContext.find((el) => {
-      if (el.pid === productInfo.pid) {
+    let flagFind = false;
+    for (let i = 0; i < cartContext.length; i++) {
+      if (cartContext[i].pid === productInfo.pid) {
         if (
-          el.colors.filter((color) => color.selected)[0].hexcode ===
+          cartContext[i].colors.filter((color) => color.selected)[0].hexcode ===
           selectedPickerColor
         ) {
           if (
-            el.sizes.filter((size) => size.selected)[0].name ===
+            cartContext[i].sizes.filter((size) => size.selected)[0].name ===
             selectedPickerSize
           ) {
-            return true;
+            // 找到一樣規格的產品，更新該產品目前數量
+            // 防止 state 被 batch，造成資料不是預期的
+            setCartContext((prevCartContext) => {
+              return prevCartContext.map((product, index) =>
+                index === i
+                  ? { ...product, quantity: product.quantity + picker.quantity }
+                  : { ...product }
+              );
+            });
+            flagFind = true;
+            break;
           }
         }
       }
-    });
+    }
     // 未找到相同規格的產品，新增到購物車頂端
-    if (sameProductIndex === undefined) {
+    if (!flagFind) {
       // 複製 cartContext 內容，但 ref 不一樣，造成 react 去更新
       const newCartContext = [...cartContext];
       newCartContext.unshift({
@@ -410,20 +421,7 @@ export default function SingleProductPage() {
       });
       setCartContext(newCartContext);
     }
-    // 找到一樣規格的產品，更新該產品目前數量
-    else {
-      // 防止 state 被 batch，造成資料不是預期的
-      setCartContext((prevCartContext) => {
-        return prevCartContext.map((product) =>
-          product.pid === sameProductIndex.pid
-            ? {
-                ...product,
-                quantity: product.quantity + picker.quantity,
-              }
-            : { ...product }
-        );
-      });
-    }
+    // 顯示加入購物車訊息動畫
     setShowCartReminder(true);
   }
 
