@@ -164,7 +164,9 @@ const ProductAddButton = styled.div.attrs(() => ({
   }
 `;
 
-const AddToCartReminderMsg = styled(animated.div)`
+const AddToCartReminderMsg = styled(animated.div).attrs(() => ({
+  className: "box-shadow-dark",
+}))`
   position: fixed;
   // 為了讓 .svg 檔案能夠水平居中
   display: flex;
