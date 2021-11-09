@@ -72,7 +72,7 @@
   background-color: #FFFFFF;
 }
 
-/* 提供給 product picker 使用 */
-.bg-offcanva {
+/* 提供給需要遮罩元件使用 */
+.bg-mask {
   background-color: rgba(53, 53, 53, 0.8);
 }

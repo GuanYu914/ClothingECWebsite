@@ -29,7 +29,7 @@ const slideInUpAnimation = keyframes`${slideInUp}`;
 const Switcher = styled.div``;
 
 const BackgroundContainer = styled.div.attrs(() => ({
-  className: "bg-offcanva",
+  className: "bg-mask",
 }))`
   width: 100%;
   height: 100%;
@@ -134,6 +134,7 @@ const PickerColor = styled.div`
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
   margin-right: 1.4rem;
+  cursor: pointer;
   background-color: ${(props) => props.color};
   border: ${(props) => props.selected};
 

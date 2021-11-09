@@ -23,7 +23,7 @@ const OffcanvaButton = styled(list)`
 const OffcanvaContainer = styled.div``;
 
 const MaskContainer = styled(animated.div).attrs(() => ({
-  className: "bg-offcanva",
+  className: "bg-mask",
 }))`
   position: fixed;
   z-index: 5;
