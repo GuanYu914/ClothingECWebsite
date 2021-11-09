@@ -10,4 +10,7 @@
 /* 凍結 body 所有畫面 */
 .body-frozen {
   overflow: hidden;
+  /* work on safari */
+  touch-action: none;
+  -ms-touch-action: none;
 }
