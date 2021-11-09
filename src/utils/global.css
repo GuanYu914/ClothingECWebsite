@@ -1,7 +1,9 @@
 /* 放一些全域的 css 屬性 */
 
+:root {
+  font-size: 14px;
+}
 body {
   font-family: 'Noto Sans TC' !important; /* 強制套用 Noto Sans TC Web font */
   box-sizing: border-box;
-  font-size: 16px;
 }
