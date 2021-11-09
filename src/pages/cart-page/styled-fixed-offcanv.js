@@ -2,7 +2,7 @@ import styled from "styled-components/macro";
 import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/square.svg";
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
-import { Z_INDEX_LV6 } from "../../constant";
+import { Z_INDEX_LV4 } from "../../constant";
 import PropTypes from "prop-types";
 
 const Container = styled.div.attrs(() => ({
@@ -15,7 +15,7 @@ const Container = styled.div.attrs(() => ({
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: ${Z_INDEX_LV6};
+  z-index: ${Z_INDEX_LV4};
   box-shadow: rgba(0, 0, 0, 0.04) 0px -3px 5px;
 `;
 
