@@ -61,4 +61,6 @@ export const UserAvatar = styled.div.attrs(() => ({
   transform: translateX(-50%);
   bottom: -2rem;
   z-index: ${Z_INDEX_LV1};
+  background-image: url(${(props) => props.url});
+  background-size: cover;
 `;
