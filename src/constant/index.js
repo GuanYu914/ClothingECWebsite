@@ -45,3 +45,14 @@ export const BG_SECONDARY2 = "#1F1E1C";
 export const BG_SECONDARY3 = "#FFFFFF";
 
 export const BG_OFFCANVA = "rgba(53, 53, 53, 0.8)";
+export const BG_TRANSPARENT = "rgba(255, 255, 255, 0.8)";
+
+// 控制 HomePage hotItems 的資料庫相關常數
+export const HOT_ITEMS_QUERY_INIT_OFFSET = 0;
+export const HOT_ITEMS_QUERY_INIT_LIMIT = 5;
+export const HOT_ITEMS_QUERY_LIMIT = 3;
+
+// 控制 HomePage comments 的資料庫相關常數
+export const COMMENTS_QUERY_INIT_OFFSET = 0;
+export const COMMENTS_QUERY_INIT_LIMIT = 5;
+export const COMMENTS_QUERY_LIMIT = 3;
