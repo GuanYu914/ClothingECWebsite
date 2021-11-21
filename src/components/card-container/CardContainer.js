@@ -2,7 +2,12 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
-import { BOX_SHADOW_DARK, BREAKPOINT_PAD, Z_INDEX_LV1 } from "../../constant";
+import {
+  BOX_SHADOW_DARK,
+  BREAKPOINT_PAD,
+  Z_INDEX_LV1,
+  BG_TRANSPARENT,
+} from "../../constant";
 import { useContext } from "react";
 import { UserContext } from "../../context";
 
@@ -26,6 +31,8 @@ const ItemContainer = styled.div.attrs(() => ({
   margin-right: 1rem;
   margin-bottom: 2rem;
   cursor: pointer;
+  background-image: url("${(props) => props.img}");
+  background-size: cover;
 
   &:last-child {
     margin-bottom: 0;
@@ -52,6 +59,7 @@ const ItemHeader = styled.div.attrs(() => ({
   z-index: ${Z_INDEX_LV1};
   padding: 0.6rem;
   border-radius: 0 0 1.2rem 1.2rem;
+  background-color: ${BG_TRANSPARENT};
 `;
 
 const ItemInfo = styled.div`
@@ -93,7 +101,11 @@ export default function CardContainer({
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
-        <ItemContainer key={item.id} marginLeft={marginLeft}>
+        <ItemContainer
+          key={item.id}
+          marginLeft={marginLeft}
+          img={item.product.img}
+        >
           <ItemHeader>
             <ItemInfo>
               <ItemName>{item.product.name}</ItemName>
