@@ -142,6 +142,7 @@ export default function CardContainer({
       product: {
         name: string  (required)
         price: string (required)
+        img: string   (required)
       },
       isLiked: boolean(required)
     }
@@ -163,6 +164,7 @@ CardContainer.propTypes = {
       product: PropTypes.shape({
         name: PropTypes.string.isRequired,
         price: PropTypes.string.isRequired,
+        img: PropTypes.string.isRequired,
       }),
       isLiked: PropTypes.bool.isRequired,
     })
