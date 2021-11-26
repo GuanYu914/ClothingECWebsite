@@ -1,4 +1,12 @@
 import axios from "axios";
+import {
+  COMMENTS_QUERY_INIT_LIMIT,
+  COMMENTS_QUERY_INIT_OFFSET,
+  HOT_ITEMS_QUERY_INIT_LIMIT,
+  HOT_ITEMS_QUERY_INIT_OFFSET,
+  PRODUCTS_QUERY_INIT_LIMIT,
+  PRODUCTS_QUERY_INIT_OFFSET,
+} from "./constant";
 // 這邊會串接後端 api
 const DevURL = "http://192.168.0.15/clothing_ec";
 // 將來要發佈到前端網站上的網域
@@ -44,10 +52,10 @@ export const getMainCategoriesApi = async function () {
 // 拿 HomePage 的熱銷品項
 export const getHotItemsApi = async function (offset, limit) {
   if (offset === undefined) {
-    offset = 0;
+    offset = HOT_ITEMS_QUERY_INIT_OFFSET;
   }
   if (limit === undefined) {
-    limit = 5;
+    limit = HOT_ITEMS_QUERY_INIT_LIMIT;
   }
   return await axios(
     `${DevURL}/handleGetHotItems.php?offset=${offset}&&limit=${limit}`
@@ -60,12 +68,38 @@ export const getHotItemsApi = async function (offset, limit) {
 // 拿 HomePage 的顧客評價
 export const getUserCommentsApi = async function (offset, limit) {
   if (offset === undefined) {
-    offset = 0;
+    offset = COMMENTS_QUERY_INIT_OFFSET;
   }
   if (limit === undefined) {
-    limit = 5;
+    limit = COMMENTS_QUERY_INIT_LIMIT;
   }
   return await axios(
     `${DevURL}/handleGetUserComments.php?offset=${offset}&&limit=${limit}`
+  ).catch(errorHandling);
+};
+
+// 拿 ProductsPage 的所有商品分類列表
+export const getAllCategoriesApi = async function () {
+  return await axios(`${DevURL}/handleGetCategories.php?type=detail`).catch(
+    errorHandling
+  );
+};
+
+// 拿 ProductsPage 的當前分類產品
+export const getProductsByCategoryApi = async function (
+  mainCategory,
+  subCategory,
+  detailedCategory,
+  offset,
+  limit
+) {
+  if (offset === undefined) {
+    offset = PRODUCTS_QUERY_INIT_OFFSET;
+  }
+  if (limit === undefined) {
+    limit = PRODUCTS_QUERY_INIT_LIMIT;
+  }
+  return await axios(
+    `${DevURL}/handleGetProducts.php?main=${mainCategory}&&sub=${subCategory}&&detailed=${detailedCategory}&&offset=${offset}&&limit=${limit}`
   ).catch(errorHandling);
 };
