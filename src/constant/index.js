@@ -56,3 +56,8 @@ export const HOT_ITEMS_QUERY_LIMIT = 3;
 export const COMMENTS_QUERY_INIT_OFFSET = 0;
 export const COMMENTS_QUERY_INIT_LIMIT = 5;
 export const COMMENTS_QUERY_LIMIT = 3;
+
+// 控制 ProductsPage products 的資料庫相關常數
+export const PRODUCTS_QUERY_INIT_OFFSET = 0;
+export const PRODUCTS_QUERY_INIT_LIMIT = 12;
+export const PRODUCTS_QUERY_LIMIT = 3;
