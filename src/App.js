@@ -142,7 +142,8 @@ function App() {
                 {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
                 {user !== null ? <Redirect to="/" /> : <RegisterPage />}
               </Route>
-              <Route path="/products">
+              {/* 使用 ? 代表可能沒有的欄位 */}
+              <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
                 <ProductsPage />
               </Route>
               <Route path="/product">
