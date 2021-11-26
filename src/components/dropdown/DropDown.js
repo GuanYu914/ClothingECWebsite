@@ -2,6 +2,7 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import {
   BG_PRIMARY1,
+  COLOR_PRIMARY1,
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
 } from "../../constant";
@@ -11,6 +12,7 @@ import { Link, useHistory } from "react-router-dom";
 const DropDownContainer = styled.div`
   display: inline-block;
   position: relative;
+  z-index: ${(props) => props.zIndex};
 `;
 const DropDownContent = styled.div.attrs(() => ({
   className: "box-shadow-dark color-secondary2 fs-h3 bg-secondary3",
@@ -44,6 +46,21 @@ const DropDownContent = styled.div.attrs(() => ({
     color: ${COLOR_SECONDARY3};
     background-color: ${BG_PRIMARY1};
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  }
+`;
+
+const OptionName = styled.h3.attrs(() => ({
+  className: "fs-h3 color-secondary2",
+}))`
+  margin-bottom: 1.6rem;
+  cursor: pointer;
+
+  &:hover {
+    color: ${COLOR_PRIMARY1};
+  }
+
+  &:last-child {
+    margin-bottom: 0;
   }
 `;
 
@@ -102,10 +119,14 @@ const ProductQuantity = styled.h3.attrs(() => ({
   className: "fs-h3 color-secondary2",
 }))``;
 
-export default function DropDown({ dropDownInfo, children }) {
+export default function DropDown({
+  dropDownInfo,
+  children,
+  handleOptionSelection,
+}) {
   const history = useHistory();
   return (
-    <DropDownContainer>
+    <DropDownContainer zIndex={dropDownInfo.zIndex}>
       {children}
       {dropDownInfo.useForLinks && (
         <DropDownContent width={dropDownInfo.width}>
@@ -113,6 +134,19 @@ export default function DropDown({ dropDownInfo, children }) {
             <Link key={option.id} to={option.url}>
               {option.name}
             </Link>
+          ))}
+        </DropDownContent>
+      )}
+      {dropDownInfo.useForOption && (
+        <DropDownContent width={dropDownInfo.width}>
+          {dropDownInfo.options.map((option) => (
+            <OptionName
+              key={option.id}
+              data-option-name={option.name}
+              onClick={handleOptionSelection}
+            >
+              {option.name}
+            </OptionName>
           ))}
         </DropDownContent>
       )}
@@ -173,12 +207,13 @@ export default function DropDown({ dropDownInfo, children }) {
  *  children: react component
  *  dropDownInfo: {
  *    width: string,
- *    useForLinks: boolean, ( 跟 useForBag 則一傳入即可 )
- *    useForCart: boolean,   ( 跟 useForLinks 則一傳入即可 )
- *    options: [{           ( useForLinks 為 true 時必須傳入 )
+ *    height: string,
+ *    zIndex: string,
+ *    useForLinks, useForCart, useForOption: boolean, ( 擇一 )
+ *    options: [{           ( useForLinks, useForOption 為 true 時必須傳入 )
  *      id: number,
  *      name: string,
- *      url: string
+ *      url: string         ( useForOption 為 true 時不須傳入 )
  *    }],
  *    products: [{          ( useForBag 為 true 時必須傳入 )
  *      id: number,
@@ -187,7 +222,8 @@ export default function DropDown({ dropDownInfo, children }) {
  *      color: string,
  *      size: string,
  *      quantity: number,
- *    }]
+ *    }],
+ *    handleOptionSelection: function ( useForOption 為 true 時必須傳入 )
  *  }
  */
 
@@ -196,8 +232,10 @@ DropDown.propTypes = {
   dropDownInfo: PropTypes.shape({
     width: PropTypes.string,
     height: PropTypes.string,
+    zIndex: PropTypes.string,
     useForLinks: PropTypes.bool,
     useForCart: PropTypes.bool,
+    useForOption: PropTypes.bool,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number,
@@ -216,4 +254,5 @@ DropDown.propTypes = {
       })
     ),
   }),
+  handleOptionSelection: PropTypes.func,
 };
