@@ -41,6 +41,7 @@ import {
   getMainCategoriesApi,
 } from "../../Webapi";
 import Loader from "../../components/loader";
+import { useHistory } from "react-router";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -81,6 +82,7 @@ const HotSellingItemsContainer = styled.div`
 `;
 
 export default function HomePage() {
+  let history = useHistory();
   // 表示每個區塊是否該顯示 loading 動畫還是內容
   const [isLoadingBanner, setIsLoadingBanner] = useState(true);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -166,7 +168,7 @@ export default function HomePage() {
         }
         const json_data = resp.data.data;
         // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-        if (resp.data.totals < hotItemsIndicator.limit) {
+        if (resp.data.totals <= hotItemsIndicator.limit) {
           setDisableHotItemsButton(true);
         }
         SetHotItems(
@@ -175,7 +177,7 @@ export default function HomePage() {
             product: {
               name: el.name,
               price: `${el.price}`,
-              img: JSON.parse(el.imgs).info[0].src,
+              img: JSON.parse(el.imgs)[0].src,
             },
             // 之後要根據 user 做調整
             isLiked: false,
@@ -198,7 +200,7 @@ export default function HomePage() {
         }
         const json_data = resp.data.data;
         // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-        if (resp.data.totals < commentsIndicator.limit) {
+        if (resp.data.totals <= commentsIndicator.limit) {
           setDisableCommentsButton(true);
         }
         setComments(
@@ -244,7 +246,6 @@ export default function HomePage() {
   }, [hotItemsIndicator]);
   // commentsIndicator 改變時執行
   useEffect(() => {
-    console.log(commentsIndicator);
     getUserCommentsFromApi(commentsIndicator.offset, commentsIndicator.limit);
   }, [commentsIndicator]);
 
@@ -261,7 +262,14 @@ export default function HomePage() {
             ) : (
               <>
                 {categories.map((category) => (
-                  <Category key={category.id}>{category.name}</Category>
+                  <Category
+                    key={category.id}
+                    onClick={() => {
+                      history.push(`/products/${category.name}`);
+                    }}
+                  >
+                    {category.name}
+                  </Category>
                 ))}
               </>
             )}
