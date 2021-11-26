@@ -48,26 +48,41 @@ const PageButton = styled.button.attrs(() => ({
 `;
 
 export default function Paginator({
-  pageInfo,
+  pagesInfo,
   handleJumpToPrevPage,
   handleJumpToNextPage,
   handleUpdateCurrentPage,
 }) {
+  // 使用預設值
+  if (pagesInfo.totalsItems === undefined) {
+    pagesInfo.totalsItems = 1;
+  }
+  if (pagesInfo.itemsPerPage === undefined) {
+    pagesInfo.itemsPerPage = 5;
+  }
+  // 產生頁數陣列
+  let pagesArray = [];
+  for (
+    let i = 0;
+    i < Math.floor(pagesInfo.totalsItems / pagesInfo.itemsPerPage);
+    i++
+  ) {
+    pagesArray.push(i + 1);
+  }
   return (
     <Container>
       <PrevIcon
-        hidden={pageInfo.currentPage === 1 ? true : false}
+        hidden={pagesInfo.currentPage === 1 ? true : false}
         onClick={() => {
           handleJumpToPrevPage();
         }}
       />
       <PageIndicator>
-        {pageInfo.totalPages.map((page, index) => (
+        {pagesArray.map((page, index) => (
           <PageButton
             key={index}
-            isSelected={pageInfo.currentPage === page ? true : false}
+            isSelected={pagesInfo.currentPage === page ? true : false}
             onClick={(e) => {
-              console.log("clicked page is: " + e.target.innerText);
               handleUpdateCurrentPage(Number(e.target.innerText.trim()));
             }}
           >
@@ -76,9 +91,7 @@ export default function Paginator({
         ))}
       </PageIndicator>
       <NextIcon
-        hidden={
-          pageInfo.currentPage === pageInfo.totalPages.length ? true : false
-        }
+        hidden={pagesInfo.currentPage === pagesArray.length ? true : false}
         onClick={() => {
           handleJumpToNextPage();
         }}
@@ -88,8 +101,9 @@ export default function Paginator({
 }
 
 /**
- *  pageInfo: {
- *    totalPages: number array
+ *  pagesInfo: {
+ *    totalsItems: number,
+ *    itemsPerPage: number,
  *    currentPage: number
  *  }
  *
@@ -100,8 +114,9 @@ export default function Paginator({
  */
 
 Paginator.propTypes = {
-  pageInfo: PropTypes.shape({
-    totalPages: PropTypes.arrayOf(PropTypes.number),
+  pagesInfo: PropTypes.shape({
+    totalsItems: PropTypes.number,
+    itemsPerPage: PropTypes.number,
     currentPage: PropTypes.number,
   }),
   handleJumpToPrevPage: PropTypes.func,
