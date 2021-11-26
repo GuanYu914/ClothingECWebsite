@@ -2,7 +2,6 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import CardContainer from "../../components/card-container";
 import { CTAPrimaryButton } from "../../components/button";
-import Paginator from "../../components/paginator";
 import styled, { keyframes } from "styled-components/macro";
 import { fadeIn } from "react-animations";
 import {
@@ -11,11 +10,19 @@ import {
   BREAKPOINT_PAD,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
-  BREAKPOINT_LAPTOP,
   COLOR_PRIMARY1,
+  Z_INDEX_LV2,
+  PRODUCTS_QUERY_INIT_OFFSET,
+  PRODUCTS_QUERY_INIT_LIMIT,
+  PRODUCTS_QUERY_LIMIT,
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
-import { useState } from "react";
+import { ReactComponent as scrollUpIcon } from "../../imgs/pages/products-page/caret-up-fill.svg";
+import { useState, useEffect } from "react";
+import { getAllCategoriesApi, getProductsByCategoryApi } from "../../Webapi";
+import DropDown from "../../components/dropdown";
+import Loader from "../../components/loader";
+import { useParams, useHistory } from "react-router";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -62,6 +69,7 @@ const ProductsCounter = styled.h3.attrs(() => ({
 const ProductsFilter = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
 `;
 
 const FilterName = styled.h3.attrs(() => ({
@@ -167,162 +175,229 @@ const CardContainerForPad = styled.div`
   }
 `;
 
-const ButtonContainerForMobileAndPad = styled.div`
-  ${BREAKPOINT_MOBILE} {
-    display: block;
-  }
-
-  ${BREAKPOINT_PAD} {
-    display: block;
-  }
-
-  ${BREAKPOINT_LAPTOP} {
-    display: none;
-  }
+const ButtonContainer = styled.div`
+  display: block;
 `;
 
-const ButtonContainerForLaptop = styled.div`
-  ${BREAKPOINT_MOBILE} {
-    display: none;
-  }
-
-  ${BREAKPOINT_LAPTOP} {
-    display: block;
-  }
+const FloatingButtonForMobileAndPad = styled.button.attrs(() => ({
+  className: "bg-primary1 color-secondary3 box-shadow-light fs-h3",
+}))`
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  position: fixed;
+  bottom: 10rem;
+  right: 0.5rem;
+  border: none;
+  z-index: ${Z_INDEX_LV2};
 `;
+
+const ScrollToTopIcon = styled(scrollUpIcon)`
+  display: block;
+  margin: 0 auto;
+  width: 2rem;
+  height: 2rem;
+`;
+
+// 定義 Filter 會需要用到的常數、變數
+const FILTER_INIT_OPTION = "尚未套用篩選條件";
+const FILTER_OPTION_1 = "價格低至高";
+const FILTER_OPTION_2 = "價格高至低";
+const FILTER_RESET_OPTION = "取消套用篩選";
 
 export default function ProductsPage() {
+  // 透過 react router hook 拿到一開始的分類路徑
+  let {
+    mainCategoryFromRouter,
+    subCategoryFromRouter,
+    detailedCategoryFromRouter,
+  } = useParams();
+  // 拿到當前頁面的分類路徑
+  // 透過 history 改變網址列內容
+  let history = useHistory();
+  // 放分類路徑資訊、所有分類列表、該分類底下的所有產品清單
   const [productsInfo, setProductsInfo] = useState({
     categoryPath: {
       base: "分類",
-      main: "小孩",
-      sub: "配件",
-      detailed: "襪子",
+      main: undefined,
+      sub: undefined,
+      detailed: undefined,
     },
-    categoriesList: [
-      {
-        id: 1,
-        name: "男裝",
-        category: [
-          {
-            id: 1,
-            name: "上衣類",
-            category: ["背心", "Polo衫", "T恤", "針織衫", "連帽上衣"],
-          },
-          {
-            id: 2,
-            name: "下身類",
-            category: ["牛仔褲", "休閒長褲", "卡其褲", "短褲"],
-          },
-          {
-            id: 3,
-            name: "外套類",
-            category: ["抗UV系列", "連帽外套", "風衣外套", "羽絨外套"],
-          },
-        ],
-        isSelected: false,
-      },
-      {
-        id: 2,
-        name: "女裝",
-        category: [
-          {
-            id: 1,
-            name: "上衣類",
-            category: ["背心", "Polo衫", "T恤", "針織衫", "連帽上衣"],
-          },
-          {
-            id: 2,
-            name: "洋裝/裙子",
-            category: ["洋裝", "裙子"],
-          },
-          {
-            id: 3,
-            name: "下身類",
-            category: ["牛仔褲", "休閒長褲", "寬褲", "緊身褲", "短褲"],
-          },
-          {
-            id: 4,
-            name: "外套類",
-            category: ["抗UV系列", "連帽外套", "風衣外套", "羽絨外套"],
-          },
-        ],
-        isSelected: false,
-      },
-      {
-        id: 3,
-        name: "小孩",
-        category: [
-          {
-            id: 1,
-            name: "上衣類",
-            category: ["短袖", "襯衫", "休閒上衣"],
-          },
-          {
-            id: 2,
-            name: "洋裝/裙子",
-            category: ["洋裝", "裙子"],
-          },
-          {
-            id: 3,
-            name: "內衣類",
-            category: ["內搭衣", "內褲"],
-          },
-          {
-            id: 4,
-            name: "配件",
-            category: ["襪子"],
-          },
-        ],
-        isSelected: true,
-      },
-    ],
-    productsList: [
-      {
-        id: 1,
-        product: {
-          name: "大學",
-          price: "799",
-        },
-        isLiked: false,
-      },
-      {
-        id: 2,
-        product: {
-          name: "秋冬薄針織",
-          price: "499",
-        },
-        isLiked: false,
-      },
-      {
-        id: 3,
-        product: {
-          name: "長版西裝長褲",
-          price: "1299",
-        },
-        isLiked: true,
-      },
-      {
-        id: 4,
-        product: {
-          name: "雲朵包",
-          price: "888",
-        },
-        isLiked: false,
-      },
-    ],
+    categoriesList: [],
+    productsList: [],
   });
-
+  // 儲存用來顯示的路徑字串
+  const [displayedCategoryPath, setDisplayedCategoryPath] = useState("");
+  // 儲存分類讀取狀態
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  // 儲存產品讀取狀態
+  const [isLoadingProducts, setIsLoadingProductsBlock] = useState(true);
+  // Filter 狀態參數
   const [filter, setFilter] = useState({
-    enable: false,
-    condition: "根據熱門程度",
+    width: "12rem",
+    useForOption: true,
+    zIndex: Z_INDEX_LV2,
+    currentOption: FILTER_INIT_OPTION,
+    options: [
+      {
+        id: 1,
+        name: FILTER_OPTION_1,
+      },
+      {
+        id: 2,
+        name: FILTER_OPTION_2,
+      },
+    ],
   });
-
-  const [pageInfo, setPageInfo] = useState({
-    totalPages: [1, 2, 3, 4, 5, 6, 7, 8],
-    currentPage: 7,
+  // 控制 filter 是否要顯示
+  const [showFilter, setShowFilter] = useState(false);
+  // 儲存還沒有被 filtered 的 productsList
+  const [noneFilteredProducts, setNoneFilteredProducts] = useState([]);
+  // 用來控制顯示更多產品的相關參數
+  const [productsListIndicator, setProductsListIndicator] = useState({
+    offset: PRODUCTS_QUERY_INIT_OFFSET,
+    limit: PRODUCTS_QUERY_INIT_LIMIT,
   });
-
+  // 使否要顯示 "載入更多" 按鈕
+  const [disableProductsListButton, setDisableProductsListButton] =
+    useState(false);
+  // 使否要顯示載入時動畫
+  const [isLoadingMoreProducts, setIsLoadingMoreProducts] = useState(false);
+  // 拿到所有分類清單
+  function getAllCategoriesFromApi() {
+    getAllCategoriesApi().then((resp) => {
+      if (resp.data.isSuccessful === "failed") {
+        console.log("server side error, check response...", resp.data);
+        return;
+      }
+      const json_data = resp.data.data;
+      // 傳入 function 拿到最新的 state
+      setProductsInfo((prevProductsInfo) => {
+        return {
+          categoryPath: prevProductsInfo.categoryPath,
+          productsList: prevProductsInfo.productsList,
+          categoriesList: json_data.map((el) => ({
+            id: el.id,
+            name: el.name,
+            category: JSON.parse(el.category),
+            isSelected: el.name === mainCategoryFromRouter ? true : false,
+          })),
+        };
+      });
+      setIsLoadingCategories(false);
+    });
+  }
+  // 透過分類路徑拿到相對應得產品清單，並設定相關狀態
+  function getProductsByCategoryFromApi(
+    mainCategory,
+    subCategory,
+    detailedCategory,
+    offset,
+    limit,
+    flagLoadMore = false
+  ) {
+    // 只要載入部分產品清單
+    if (flagLoadMore) {
+      setIsLoadingProductsBlock(false);
+      setIsLoadingMoreProducts(true);
+    } else {
+      setIsLoadingProductsBlock(true);
+      setIsLoadingMoreProducts(false);
+    }
+    // 先隱藏 filter
+    setShowFilter(false);
+    getProductsByCategoryApi(
+      mainCategory,
+      subCategory == "所有分類" ? undefined : subCategory,
+      detailedCategory,
+      offset,
+      limit
+    ).then((resp) => {
+      if (resp.data.isSuccessful === "failed") {
+        console.log("server side error, check response...", resp.data);
+        return;
+      }
+      const json_data = resp.data.data;
+      // 如果資料總筆數小於等於目前 indicator 的限制筆數，則資料已讀取完畢，反之相反
+      if (resp.data.totals <= productsListIndicator.limit) {
+        setDisableProductsListButton(true);
+      } else {
+        setDisableProductsListButton(false);
+      }
+      // 儲存未被 filter 套用的產品清單，便於 reset 時套用
+      setNoneFilteredProducts(
+        json_data.map((el) => ({
+          id: el.id,
+          product: {
+            name: el.name,
+            price: `${el.price}`,
+            img: JSON.parse(el.imgs)[0].src,
+          },
+          isLiked: false,
+        }))
+      );
+      // 傳入 function 拿到最新的 state
+      setProductsInfo((prevProductsInfo) => {
+        return {
+          categoryPath: prevProductsInfo.categoryPath,
+          categoriesList: prevProductsInfo.categoriesList,
+          totalProductsNumber: resp.data.totals,
+          productsList: json_data.map((el) => ({
+            id: el.id,
+            product: {
+              name: el.name,
+              price: `${el.price}`,
+              img: JSON.parse(el.imgs)[0].src,
+            },
+            isLiked: false,
+          })),
+        };
+      });
+      // 顯示 filter，並隱藏相關載入動畫
+      setShowFilter(true);
+      setIsLoadingProductsBlock(false);
+      setIsLoadingMoreProducts(false);
+    });
+  }
+  // 從 react router 拿相對應的路徑資訊
+  function getCurrentCategoryPathFromRouter() {
+    setProductsInfo((prevProductsInfo) => {
+      return {
+        categoryPath: {
+          base: prevProductsInfo.categoryPath.base,
+          main: mainCategoryFromRouter,
+          sub:
+            subCategoryFromRouter === undefined
+              ? prevProductsInfo.categoryPath.sub
+              : subCategoryFromRouter,
+          detailed:
+            detailedCategoryFromRouter === undefined
+              ? prevProductsInfo.categoryPath.detailed
+              : detailedCategoryFromRouter,
+        },
+        categoriesList: prevProductsInfo.categoriesList,
+        productsList: prevProductsInfo.productsList,
+      };
+    });
+  }
+  // 設置顯示路徑資訊狀態
+  function updateDisplayedCategoryPath() {
+    let displayText = "";
+    if (productsInfo.categoryPath.base !== undefined) {
+      displayText += "分類";
+    }
+    if (productsInfo.categoryPath.main !== undefined) {
+      displayText += ` > ${productsInfo.categoryPath.main}`;
+    }
+    if (productsInfo.categoryPath.sub !== undefined) {
+      displayText += ` > ${productsInfo.categoryPath.sub}`;
+    }
+    if (productsInfo.categoryPath.detailed !== undefined) {
+      displayText += ` > ${productsInfo.categoryPath.detailed}`;
+    }
+    setDisplayedCategoryPath(displayText);
+  }
+  // 添加為喜歡的產品
   function handleUpdateProductLikeState(id) {
     setProductsInfo({
       ...productsInfo,
@@ -333,7 +408,7 @@ export default function ProductsPage() {
       ),
     });
   }
-
+  // 展開相對應的子分類
   function handleToggleCategorySubLists(id) {
     setProductsInfo({
       ...productsInfo,
@@ -344,163 +419,336 @@ export default function ProductsPage() {
       ),
     });
   }
-
-  function handleJumpToPrevPage() {
-    if (pageInfo.currentPage === 1) return;
-    setPageInfo({
-      ...pageInfo,
-      currentPage: pageInfo.currentPage - 1,
+  // 當用戶點擊分類列表 (選擇子分類)
+  function handleUpdateClickedSubCategoryPath(e) {
+    const categoryFromRouter = `${mainCategoryFromRouter}/${subCategoryFromRouter}`;
+    const categoryFromDOM = getSubCategoryPath(e);
+    const categoryFromDOMArray = categoryFromDOM.split("/");
+    history.push(`/products/${categoryFromDOM}`);
+    // 如果與當前選擇的分類不符，則重設 ProductsListIndicator，
+    // 並根據 indicator 的參數重新讀取產品清單
+    if (categoryFromDOM !== categoryFromRouter) {
+      setProductsListIndicator({
+        offset: PRODUCTS_QUERY_INIT_OFFSET,
+        limit: PRODUCTS_QUERY_INIT_LIMIT,
+      });
+      // 重新設定分類路徑，標示顏色
+      setProductsInfo({
+        ...productsInfo,
+        categoryPath: {
+          base: "分類",
+          main: categoryFromDOMArray[0],
+          sub: categoryFromDOMArray[1],
+          detailed: undefined,
+        },
+      });
+    }
+  }
+  // 當用戶點擊分類列表 (選擇詳細分類)
+  function handleUpdateClickedDetailedCategoryPath(e) {
+    const categoryFromRouter = `${mainCategoryFromRouter}/${subCategoryFromRouter}/${detailedCategoryFromRouter}`;
+    const categoryFromDOM = getDetailedCategoryPath(e);
+    const categoryFromDOMArray = categoryFromDOM.split("/");
+    history.push(`/products/${categoryFromDOM}`);
+    // 如果與當前選擇的分類不符，則重設 ProductsListIndicator
+    // 並根據 indicator 的參數重新讀取產品清單
+    if (categoryFromRouter !== categoryFromDOM) {
+      setProductsListIndicator({
+        offset: PRODUCTS_QUERY_INIT_OFFSET,
+        limit: PRODUCTS_QUERY_INIT_LIMIT,
+      });
+      // 重新設定分類路徑，標示顏色
+      setProductsInfo({
+        ...productsInfo,
+        categoryPath: {
+          base: "分類",
+          main: categoryFromDOMArray[0],
+          sub: categoryFromDOMArray[1],
+          detailed: categoryFromDOMArray[2],
+        },
+      });
+    }
+  }
+  // 回傳當前子分類路徑字串
+  function getSubCategoryPath(e) {
+    const clickedMainCategory = e.target.parentNode.innerText.split("\n")[0];
+    const clickedSubCategory = e.target.innerText.split("\n")[0];
+    return `${clickedMainCategory}/${clickedSubCategory}`;
+  }
+  // 回傳當前詳細路徑字串
+  function getDetailedCategoryPath(e) {
+    const clickedMainCategory =
+      e.target.parentNode.parentNode.innerText.split("\n")[0];
+    const clickedSubCategory = e.target.parentNode.innerText.split("\n")[0];
+    const clickedDetailedCategory = e.target.innerText;
+    return `${clickedMainCategory}/${clickedSubCategory}/${clickedDetailedCategory}`;
+  }
+  // 處理 filter 點擊 options 事件
+  function handleOptionSelection(e) {
+    // 從 data- 欄位拿到選項名稱
+    const optionName = e.target.getAttribute("data-option-name");
+    if (optionName !== FILTER_RESET_OPTION) {
+      if (optionName === FILTER_OPTION_1) {
+        // 根據價格低到高排序
+        setProductsInfo({
+          ...productsInfo,
+          productsList: productsInfo.productsList.sort(
+            (a, b) => a.product.price - b.product.price
+          ),
+        });
+      }
+      if (optionName === FILTER_OPTION_2) {
+        // 根據價格高到低排序
+        setProductsInfo({
+          ...productsInfo,
+          productsList: productsInfo.productsList.sort(
+            (a, b) => b.product.price - a.product.price
+          ),
+        });
+      }
+      // 加上選項 "取消套用篩選"，如果已經有則忽略
+      setFilter({
+        ...filter,
+        currentOption:
+          optionName === FILTER_RESET_OPTION ? FILTER_INIT_OPTION : optionName,
+        options:
+          filter.options.find(
+            (option) => option.name === FILTER_RESET_OPTION
+          ) === undefined
+            ? filter.options.concat([
+                {
+                  id: filter.options.length + 1,
+                  name: FILTER_RESET_OPTION,
+                },
+              ])
+            : filter.options,
+      });
+    }
+    if (optionName === FILTER_RESET_OPTION) {
+      // 套用先前沒有 filtered 的產品清單
+      setProductsInfo({
+        ...productsInfo,
+        productsList: [...noneFilteredProducts],
+      });
+      // 將套用篩選的選項移除，並更新目前的選項名稱
+      setFilter({
+        ...filter,
+        currentOption:
+          optionName === FILTER_RESET_OPTION ? FILTER_INIT_OPTION : optionName,
+        options: filter.options.filter(
+          (option) => option.name !== FILTER_RESET_OPTION
+        ),
+      });
+    }
+  }
+  // 套用先前的 filter 選項
+  function applyExistFilterCondition() {
+    if (filter.currentOption === FILTER_RESET_OPTION) return;
+    if (filter.currentOption === FILTER_OPTION_1) {
+      setProductsInfo({
+        ...productsInfo,
+        productsList: productsInfo.productsList.sort(
+          (a, b) => a.product.price - b.product.price
+        ),
+      });
+    }
+    if (filter.currentOption === FILTER_OPTION_2) {
+      setProductsInfo({
+        ...productsInfo,
+        productsList: productsInfo.productsList.sort(
+          (a, b) => b.product.price - a.product.price
+        ),
+      });
+    }
+  }
+  // 點擊載入更多事件
+  function handleGetMoreProducts() {
+    setProductsListIndicator({
+      offset: productsListIndicator.offset,
+      limit: productsListIndicator.limit + PRODUCTS_QUERY_LIMIT,
     });
   }
-
-  function handleJumpToNextPage() {
-    if (pageInfo.currentPage === pageInfo.totalPages.length) return;
-    setPageInfo({
-      ...pageInfo,
-      currentPage: pageInfo.currentPage + 1,
-    });
+  // 點選浮動按鈕，自動上滑到頂端事件
+  function handleScrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
-
-  function handleUpdateCurrentPage(page) {
-    setPageInfo({
-      ...pageInfo,
-      currentPage: page,
-    });
-  }
+  // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單
+  useEffect(() => {
+    getCurrentCategoryPathFromRouter();
+    getAllCategoriesFromApi();
+    getProductsByCategoryFromApi(
+      mainCategoryFromRouter,
+      subCategoryFromRouter,
+      detailedCategoryFromRouter,
+      productsListIndicator.offset,
+      productsListIndicator.limit
+    );
+  }, []);
+  // 如果分類路徑有變，則更新顯示路徑
+  useEffect(() => {
+    updateDisplayedCategoryPath();
+  }, [productsInfo.categoryPath]);
+  // 顯示 filter 時，同時套用之前的篩選條件
+  useEffect(() => {
+    if (showFilter) {
+      applyExistFilterCondition();
+    }
+  }, [showFilter]);
+  // 根據 indicator 讀取更多產品
+  useEffect(() => {
+    getProductsByCategoryFromApi(
+      mainCategoryFromRouter,
+      subCategoryFromRouter,
+      detailedCategoryFromRouter,
+      productsListIndicator.offset,
+      productsListIndicator.limit,
+      true
+    );
+  }, [productsListIndicator]);
 
   return (
     <PageContainer>
       <Header />
       <ContentContainer>
-        <ProductsCategoryPath>
-          {productsInfo.categoryPath.base +
-            " > " +
-            productsInfo.categoryPath.main +
-            " > " +
-            productsInfo.categoryPath.sub +
-            "  > " +
-            productsInfo.categoryPath.detailed}
-        </ProductsCategoryPath>
+        <ProductsCategoryPath>{displayedCategoryPath}</ProductsCategoryPath>
         <ProductsInfo>
           <ProductsCounter>
-            共 {productsInfo.productsList.length} 件商品
+            共 {productsInfo.totalProductsNumber} 件商品
           </ProductsCounter>
-          {filter.enable && (
-            <ProductsFilter>
-              <FilterName>{filter.condition}</FilterName>
-              <FilterIcon />
-            </ProductsFilter>
-          )}
-          {!filter.enable && (
-            <ProductsFilter>
-              <FilterName>尚未套用篩選</FilterName>
-              <FilterIcon />
-            </ProductsFilter>
+          {showFilter ? (
+            <>
+              <DropDown
+                dropDownInfo={filter}
+                handleOptionSelection={handleOptionSelection}
+              >
+                <ProductsFilter>
+                  <FilterName>{filter.currentOption}</FilterName>
+                  <FilterIcon />
+                </ProductsFilter>
+              </DropDown>
+            </>
+          ) : (
+            <></>
           )}
         </ProductsInfo>
         <ProductsContainer>
-          <ProductsCategoryListContainer>
-            {productsInfo.categoriesList.map((main_category) => (
-              <CategoryMainTitle
-                key={main_category.id}
-                isSelected={
-                  productsInfo.categoryPath.main === main_category.name
-                    ? true
-                    : false
-                }
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleToggleCategorySubLists(main_category.id);
-                }}
-              >
-                {main_category.name}
-                <FilterIcon
-                  position={"absolute"}
-                  onClick={() => {
+          {isLoadingCategories ? (
+            <Loader />
+          ) : (
+            <ProductsCategoryListContainer>
+              {productsInfo.categoriesList.map((main_category) => (
+                <CategoryMainTitle
+                  key={main_category.id}
+                  isSelected={
+                    productsInfo.categoryPath.main === main_category.name
+                      ? true
+                      : false
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
                     handleToggleCategorySubLists(main_category.id);
                   }}
-                ></FilterIcon>
-                {main_category.isSelected &&
-                  main_category.category.map((sub_category) => (
-                    <CategorySubTitle
-                      key={sub_category.id}
-                      marginBottom={"1rem"}
-                      isSelected={
-                        productsInfo.categoryPath.main === main_category.name
-                          ? productsInfo.categoryPath.sub === sub_category.name
-                            ? true
-                            : false
-                          : false
-                      }
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log(
-                          `click sub category...${
-                            e.target.outerText.split("\n")[0]
-                          }`
-                        );
-                      }}
-                    >
-                      {sub_category.name}
-                      {sub_category.category.map((detailed_category, index) => (
-                        <CategoryDetailTitle
-                          key={index}
-                          isSelected={
-                            productsInfo.categoryPath.main ===
-                            main_category.name
-                              ? productsInfo.categoryPath.sub ===
-                                sub_category.name
-                                ? productsInfo.categoryPath.detailed ===
-                                  detailed_category
-                                  ? true
-                                  : false
-                                : false
+                >
+                  {main_category.name}
+                  <FilterIcon
+                    position={"absolute"}
+                    onClick={() => {
+                      handleToggleCategorySubLists(main_category.id);
+                    }}
+                  ></FilterIcon>
+                  {main_category.isSelected &&
+                    main_category.category.map((sub_category) => (
+                      <CategorySubTitle
+                        key={sub_category.id}
+                        marginBottom={"1rem"}
+                        isSelected={
+                          productsInfo.categoryPath.main === main_category.name
+                            ? productsInfo.categoryPath.sub ===
+                              sub_category.name
+                              ? true
                               : false
-                          }
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            console.log(
-                              "click detailed category..." + e.target.innerText
-                            );
-                          }}
-                        >
-                          {detailed_category}
-                        </CategoryDetailTitle>
-                      ))}
-                    </CategorySubTitle>
-                  ))}
-              </CategoryMainTitle>
-            ))}
-          </ProductsCategoryListContainer>
-          <CardContainerForMobile>
-            <CardContainer
-              items={productsInfo.productsList}
-              horizontalAlign={"center"}
-              handleLiked={handleUpdateProductLikeState}
-            ></CardContainer>
-          </CardContainerForMobile>
-          <CardContainerForPad>
-            <CardContainer
-              items={productsInfo.productsList}
-              marginTop={"0"}
-              marginLeft={"0"}
-              handleLiked={handleUpdateProductLikeState}
-            ></CardContainer>
-          </CardContainerForPad>
+                            : false
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpdateClickedSubCategoryPath(e);
+                        }}
+                      >
+                        {sub_category.name}
+                        {sub_category.category.map(
+                          (detailed_category, index) => (
+                            <CategoryDetailTitle
+                              key={index}
+                              isSelected={
+                                productsInfo.categoryPath.main ===
+                                main_category.name
+                                  ? productsInfo.categoryPath.sub ===
+                                    sub_category.name
+                                    ? productsInfo.categoryPath.detailed ===
+                                      detailed_category
+                                      ? true
+                                      : false
+                                    : false
+                                  : false
+                              }
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleUpdateClickedDetailedCategoryPath(e);
+                              }}
+                            >
+                              {detailed_category}
+                            </CategoryDetailTitle>
+                          )
+                        )}
+                      </CategorySubTitle>
+                    ))}
+                </CategoryMainTitle>
+              ))}
+            </ProductsCategoryListContainer>
+          )}
+          {isLoadingProducts ? (
+            <Loader />
+          ) : (
+            <>
+              <CardContainerForMobile>
+                <CardContainer
+                  items={productsInfo.productsList}
+                  horizontalAlign={"center"}
+                  handleLiked={handleUpdateProductLikeState}
+                ></CardContainer>
+              </CardContainerForMobile>
+              <CardContainerForPad>
+                <CardContainer
+                  items={productsInfo.productsList}
+                  marginTop={"0"}
+                  marginLeft={"0"}
+                  handleLiked={handleUpdateProductLikeState}
+                ></CardContainer>
+              </CardContainerForPad>
+            </>
+          )}
         </ProductsContainer>
-        <ButtonContainerForMobileAndPad>
-          <CTAPrimaryButton isRounded={true} margin={"3rem auto 0"}>
-            載入更多
-          </CTAPrimaryButton>
-        </ButtonContainerForMobileAndPad>
-        <ButtonContainerForLaptop>
-          <Paginator
-            pageInfo={pageInfo}
-            handleJumpToNextPage={handleJumpToNextPage}
-            handleJumpToPrevPage={handleJumpToPrevPage}
-            handleUpdateCurrentPage={handleUpdateCurrentPage}
-          ></Paginator>
-        </ButtonContainerForLaptop>
+        <ButtonContainer>
+          {!disableProductsListButton && (
+            <>
+              {isLoadingMoreProducts ? (
+                <Loader />
+              ) : (
+                <CTAPrimaryButton
+                  isRounded={true}
+                  margin={"3rem auto 0"}
+                  onClick={handleGetMoreProducts}
+                >
+                  載入更多
+                </CTAPrimaryButton>
+              )}
+            </>
+          )}
+        </ButtonContainer>
+        <FloatingButtonForMobileAndPad onClick={handleScrollToTop}>
+          <ScrollToTopIcon />
+          回到頂端
+        </FloatingButtonForMobileAndPad>
       </ContentContainer>
       <Footer />
     </PageContainer>
