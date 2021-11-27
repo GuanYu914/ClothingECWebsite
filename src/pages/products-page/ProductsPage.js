@@ -572,6 +572,11 @@ export default function ProductsPage() {
   function handleScrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+  //
+  function handleRedirectToProductPage(e) {
+    const id = e.target.getAttribute("data-id");
+    history.push(`/product/${id}`);
+  }
   // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單
   useEffect(() => {
     getCurrentCategoryPathFromRouter();
@@ -715,6 +720,7 @@ export default function ProductsPage() {
                   items={productsInfo.productsList}
                   horizontalAlign={"center"}
                   handleLiked={handleUpdateProductLikeState}
+                  handleOnClick={handleRedirectToProductPage}
                 ></CardContainer>
               </CardContainerForMobile>
               <CardContainerForPad>
@@ -723,6 +729,7 @@ export default function ProductsPage() {
                   marginTop={"0"}
                   marginLeft={"0"}
                   handleLiked={handleUpdateProductLikeState}
+                  handleOnClick={handleRedirectToProductPage}
                 ></CardContainer>
               </CardContainerForPad>
             </>

@@ -232,6 +232,11 @@ export default function HomePage() {
     });
     setIsCommentsButtonClicked(true);
   }
+  // 導引到相對應產品頁面
+  function handleRedirectToProductPage(e) {
+    const id = e.target.getAttribute("data-id");
+    history.push(`/product/${id}`);
+  }
 
   // DOM 載入完畢後只執行一次，用來抓一開始的資訊
   useEffect(() => {
@@ -285,6 +290,7 @@ export default function HomePage() {
                 items={hotItems}
                 horizontalAlign={"center"}
                 handleLiked={handleUpdateItemLikedState}
+                handleOnClick={handleRedirectToProductPage}
               />
             )}
           </HotSellingItemsContainer>
