@@ -19,9 +19,15 @@ import {
   Z_INDEX_LV6,
   COLOR_PRIMARY1,
 } from "../../constant";
-import { CartContext, UserContext } from "../../context";
+import {
+  CartContext,
+  UserContext,
+  WatchedProductsContext,
+} from "../../context";
 import { useTransition, animated } from "react-spring";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
+import { getProductByIDApi } from "../../Webapi";
+import Loader from "../../components/loader";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -114,14 +120,22 @@ const DetailInfoContainer = styled.div`
   margin-top: 3rem;
 `;
 
-const DetailInfoTitle = styled.h2.attrs(() => ({
+const DetailInfoTitle = styled.h1.attrs(() => ({
   className: "fs-h2 color-secondary2",
 }))``;
 
-const DetailInfoDesc = styled.h3.attrs(() => ({
+const DetailInfoDescBlock = styled.div`
+  margin-top: 1rem;
+`;
+
+const DetailInfoDescBlockSubTitle = styled.h2.attrs(() => ({
+  className: "fs-h2 color-secondary2",
+}))``;
+
+const DetailInfoDescBlockBody = styled.h3.attrs(() => ({
   className: "fs-h3 color-secondary2",
 }))`
-  margin-top: 1rem;
+  margin-bottom: 2rem;
 `;
 
 const ProductInfoContainerForPad = styled.div`
@@ -194,80 +208,53 @@ const ReminderMsg = styled.h2.attrs(() => ({
 }))``;
 
 export default function SingleProductPage() {
-  // 透過 UserContext 拿到用戶資訊
-  const userContext = useContext(UserContext);
+  // 透過 React router hook 拿到特定網址資訊
+  const { productID } = useParams();
   // 透過此 hook 換頁
   const history = useHistory();
+  // 透過 UserContext 拿到用戶資訊
+  const userContext = useContext(UserContext);
   // 透過 CartContext 拿到購物車資訊
   const { cartContext, setCartContext } = useContext(CartContext);
+  // 透過 WatchedProductContext 拿到近期瀏覽的商品
+  const { watchedProductsContext, setWatchedProductsContext } = useContext(
+    WatchedProductsContext
+  );
+  //  產品資訊讀取狀態
+  const [isLoadingProduct, setIsLoadingProduct] = useState(true);
+  // 已看過產品清單讀取狀態
+  const [isLoadingWatchedProducts, setIsLoadingWatchedProducts] =
+    useState(false);
   // 頁面產品資訊
-  const [productInfo, setProductInfo] = useState({
-    id: 1,
-    pid: 4784,
-    name: "女版襯衫",
-    detail: "這邊需要提供運費、尺寸、商品品質及清洗注意事項",
-    imgs: [
-      {
-        id: 1,
-        src: "https://i.imgur.com/C7SYk0P.jpg",
-        alt: "product_pic",
-      },
-      {
-        id: 2,
-        src: "https://i.imgur.com/Dfav1Yk.jpg",
-        alt: "product_pic",
-      },
-    ],
-    colors: [
-      { id: 1, hexcode: "#ffce30", selected: false },
-      { id: 2, hexcode: "#e83845", selected: false },
-      { id: 3, hexcode: "#e389b9", selected: false },
-      { id: 4, hexcode: "#746ab0", selected: false },
-      { id: 5, hexcode: "#288ba8", selected: false },
-    ],
-    sizes: [
-      { id: 1, name: "XS", selected: false },
-      { id: 2, name: "S", selected: false },
-      { id: 3, name: "M", selected: false },
-      { id: 4, name: "L", selected: false },
-      { id: 5, name: "XL", selected: false },
-      { id: 6, name: "2L", selected: false },
-    ],
-    quantity: 1,
-    unitPrice: 490,
-  });
-  // 根據螢幕寬度給不同 props 到 BSCarousel 元件
-  // 使用假資料
+  const [productInfo, setProductInfo] = useState({});
+  // 產品幻燈片，根據螢幕寬度給不同 props 到 BSCarousel 元件
   const [slidesForMobile, setSlidesForMobile] = useState({
     frame: {
-      maxHeight: "22rem",
+      maxHeight: "30rem",
       borderRadius: "2rem",
     },
-    slide: productInfo.imgs,
+    slide: [],
   });
-
   const [slidesForPad, setSlidesForPad] = useState({
     frame: {
+      maxHeight: "40rem",
       borderRadius: "2rem",
     },
-    slide: productInfo.imgs,
+    slide: [],
   });
+  // 顯示產品分類路徑名稱
+  const [displayedCategoryPath, setDisplayedCategoryPath] = useState();
   // mobile 裝置底下， product-picker 元件啟用狀態
   const [mobilePickerState, setMobilePickerState] = useState(false);
   // 儲存當前頁面，愛心是否被點擊狀態
   const [isLiked, setIsLiked] = useState(false);
-  // 給 picker 的資訊，適用於 mobile 跟 pad
-  // 使用假資料
-  const [picker, setPicker] = useState({
-    colors: productInfo.colors,
-    sizes: productInfo.sizes,
-    quantity: productInfo.quantity,
-    unitPrice: productInfo.unitPrice,
-  });
+  // 當前頁面可以被執行有關購物車相關的操作狀態
   const [activeOpState, setActiveOpState] = useState(false);
-  // 加入購物車訊息動畫
+  // 加入購物車動畫時間
   const showCartReminderDuration = 500;
+  // 是否要顯示加入購物車的動畫
   const [showCartReminder, setShowCartReminder] = useState(false);
+  // 加入購物車訊息動畫
   const showCartReminderAnimation = useTransition(showCartReminder, {
     from: { opacity: 0 },
     enter: { opacity: 1 },
@@ -276,45 +263,9 @@ export default function SingleProductPage() {
       duration: showCartReminderDuration,
     },
   });
-  // 使用假資料
-  const [watchedItems, setWatchItems] = useState([
-    {
-      id: 1,
-      product: { name: "牛仔短褲", price: "489" },
-      isLiked: false,
-    },
-    {
-      id: 2,
-      product: { name: "修身寬褲", price: "699" },
-      isLiked: true,
-    },
-    {
-      id: 3,
-      product: {
-        name: "迪士尼聯名短袖",
-        price: "899",
-      },
-      isLiked: true,
-    },
-  ]);
 
-  // Render 完會做的事
-  useEffect(() => {
-    // 這裡可以檢查目前以下變數狀態
-    // console.log("picker 狀態", picker);
-    // console.log("cartContext 狀態", cartContext);
-    // console.log("showCartReminder 狀態", showCartReminder);
-    // 更新底部按鈕配色
-    setActiveOpState(checkOP());
-    // 自動隱藏加入購物車訊息
-    if (showCartReminder) {
-      setTimeout(() => {
-        setShowCartReminder(false);
-      }, showCartReminderDuration * 3);
-    }
-  }, [showCartReminder, cartContext, picker, activeOpState]);
-
-  function handleProductAdd() {
+  // mobile 裝置下，點選 "選擇商品規格" 事件
+  function handleSelectProductSpecOnMobile() {
     // 叫出 mobile 裝置底下的 product-picker 元件
     setMobilePickerState(true);
   }
@@ -322,63 +273,74 @@ export default function SingleProductPage() {
   function handleAddToLikedItems() {
     setIsLiked(!isLiked);
   }
-
+  // 選擇商品顏色
   function handleSelectPickerColor(id) {
-    setPicker({
-      ...picker,
-      colors: picker.colors.map((color) =>
-        color.id === id
-          ? { ...color, selected: true }
-          : { ...color, selected: false }
-      ),
+    setProductInfo({
+      ...productInfo,
+      picker: {
+        ...productInfo.picker,
+        colors: productInfo.picker.colors.map((color) =>
+          color.id === id
+            ? { ...color, selected: true }
+            : { ...color, selected: false }
+        ),
+      },
     });
   }
-
+  // 選擇商品尺寸
   function handleSelectPickerSize(id) {
-    setPicker({
-      ...picker,
-      sizes: picker.sizes.map((size) =>
-        size.id === id
-          ? { ...size, selected: true }
-          : { ...size, selected: false }
-      ),
+    setProductInfo({
+      ...productInfo,
+      picker: {
+        ...productInfo.picker,
+        sizes: productInfo.picker.sizes.map((size) =>
+          size.id === id
+            ? { ...size, selected: true }
+            : { ...size, selected: false }
+        ),
+      },
     });
   }
-
+  // 增加購買數量
   function handleIncreaseQuantity() {
-    setPicker({
-      ...picker,
-      quantity: picker.quantity + 1,
+    setProductInfo({
+      ...productInfo,
+      picker: {
+        ...productInfo.picker,
+        quantity: productInfo.picker.quantity + 1,
+      },
     });
   }
-
+  // 減少購買數量
   function handleDecreaseQuantity() {
-    if (picker.quantity == 1) return;
-    setPicker({
-      ...picker,
-      quantity: picker.quantity - 1,
+    if (productInfo.picker.quantity == 1) return;
+    setProductInfo({
+      ...productInfo,
+      picker: {
+        ...productInfo.picker,
+        quantity: productInfo.picker.quantity - 1,
+      },
     });
   }
-
-  function checkOP() {
+  // 檢查當前狀態使否可以點選 "直接購買" 跟 "加入購物車" 按鈕
+  function checkActiveState() {
     let colorChecked = false;
     let sizeChecked = false;
-    for (let i = 0; i < picker.colors.length; i++) {
-      if (picker.colors[i].selected) {
+    for (let i = 0; i < productInfo.picker.colors.length; i++) {
+      if (productInfo.picker.colors[i].selected) {
         colorChecked = true;
         break;
       }
     }
-    for (let j = 0; j < picker.sizes.length; j++) {
-      if (picker.sizes[j].selected) {
+    for (let j = 0; j < productInfo.picker.sizes.length; j++) {
+      if (productInfo.picker.sizes[j].selected) {
         sizeChecked = true;
         break;
       }
     }
-
     return colorChecked && sizeChecked;
   }
-
+  // 點選 "加入購物車" 按鈕
   function handleAddToCart(selectedPickerColor, selectedPickerSize) {
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
@@ -397,7 +359,10 @@ export default function SingleProductPage() {
             setCartContext((prevCartContext) => {
               return prevCartContext.map((product, index) =>
                 index === i
-                  ? { ...product, quantity: product.quantity + picker.quantity }
+                  ? {
+                      ...product,
+                      quantity: product.quantity + productInfo.picker.quantity,
+                    }
                   : { ...product }
               );
             });
@@ -416,118 +381,274 @@ export default function SingleProductPage() {
         pid: productInfo.pid,
         name: productInfo.name,
         urls: productInfo.imgs,
-        colors: picker.colors,
-        sizes: picker.sizes,
-        quantity: picker.quantity,
-        unitPrice: picker.unitPrice,
+        colors: productInfo.picker.colors,
+        sizes: productInfo.picker.sizes,
+        quantity: productInfo.picker.quantity,
+        unitPrice: productInfo.picker.unitPrice,
       });
       setCartContext(newCartContext);
     }
     // 顯示加入購物車訊息動畫
     setShowCartReminder(true);
   }
-
-  function handleCheckout(
-    selectedPickerColor,
-    selectedPickerSize,
-    selectedPickerQuantity
-  ) {
+  // 點選 "直接購買" 按鈕
+  function handleCheckout(selectedPickerColor, selectedPickerSize) {
     // 加入到購物車且導引到 cart page
-    handleAddToCart(
-      selectedPickerColor,
-      selectedPickerSize,
-      selectedPickerQuantity
-    );
+    handleAddToCart(selectedPickerColor, selectedPickerSize);
     history.push("/cart");
   }
-
   // 更新 watchedItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
-    setWatchItems(
-      watchedItems.map((item) =>
+    setWatchedProductsContext(
+      watchedProductsContext.map((item) =>
         item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
       )
     );
   }
+  // 拿產品相關資訊，並設置相關狀態
+  function getProductInfoFromApi(pid) {
+    setIsLoadingProduct(true);
+    setIsLoadingWatchedProducts(true);
+    getProductByIDApi(pid)
+      .then((resp) => {
+        if (resp.data.isSuccessful === "failed") {
+          console.log("server side error, check response...", resp.data);
+          return;
+        }
+        const json_data = resp.data.data[0];
+        setProductInfo({
+          id: json_data.pid,
+          pid: json_data.pid,
+          category: JSON.parse(json_data.category),
+          name: json_data.name,
+          detail: JSON.parse(json_data.detail),
+          imgs: JSON.parse(json_data.imgs),
+          picker: {
+            sizes: JSON.parse(json_data.sizes).map((size) => ({
+              ...size,
+              selected: false,
+            })),
+            colors: JSON.parse(json_data.colors).map((color) => ({
+              ...color,
+              selected: false,
+            })),
+            quantity: 1,
+            unitPrice: json_data.price,
+          },
+        });
+        setSlidesForMobile({
+          ...slidesForMobile,
+          slide: JSON.parse(json_data.imgs),
+        });
+        setSlidesForPad({
+          ...slidesForPad,
+          slide: JSON.parse(json_data.imgs),
+        });
+        // 加到 watchedProductContext
+        const watchedProducts = filteredWatchedProducts(
+          watchedProductsContext,
+          json_data.pid
+        );
+        setWatchedProductsContext([
+          {
+            id: json_data.pid,
+            product: {
+              name: json_data.name,
+              price: `${json_data.price}`,
+              img: JSON.parse(json_data.imgs)[0].src,
+            },
+            isLiked: false,
+          },
+          ...watchedProducts,
+        ]);
+        setIsLoadingProduct(false);
+        setIsLoadingWatchedProducts(false);
+      })
+      .catch((e) => {
+        console.log("xhr request isn't successful, error is ", e);
+      });
+  }
+  // 拿到產品所在分類目錄
+  function getCategoryPathOfProduct() {
+    let categoryPath = "";
+    if (productInfo.category.base !== "none") {
+      categoryPath += productInfo.category.base;
+    }
+    if (productInfo.category.main !== "none") {
+      categoryPath += " > " + productInfo.category.main;
+    }
+    if (productInfo.category.sub !== "none") {
+      categoryPath += " > " + productInfo.category.sub;
+    }
+    if (productInfo.category.detailed !== "none") {
+      categoryPath += " > " + productInfo.category.detailed;
+    }
+    return categoryPath;
+  }
+  // 移除已經在清單裡的產品
+  function filteredWatchedProducts(context, pid) {
+    return context.filter((el) => el.id !== pid);
+  }
+  // 導引到相對應的產品頁面
+  function handleRedirectToProductPage(e) {
+    const id = e.target.getAttribute("data-id");
+    // 如果點擊的是當前產品 id 則不理會
+    if (productID === id) return;
+    getProductInfoFromApi(id);
+    history.push(`/product/${id}`);
+  }
+
+  // 第一次 Render 結束
+  useEffect(() => {
+    getProductInfoFromApi(productID);
+  }, []);
+  // 若重複點擊，則暫緩顯示購物車訊息
+  useEffect(() => {
+    if (showCartReminder) {
+      setTimeout(() => {
+        setShowCartReminder(false);
+      }, showCartReminderDuration * 3);
+    }
+  }, [showCartReminder]);
+  // 如果 picker 有被點選，且不是正在讀取中，則更新目前購物操作狀態
+  useEffect(() => {
+    if (!isLoadingProduct) {
+      setActiveOpState(checkActiveState());
+    }
+  }, [productInfo.picker]);
+  // 若產品狀態讀取完畢，則更新分類路徑名稱
+  useEffect(() => {
+    if (!isLoadingProduct) {
+      setDisplayedCategoryPath(getCategoryPathOfProduct());
+    }
+  }, [isLoadingProduct]);
 
   return (
     <PageContainer>
       <Header />
       <ContentContainer>
-        <ProductCategoryPath>
-          首頁 &gt; 分類 &gt; 女裝 &gt; 秋冬款
-        </ProductCategoryPath>
-        <ProductInfoForMobile>
-          <BSCarousel slides={slidesForMobile} />
-          <ProductInfoContainer>
-            <ProductName>女版襯衫</ProductName>
-            {userContext !== null && (
-              <>
-                {isLiked && (
-                  <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+        {isLoadingProduct ? (
+          <Loader />
+        ) : (
+          <>
+            <ProductCategoryPath>{displayedCategoryPath}</ProductCategoryPath>
+            <ProductInfoForMobile>
+              <BSCarousel slides={slidesForMobile} />
+              <ProductInfoContainer>
+                <ProductName>女版襯衫</ProductName>
+                {userContext !== null && (
+                  <>
+                    {isLiked ? (
+                      <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+                    ) : (
+                      <FavoriteIcon onClick={handleAddToLikedItems} />
+                    )}
+                  </>
                 )}
-                {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
-              </>
-            )}
-          </ProductInfoContainer>
-          <DetailInfoContainer>
-            <DetailInfoTitle>詳細資訊</DetailInfoTitle>
-            <DetailInfoDesc>
-              這邊會需要提供運費、尺寸、商品材質以及清洗注意事項
-            </DetailInfoDesc>
-          </DetailInfoContainer>
-        </ProductInfoForMobile>
-        <ProductInfoContainerForPad>
-          <BSCarousel slides={slidesForPad} />
-          <ProductInfoContainer>
-            <ProductHeaderContainer>
-              <ProductName>{productInfo.name}</ProductName>
-              {userContext !== null && (
-                <>
-                  {isLiked && (
-                    <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+              </ProductInfoContainer>
+              <DetailInfoContainer>
+                <DetailInfoTitle>詳細資訊</DetailInfoTitle>
+                <DetailInfoDescBlock>
+                  <DetailInfoDescBlockSubTitle>
+                    產品尺碼
+                  </DetailInfoDescBlockSubTitle>
+                  <DetailInfoDescBlockBody>
+                    {productInfo.detail.size}
+                  </DetailInfoDescBlockBody>
+                  <DetailInfoDescBlockSubTitle>
+                    運費注意事項
+                  </DetailInfoDescBlockSubTitle>
+                  <DetailInfoDescBlockBody>
+                    {productInfo.detail.shipment}
+                  </DetailInfoDescBlockBody>
+                  <DetailInfoDescBlockSubTitle>
+                    清潔須知
+                  </DetailInfoDescBlockSubTitle>
+                  <DetailInfoDescBlockBody>
+                    {productInfo.detail.cleanness}
+                  </DetailInfoDescBlockBody>
+                </DetailInfoDescBlock>
+              </DetailInfoContainer>
+            </ProductInfoForMobile>
+            <ProductInfoContainerForPad>
+              <BSCarousel slides={slidesForPad} />
+              <ProductInfoContainer>
+                <ProductHeaderContainer>
+                  <ProductName>{productInfo.name}</ProductName>
+                  {userContext !== null && (
+                    <>
+                      {isLiked && (
+                        <FavoriteFilledIcon onClick={handleAddToLikedItems} />
+                      )}
+                      {!isLiked && (
+                        <FavoriteIcon onClick={handleAddToLikedItems} />
+                      )}
+                    </>
                   )}
-                  {!isLiked && <FavoriteIcon onClick={handleAddToLikedItems} />}
-                </>
-              )}
-            </ProductHeaderContainer>
-            <ProductPicker
-              picker={picker}
-              usedOnPad={true}
-              handleSelectPickerColor={handleSelectPickerColor}
-              handleSelectPickerSize={handleSelectPickerSize}
-              handleIncreaseQuantity={handleIncreaseQuantity}
-              handleDecreaseQuantity={handleDecreaseQuantity}
-              activeOpState={activeOpState}
-              setMobilePickerState={handleProductAdd}
-              isLiked={isLiked}
-              handleAddToLikedItems={handleAddToLikedItems}
-              handleAddToCart={handleAddToCart}
-              handleCheckout={handleCheckout}
+                </ProductHeaderContainer>
+                <ProductPicker
+                  picker={productInfo.picker}
+                  usedOnPad={true}
+                  handleSelectPickerColor={handleSelectPickerColor}
+                  handleSelectPickerSize={handleSelectPickerSize}
+                  handleIncreaseQuantity={handleIncreaseQuantity}
+                  handleDecreaseQuantity={handleDecreaseQuantity}
+                  activeOpState={activeOpState}
+                  setMobilePickerState={handleSelectProductSpecOnMobile}
+                  isLiked={isLiked}
+                  handleAddToLikedItems={handleAddToLikedItems}
+                  handleAddToCart={handleAddToCart}
+                  handleCheckout={handleCheckout}
+                />
+                <DetailInfoContainer>
+                  <DetailInfoTitle>詳細資訊</DetailInfoTitle>
+                  <DetailInfoDescBlock>
+                    <DetailInfoDescBlockSubTitle>
+                      產品尺碼
+                    </DetailInfoDescBlockSubTitle>
+                    <DetailInfoDescBlockBody>
+                      {productInfo.detail.size}
+                    </DetailInfoDescBlockBody>
+                    <DetailInfoDescBlockSubTitle>
+                      運費注意事項
+                    </DetailInfoDescBlockSubTitle>
+                    <DetailInfoDescBlockBody>
+                      {productInfo.detail.shipment}
+                    </DetailInfoDescBlockBody>
+                    <DetailInfoDescBlockSubTitle>
+                      清潔須知
+                    </DetailInfoDescBlockSubTitle>
+                    <DetailInfoDescBlockBody>
+                      {productInfo.detail.cleanness}
+                    </DetailInfoDescBlockBody>
+                  </DetailInfoDescBlock>
+                </DetailInfoContainer>
+              </ProductInfoContainer>
+            </ProductInfoContainerForPad>
+          </>
+        )}
+        {isLoadingWatchedProducts ? (
+          <Loader />
+        ) : (
+          <WatchedItemsContainer>
+            <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>
+            <CardContainer
+              items={watchedProductsContext}
+              handleLiked={handleUpdateItemLikedState}
+              handleOnClick={handleRedirectToProductPage}
+              marginLeft={"0"}
             />
-            <DetailInfoContainer>
-              <DetailInfoTitle>詳細資訊</DetailInfoTitle>
-              <DetailInfoDesc>{productInfo.detail}</DetailInfoDesc>
-            </DetailInfoContainer>
-          </ProductInfoContainer>
-        </ProductInfoContainerForPad>
-        <WatchedItemsContainer>
-          <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>
-          <CardContainer
-            items={watchedItems}
-            handleLiked={handleUpdateItemLikedState}
-            marginLeft={"0"}
-          />
-        </WatchedItemsContainer>
+          </WatchedItemsContainer>
+        )}
       </ContentContainer>
       {/* 這是 mobile 裝置上的底部按鈕 */}
-      <ProductAddButton onClick={handleProductAdd}>
+      <ProductAddButton onClick={handleSelectProductSpecOnMobile}>
         選擇商品規格
       </ProductAddButton>
       {mobilePickerState && (
         // 適用於 mobile breakpoint
         <ProductPicker
-          picker={picker}
+          picker={productInfo.picker}
           usedOnMobile={true}
           handleSelectPickerColor={handleSelectPickerColor}
           handleSelectPickerSize={handleSelectPickerSize}
