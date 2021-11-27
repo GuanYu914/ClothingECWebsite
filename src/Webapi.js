@@ -103,3 +103,10 @@ export const getProductsByCategoryApi = async function (
     `${DevURL}/handleGetProducts.php?main=${mainCategory}&&sub=${subCategory}&&detailed=${detailedCategory}&&offset=${offset}&&limit=${limit}`
   ).catch(errorHandling);
 };
+
+// 拿 SingeProductPage 當前頁面產品
+export const getProductByIDApi = async function (pid) {
+  return await axios(`${DevURL}/handleGetProduct.php?id=${pid}`).catch(
+    errorHandling
+  );
+};
