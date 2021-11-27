@@ -14,6 +14,7 @@ import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
 import { UserContext, CartContext, WatchedProductsContext } from "./context";
+import ScrollToTop from "./components/scroll-to-top";
 
 function App() {
   // Call Web API 拿用戶資訊
@@ -126,6 +127,7 @@ function App() {
   return (
     <main>
       <Router>
+        <ScrollToTop />
         <Switch>
           <UserContext.Provider value={memorizedUser}>
             <CartContext.Provider value={memorizedCart}>
