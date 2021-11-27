@@ -13,7 +13,7 @@ import LoginPage from "./pages/login-page";
 import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
-import { UserContext, CartContext } from "./context";
+import { UserContext, CartContext, WatchedProductsContext } from "./context";
 
 function App() {
   // Call Web API 拿用戶資訊
@@ -111,10 +111,16 @@ function App() {
   ]);
   // 模擬購物車是空的時候
   // const [cartContext, setCartContext] = useState([]);
-  // 當 cartContext
+  // 當 cartContext 更新，才更新此數值
   const memorizedCart = useMemo(
     () => ({ cartContext, setCartContext }),
     [cartContext]
+  );
+  // 以前看過的產品
+  const [watchedProductsContext, setWatchedProductsContext] = useState([]);
+  const memorizeWatchProducts = useMemo(
+    () => ({ watchedProductsContext, setWatchedProductsContext }),
+    [watchedProductsContext]
   );
 
   return (
@@ -123,35 +129,41 @@ function App() {
         <Switch>
           <UserContext.Provider value={memorizedUser}>
             <CartContext.Provider value={memorizedCart}>
-              <Route exact path="/">
-                <HomePage />
-              </Route>
-              <Route path="/login">
-                {/* 防止已經是會員用戶透過 url 存取登入頁面 */}
-                {user !== null ? <Redirect to="/" /> : <LoginPage />}
-              </Route>
-              <Route path="/profile-edit">
-                {/* 防止非用戶透過 url 存取編輯個人資訊頁面 */}
-                {user === null ? <Redirect to="/login" /> : <ProfileEditPage />}
-              </Route>
-              <Route path="/favorite">
-                {/* 防止非用戶透過 url 存取收藏清單頁面 */}
-                {user === null ? <Redirect to="/login" /> : <FavoritePage />}
-              </Route>
-              <Route path="/register">
-                {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
-                {user !== null ? <Redirect to="/" /> : <RegisterPage />}
-              </Route>
-              {/* 使用 ? 代表可能沒有的欄位 */}
-              <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
-                <ProductsPage />
-              </Route>
-              <Route path="/product">
-                <SingleProductPage />
-              </Route>
-              <Route path="/cart">
-                <CartPage />
-              </Route>
+              <WatchedProductsContext.Provider value={memorizeWatchProducts}>
+                <Route exact path="/">
+                  <HomePage />
+                </Route>
+                <Route path="/login">
+                  {/* 防止已經是會員用戶透過 url 存取登入頁面 */}
+                  {user !== null ? <Redirect to="/" /> : <LoginPage />}
+                </Route>
+                <Route path="/profile-edit">
+                  {/* 防止非用戶透過 url 存取編輯個人資訊頁面 */}
+                  {user === null ? (
+                    <Redirect to="/login" />
+                  ) : (
+                    <ProfileEditPage />
+                  )}
+                </Route>
+                <Route path="/favorite">
+                  {/* 防止非用戶透過 url 存取收藏清單頁面 */}
+                  {user === null ? <Redirect to="/login" /> : <FavoritePage />}
+                </Route>
+                <Route path="/register">
+                  {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
+                  {user !== null ? <Redirect to="/" /> : <RegisterPage />}
+                </Route>
+                {/* 使用 ? 代表可能沒有的欄位 */}
+                <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
+                  <ProductsPage />
+                </Route>
+                <Route path="/product/:productID">
+                  <SingleProductPage />
+                </Route>
+                <Route path="/cart">
+                  <CartPage />
+                </Route>
+              </WatchedProductsContext.Provider>
             </CartContext.Provider>
           </UserContext.Provider>
         </Switch>
