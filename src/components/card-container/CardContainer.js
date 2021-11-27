@@ -92,6 +92,7 @@ const FavoriteFilledIcon = styled(heartFilled)`
 export default function CardContainer({
   items,
   handleLiked,
+  handleOnClick,
   horizontalAlign,
   marginTop,
   marginLeft,
@@ -105,11 +106,13 @@ export default function CardContainer({
           key={item.id}
           marginLeft={marginLeft}
           img={item.product.img}
+          data-id={item.id}
+          onClick={handleOnClick}
         >
-          <ItemHeader>
+          <ItemHeader data-id={item.id}>
             <ItemInfo>
-              <ItemName>{item.product.name}</ItemName>
-              <ItemPrice>NTD {item.product.price}</ItemPrice>
+              <ItemName data-id={item.id}>{item.product.name}</ItemName>
+              <ItemPrice data-id={item.id}>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
             {userContext !== null && (
               <>
@@ -147,8 +150,10 @@ export default function CardContainer({
       isLiked: boolean(required)
     }
 
-    handleLinked: function (required)
+    handleLiked: function (required)
     ps. toggle item 物件的 isLiked 屬性
+
+    handleOnClick: function (required)
 
     horizontalAlign: string (optional)
     ps. 決定 ItemsContainer 是否 justify-content: center
@@ -173,4 +178,5 @@ CardContainer.propTypes = {
   marginTop: PropTypes.string,
   marginLeft: PropTypes.string,
   handleLiked: PropTypes.func.isRequired,
+  handleOnClick: PropTypes.func.isRequired,
 };
