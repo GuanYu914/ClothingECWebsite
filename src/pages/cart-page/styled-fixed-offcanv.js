@@ -59,28 +59,26 @@ export const SharedTotalPriceShower = styled(TotalPriceShower)``;
 
 export default function FixedOffcanva({
   totalPrice,
-  checkedState,
-  checkedAllState,
+  singleCheckedState,
+  allCheckedState,
   handleToggleSelectAllProducts,
 }) {
   return (
     <Container>
       <SelectionHeader>
-        {!checkedAllState && (
-          <NoneCheckedAllButton onClick={handleToggleSelectAllProducts} />
-        )}
-        {checkedAllState && (
+        {allCheckedState ? (
           <CheckedAllButton onClick={handleToggleSelectAllProducts} />
+        ) : (
+          <NoneCheckedAllButton onClick={handleToggleSelectAllProducts} />
         )}
         全選
       </SelectionHeader>
       <TotalPriceShower>總金額：NTD {totalPrice}</TotalPriceShower>
-      {checkedState && (
+      {singleCheckedState ? (
         <CTAPrimaryButton width={"100%"} isRounded={true}>
           結帳去
         </CTAPrimaryButton>
-      )}
-      {!checkedState && (
+      ) : (
         <CTASecondaryButton width={"100%"} isRounded={true}>
           沒有物品可結帳
         </CTASecondaryButton>
@@ -91,7 +89,7 @@ export default function FixedOffcanva({
 
 FixedOffcanva.propTypes = {
   totalPrice: PropTypes.number.isRequired,
-  checkedState: PropTypes.bool.isRequired,
-  checkedAllState: PropTypes.bool.isRequired,
+  singleCheckedState: PropTypes.bool.isRequired,
+  allCheckedState: PropTypes.bool.isRequired,
   handleToggleSelectAllProducts: PropTypes.func.isRequired,
 };

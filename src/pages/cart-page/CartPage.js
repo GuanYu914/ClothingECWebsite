@@ -11,15 +11,10 @@ import FixedOffcanva, {
   SharedSelectionHeader,
   SharedTotalPriceShower,
 } from "./styled-fixed-offcanv";
-import {
-  CTAPrimaryButton,
-  CTASecondaryButton,
-  GhostPrimaryButton,
-} from "../../components/button";
+import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
 import { ReactComponent as trash } from "../../imgs/pages/cart-page/trash.svg";
 import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/square.svg";
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
-import { ReactComponent as questionSymbol } from "../../imgs/pages/cart-page/patch-question-fill.svg";
 import {
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
@@ -27,11 +22,9 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV1,
-  Z_INDEX_LV5,
-  Z_INDEX_LV6,
 } from "../../constant";
 import { CartContext } from "../../context";
-import { useTransition, animated } from "react-spring";
+import Modal from "../../components/modal";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -192,57 +185,6 @@ const CheckedAllButtonContainer = styled.div``;
 
 const CartProductsCheckedBlock = styled.div``;
 
-const MaskContainer = styled(animated.div).attrs(() => ({
-  className: "bg-mask",
-}))`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: ${Z_INDEX_LV5};
-`;
-
-const MergeSameProductReminderMsg = styled.div.attrs(() => ({
-  className: "bg-primary1",
-}))`
-  width: 18rem;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem;
-  z-index: ${Z_INDEX_LV6};
-  border-radius: 0.8rem;
-
-  ${BREAKPOINT_MOBILE} {
-    width: 18rem;
-  }
-
-  ${BREAKPOINT_PAD} {
-    width: 24rem;
-  }
-`;
-
-const MergeItemIcon = styled(questionSymbol).attrs(() => ({
-  className: "color-secondary3",
-}))`
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: 1rem;
-`;
-
-const ReminderMsg = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary3",
-}))``;
-
-const MergeButtons = styled.div`
-  margin-top: 1rem;
-  display: flex;
-`;
 export default function CartPage() {
   // 透過 cartContext 拿到目前購物車內容
   const { cartContext, setCartContext } = useContext(CartContext);
@@ -271,53 +213,24 @@ export default function CartPage() {
       selected: false,
     }))
   );
+  // 結帳金額
   const [checkedPrice, setCheckedPrice] = useState(0);
-  const [checkedState, setCheckedState] = useState(false);
-  const [checkedAllState, setCheckedAllState] = useState(false);
-  // 加入詢問合併產品訊息動畫
-  const showMergeProductMsgDuration = 500;
+  // 若選擇一個或多個購物產品則為 true，反之為 false
+  const [singleCheckedState, setSingleCheckedState] = useState(false);
+  // 若選擇購物車所有產品則為 true，反之為 false
+  const [allCheckedState, setAllCheckedState] = useState(false);
+  // 是否顯示合併產品訊息
   const [showMergeProductMsg, setShowMergeProductMsg] = useState(false);
-  const showMergeProductMsgAnimation = useTransition(showMergeProductMsg, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0, display: "none" },
-    config: {
-      duration: showMergeProductMsgDuration,
-    },
+  // 加入詢問合併產品訊息動畫
+  const [mergeProductMsgModalInfo, setMergeProductMsgModalInfo] = useState({
+    title: "貼心提醒",
+    content: "購物車內有相同規格的產品，是否合併呢？",
   });
+
   // 使用 useRef 暫存目前需要被合併的產品 id
   const mergeProductId = useRef(null);
-  useEffect(() => {
-    // 鎖定畫面不能滑動
-    const bodyEl = document.querySelector("body");
-    if (showMergeProductMsg) {
-      bodyEl.classList.add("body-frozen");
-    } else {
-      bodyEl.classList.remove("body-frozen");
-    }
-    // cartProducts 更新時，同步更新 CartContext 內容
-    setCartContext(
-      cartProducts.map((cartProduct) => ({
-        id: cartProduct.id,
-        pid: cartProduct.pid,
-        name: cartProduct.name,
-        urls: cartProduct.slides.slide.map((item) => ({
-          id: item.id,
-          src: item.src,
-          alt: item.alt,
-        })),
-        colors: cartProduct.picker.colors,
-        sizes: cartProduct.picker.sizes,
-        quantity: cartProduct.picker.quantity,
-        unitPrice: cartProduct.picker.unitPrice,
-      }))
-    );
-    // 更新總金額、商品選取狀態
-    setCheckedPrice(handleCalcAllSelectedProductPrice());
-    setCheckedState(handleCheckAllSelectedState().checked);
-    setCheckedAllState(handleCheckAllSelectedState().checkedAll);
-  }, [showMergeProductMsg, cartProducts, checkedState, checkedPrice]);
 
+  // 選擇產品顏色
   function handleSelectPickerColor(productId, colorId) {
     mergeProductId.current = checkSameProduct(productId, colorId, null);
     // 如果沒有找到相同的產品需要合併的
@@ -345,7 +258,7 @@ export default function CartPage() {
       setShowMergeProductMsg(true);
     }
   }
-
+  // 選擇產品尺寸
   function handleSelectPickerSize(productId, sizeId) {
     mergeProductId.current = checkSameProduct(productId, null, sizeId);
     // 如果沒有找到相同的產品需要合併的
@@ -373,7 +286,7 @@ export default function CartPage() {
       setShowMergeProductMsg(true);
     }
   }
-
+  // 增加產品數量
   function handleIncreaseQuantity(productId) {
     setCartProducts(
       cartProducts.map((cartProduct) =>
@@ -389,7 +302,7 @@ export default function CartPage() {
       )
     );
   }
-
+  // 減少產品數量
   function handleDecreaseQuantity(productId) {
     setCartProducts(
       cartProducts.map((cartProduct) =>
@@ -408,7 +321,7 @@ export default function CartPage() {
       )
     );
   }
-
+  // 選擇要結帳的產品
   function handleChangeProductSelectedState(productId) {
     setCartProducts(
       cartProducts.map((cartProduct) =>
@@ -418,17 +331,17 @@ export default function CartPage() {
       )
     );
   }
-
+  // 刪除購物車中的產品
   function handleDeleteSelectedProduct(productId) {
     setCartProducts(
       cartProducts.filter((cartProduct) => cartProduct.id !== productId)
     );
   }
-
+  // 檢查所有產品的選取狀態
   function handleCheckAllSelectedState() {
     let selectedCounter = 0;
-    let checkedAll = false;
-    let checked = false;
+    let allChecked = false;
+    let singleChecked = false;
     cartProducts.forEach((cartProduct) => {
       if (cartProduct.selected) {
         selectedCounter++;
@@ -436,24 +349,24 @@ export default function CartPage() {
     });
 
     if (selectedCounter === cartProducts.length) {
-      checked = true;
-      checkedAll = true;
+      singleChecked = true;
+      allChecked = true;
     }
     if (selectedCounter === 0) {
-      checkedAll = false;
-      checked = false;
+      singleChecked = false;
+      allChecked = false;
     }
     if (selectedCounter >= 1 && selectedCounter !== cartProducts.length) {
-      checkedAll = false;
-      checked = true;
+      singleChecked = true;
+      allChecked = false;
     }
 
     return {
-      checked,
-      checkedAll,
+      singleChecked,
+      allChecked,
     };
   }
-
+  // 計算所有選取產品的總價格
   function handleCalcAllSelectedProductPrice() {
     let checkedPrice = 0;
     cartProducts.forEach((cartProduct) => {
@@ -466,7 +379,7 @@ export default function CartPage() {
   }
   // 點選 "全選" 按鈕事件
   function handleToggleSelectAllProducts() {
-    const flagCheckedAll = handleCheckAllSelectedState().checkedAll;
+    const flagCheckedAll = handleCheckAllSelectedState().allChecked;
     setCartProducts(
       cartProducts.map((cartProduct) => ({
         ...cartProduct,
@@ -474,11 +387,9 @@ export default function CartPage() {
       }))
     );
   }
-
   // 合併相同規格的產品 => 顏色跟尺寸必須一樣
   // mergeParent 代表合併那方，mergeChild 代表被合併那方
   function handleMergeSameProduct() {
-    console.log(mergeProductId.current);
     const { mergeParent, mergeChild } = mergeProductId.current;
     let priceOfChild = cartProducts.filter(
       (product) => product.id === mergeChild
@@ -557,6 +468,32 @@ export default function CartPage() {
     return undefined;
   }
 
+  // cartProducts 更新時，同步更新 CartContext 內容
+  useEffect(() => {
+    setCartContext(
+      cartProducts.map((cartProduct) => ({
+        id: cartProduct.id,
+        pid: cartProduct.pid,
+        name: cartProduct.name,
+        urls: cartProduct.slides.slide.map((item) => ({
+          id: item.id,
+          src: item.src,
+          alt: item.alt,
+        })),
+        colors: cartProduct.picker.colors,
+        sizes: cartProduct.picker.sizes,
+        quantity: cartProduct.picker.quantity,
+        unitPrice: cartProduct.picker.unitPrice,
+      }))
+    );
+  }, [cartProducts]);
+  // cartProducts 更新時，更新總金額、商品選取狀態
+  useEffect(() => {
+    setCheckedPrice(handleCalcAllSelectedProductPrice());
+    setSingleCheckedState(handleCheckAllSelectedState().singleChecked);
+    setAllCheckedState(handleCheckAllSelectedState().allChecked);
+  }, [cartProducts]);
+
   return (
     <PageContainer>
       <Header />
@@ -601,8 +538,8 @@ export default function CartPage() {
           ))}
           <FixedOffcanva
             totalPrice={checkedPrice}
-            checkedState={checkedState}
-            checkedAllState={checkedAllState}
+            singleCheckedState={singleCheckedState}
+            allCheckedState={allCheckedState}
             handleToggleSelectAllProducts={handleToggleSelectAllProducts}
           />
         </CartProductsForMobile>
@@ -650,15 +587,14 @@ export default function CartPage() {
           <CartProductsCheckedBlock>
             <StyledSharedSelectionHeader>
               <CheckedAllButtonContainer>
-                {!checkedAllState && (
-                  <SharedNoneCheckedButton
+                {allCheckedState ? (
+                  <SharedCheckedAllButton
                     onClick={() => {
                       handleToggleSelectAllProducts();
                     }}
                   />
-                )}
-                {checkedAllState && (
-                  <SharedCheckedAllButton
+                ) : (
+                  <SharedNoneCheckedButton
                     onClick={() => {
                       handleToggleSelectAllProducts();
                     }}
@@ -670,7 +606,7 @@ export default function CartPage() {
                 總金額：NTD {checkedPrice}
               </StyledSharedTotalPriceShower>
             </StyledSharedSelectionHeader>
-            {checkedState && (
+            {singleCheckedState ? (
               <CTAPrimaryButton
                 margin={"0 0 0 auto"}
                 width={"16rem"}
@@ -678,8 +614,7 @@ export default function CartPage() {
               >
                 結帳去
               </CTAPrimaryButton>
-            )}
-            {!checkedState && (
+            ) : (
               <CTASecondaryButton
                 margin={"0 0 0 auto"}
                 width={"16rem"}
@@ -692,37 +627,14 @@ export default function CartPage() {
         </CartProductsForPad>
       </ContentContainer>
       {/* 這是用來提醒用戶是否要合併相同產品的訊息 */}
-      {showMergeProductMsgAnimation(
-        (props, item) =>
-          item && (
-            <MaskContainer
-              style={props}
-              onClick={() => {
-                setShowMergeProductMsg(false);
-              }}
-            >
-              <MergeSameProductReminderMsg>
-                <MergeItemIcon />
-                <ReminderMsg>
-                  購物車內有相同規格的產品，是否合併呢？
-                </ReminderMsg>
-                <MergeButtons>
-                  <CTAPrimaryButton onClick={handleMergeSameProduct}>
-                    確定
-                  </CTAPrimaryButton>
-                  <GhostPrimaryButton
-                    border="0"
-                    isRounded={true}
-                    onClick={() => {
-                      setShowMergeProductMsg(false);
-                    }}
-                  >
-                    取消
-                  </GhostPrimaryButton>
-                </MergeButtons>
-              </MergeSameProductReminderMsg>
-            </MaskContainer>
-          )
+      {showMergeProductMsg ? (
+        <Modal
+          modalInfo={mergeProductMsgModalInfo}
+          handleSubmitOp={handleMergeSameProduct}
+          handleCancelOp={() => setShowMergeProductMsg(false)}
+        />
+      ) : (
+        <></>
       )}
       <Footer marginBottom={"10rem"} />
     </PageContainer>
