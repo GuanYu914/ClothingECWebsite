@@ -15,6 +15,7 @@ import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
 import { ReactComponent as trash } from "../../imgs/pages/cart-page/trash.svg";
 import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/square.svg";
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
+import { ReactComponent as linkIcon } from "../../imgs/pages/cart-page/link-45deg.svg";
 import {
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
@@ -25,6 +26,7 @@ import {
 } from "../../constant";
 import { CartContext } from "../../context";
 import Modal from "../../components/modal";
+import { useHistory } from "react-router";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -169,7 +171,7 @@ const ProductInfo = styled.div`
   margin-left: 0.6rem;
 `;
 
-const CartProductContainer = styled.div`
+const CartProductFlexContainer = styled.div`
   margin-bottom: 4rem;
 `;
 
@@ -185,17 +187,40 @@ const CheckedAllButtonContainer = styled.div``;
 
 const CartProductsCheckedBlock = styled.div``;
 
+const ProductButtons = styled.div``;
+
+const LinkButton = styled(linkIcon)`
+  width: 2.4rem;
+  height: 2.4rem;
+  cursor: pointer;
+  margin-right: 1rem;
+`;
+
 export default function CartPage() {
+  // 透過 react router hook 換頁
+  const history = useHistory();
   // 透過 cartContext 拿到目前購物車內容
   const { cartContext, setCartContext } = useContext(CartContext);
+  // pid 不能當作 id 使用，因為合併產品時需要
   const [cartProducts, setCartProducts] = useState(
     cartContext.map((product) => ({
       id: product.id,
       pid: product.pid,
       name: product.name,
-      slides: {
+      slidesForMobile: {
         frame: {
-          maxHeight: "22rem",
+          maxHeight: "30rem",
+          borderRadius: "2rem",
+        },
+        slide: product.urls.map((url) => ({
+          id: url.id,
+          src: url.src,
+          alt: url.alt,
+        })),
+      },
+      slidesForPad: {
+        frame: {
+          maxHeight: "40rem",
           borderRadius: "2rem",
         },
         slide: product.urls.map((url) => ({
@@ -467,6 +492,10 @@ export default function CartPage() {
     }
     return undefined;
   }
+  // 導引到產品相關頁面
+  function handleRedirectToProductPage(pid) {
+    history.push(`/product/${pid}`);
+  }
 
   // cartProducts 更新時，同步更新 CartContext 內容
   useEffect(() => {
@@ -475,7 +504,8 @@ export default function CartPage() {
         id: cartProduct.id,
         pid: cartProduct.pid,
         name: cartProduct.name,
-        urls: cartProduct.slides.slide.map((item) => ({
+        // slidesForMobile 跟 slidesForPad 的 slide 都是一樣，則一傳入即可
+        urls: cartProduct.slidesForMobile.slide.map((item) => ({
           id: item.id,
           src: item.src,
           alt: item.alt,
@@ -516,14 +546,21 @@ export default function CartPage() {
                   }}
                 />
               )}
-              <BSCarousel slides={cartProduct.slides} />
+              <BSCarousel slides={cartProduct.slidesForMobile} />
               <ProductHeader>
                 <ProductName>{cartProduct.name}</ProductName>
-                <ProductDeleteButton
-                  onClick={() => {
-                    handleDeleteSelectedProduct(cartProduct.id);
-                  }}
-                />
+                <ProductButtons>
+                  <LinkButton
+                    onClick={() => {
+                      handleRedirectToProductPage(cartProduct.pid);
+                    }}
+                  />
+                  <ProductDeleteButton
+                    onClick={() => {
+                      handleDeleteSelectedProduct(cartProduct.id);
+                    }}
+                  />
+                </ProductButtons>
               </ProductHeader>
               <CartPicker
                 picker={cartProduct.picker}
@@ -545,7 +582,7 @@ export default function CartPage() {
         </CartProductsForMobile>
         <CartProductsForPad>
           {cartProducts.map((cartProduct) => (
-            <CartProductContainer key={cartProduct.id}>
+            <CartProductFlexContainer key={cartProduct.id}>
               <CartProduct key={cartProduct.id}>
                 {!cartProduct.selected && (
                   <NoneCheckedButton
@@ -561,15 +598,22 @@ export default function CartPage() {
                     }}
                   />
                 )}
-                <BSCarousel slides={cartProduct.slides} />
+                <BSCarousel slides={cartProduct.slidesForPad} />
                 <ProductInfo>
                   <ProductHeader>
                     <ProductName>{cartProduct.name}</ProductName>
-                    <ProductDeleteButton
-                      onClick={() => {
-                        handleDeleteSelectedProduct(cartProduct.id);
-                      }}
-                    />
+                    <ProductButtons>
+                      <LinkButton
+                        onClick={() => {
+                          handleRedirectToProductPage(cartProduct.pid);
+                        }}
+                      />
+                      <ProductDeleteButton
+                        onClick={() => {
+                          handleDeleteSelectedProduct(cartProduct.id);
+                        }}
+                      />
+                    </ProductButtons>
                   </ProductHeader>
                   <CartPicker
                     picker={cartProduct.picker}
@@ -582,7 +626,7 @@ export default function CartPage() {
                 </ProductInfo>
               </CartProduct>
               <ProductUnderline></ProductUnderline>
-            </CartProductContainer>
+            </CartProductFlexContainer>
           ))}
           <CartProductsCheckedBlock>
             <StyledSharedSelectionHeader>
