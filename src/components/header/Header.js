@@ -3,7 +3,7 @@ import { ReactComponent as profile } from "../../imgs/components/header/person-c
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
 import DropDown from "../../components/dropdown/DropDown";
 import Offcanva from "../offcanva";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 import styled from "styled-components/macro";
 import {
   BREAKPOINT_LAPTOP,
@@ -118,6 +118,7 @@ const NavForPad = styled.div`
 `;
 
 export default function Header() {
+  const history = useHistory();
   // 透過 Context 拿到當前用戶資料
   const userContext = useContext(UserContext);
   // 透過 Context 拿到當前購物袋資訊
@@ -139,7 +140,7 @@ export default function Header() {
   });
   const [dropDownForCart, setDropDownForCart] = useState({
     width: cartContext.length ? "fit-content" : "20rem",
-    height: cartContext.length ? "24rem" : "fit-content",
+    height: cartContext.length >= 4 ? "24rem" : "fit-content",
     useForCart: true,
     products: cartContext.map((product) => ({
       id: product.id,
@@ -174,7 +175,7 @@ export default function Header() {
     // 如果 cartContext 有更新的話，則更新購物車 dropdown 元件
     setDropDownForCart({
       width: cartContext.length ? "fit-content" : "20rem",
-      height: cartContext.length ? "24rem" : "fit-content",
+      height: cartContext.length >= 4 ? "24rem" : "fit-content",
       useForCart: true,
       products: cartContext.map((product) => ({
         id: product.id,
@@ -189,9 +190,11 @@ export default function Header() {
   }, [cartContext]);
   return (
     <NavBarContainer>
-      <Link to="/">
-        <BrandLogo />
-      </Link>
+      <BrandLogo
+        onClick={() => {
+          history.push("/");
+        }}
+      />
       <NavForMobile>
         <Offcanva offcanvaInfo={offcanvaInfo} />
       </NavForMobile>
