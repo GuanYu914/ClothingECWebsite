@@ -7,7 +7,7 @@ import {
   COLOR_SECONDARY3,
 } from "../../constant";
 import { CTAPrimaryButton } from "../button";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const DropDownContainer = styled.div`
   display: inline-block;
@@ -47,6 +47,12 @@ const DropDownContent = styled.div.attrs(() => ({
     background-color: ${BG_PRIMARY1};
     transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
   }
+`;
+
+const LinkName = styled.a.attrs(() => ({
+  className: "fs-h3",
+}))`
+  cursor: pointer;
 `;
 
 const OptionName = styled.h3.attrs(() => ({
@@ -131,9 +137,14 @@ export default function DropDown({
       {dropDownInfo.useForLinks && (
         <DropDownContent width={dropDownInfo.width}>
           {dropDownInfo.options.map((option) => (
-            <Link key={option.id} to={option.url}>
+            <LinkName
+              key={option.id}
+              onClick={() => {
+                history.push(`${option.url}`);
+              }}
+            >
               {option.name}
-            </Link>
+            </LinkName>
           ))}
         </DropDownContent>
       )}
