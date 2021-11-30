@@ -248,6 +248,7 @@ export default function CartPage() {
   const [showMergeProductMsg, setShowMergeProductMsg] = useState(false);
   // 加入詢問合併產品訊息動畫
   const [mergeProductMsgModalInfo, setMergeProductMsgModalInfo] = useState({
+    selectionMode: true,
     title: "貼心提醒",
     content: "購物車內有相同規格的產品，是否合併呢？",
   });

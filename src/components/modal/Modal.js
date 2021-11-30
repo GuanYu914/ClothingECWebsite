@@ -92,12 +92,21 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
       {showModalMsgAnimation(
         (props, item) =>
           item && (
-            <MaskContainer style={props}>
+            <MaskContainer
+              style={props}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCancelOp();
+                setShowModalMsg(false);
+              }}
+            >
               <ModalContainer>
                 <ModalHeader>
                   <ModalTitle>{modalInfo.title}</ModalTitle>
                   <CloseButton
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
+
                       handleCancelOp();
                       setShowModalMsg(false);
                     }}
@@ -105,18 +114,42 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
                 </ModalHeader>
                 <ModalBody>{modalInfo.content}</ModalBody>
                 <ModalButtons>
-                  <CTAPrimaryButton width={"50%"} onClick={handleSubmitOp}>
-                    確定
-                  </CTAPrimaryButton>
-                  <CTASecondaryButton
-                    width={"50%"}
-                    onClick={() => {
-                      handleCancelOp();
-                      setShowModalMsg(false);
-                    }}
-                  >
-                    我不要
-                  </CTASecondaryButton>
+                  {modalInfo.selectionMode ? (
+                    <>
+                      <CTAPrimaryButton
+                        width={"50%"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSubmitOp();
+                        }}
+                      >
+                        確定
+                      </CTAPrimaryButton>
+                      <CTASecondaryButton
+                        width={"50%"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelOp();
+                          setShowModalMsg(false);
+                        }}
+                      >
+                        我不要
+                      </CTASecondaryButton>
+                    </>
+                  ) : (
+                    <>
+                      <CTAPrimaryButton
+                        width={"100%"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSubmitOp();
+                          setShowModalMsg(false);
+                        }}
+                      >
+                        我知道了
+                      </CTAPrimaryButton>
+                    </>
+                  )}
                 </ModalButtons>
               </ModalContainer>
             </MaskContainer>
@@ -128,8 +161,9 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
 
 /*  props 參數
     modalInfo: {
-      title:    string (required)
-      content:  string (required)
+      selectionMode:  boolean (required) 啟用多個按鈕樣式
+      title:          string  (required)
+      content:        string  (required)
     },
     handleSubmitOp: function (required)
     handleCancelOp: function (required)
@@ -137,6 +171,7 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
 
 Modal.propTypes = {
   modalInfo: PropTypes.shape({
+    selectionMode: PropTypes.bool.isRequired,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
   }),
