@@ -98,7 +98,7 @@ export default function CardContainer({
   marginLeft,
 }) {
   // 透過 UserContext 拿到用戶資訊
-  const userContext = useContext(UserContext);
+  const { user } = useContext(UserContext);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
@@ -114,7 +114,7 @@ export default function CardContainer({
               <ItemName data-id={item.id}>{item.product.name}</ItemName>
               <ItemPrice data-id={item.id}>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {userContext !== null && (
+            {user !== null && (
               <>
                 {item.isLiked && (
                   <FavoriteFilledIcon

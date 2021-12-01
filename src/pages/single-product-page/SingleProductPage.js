@@ -213,7 +213,7 @@ export default function SingleProductPage() {
   // 透過此 hook 換頁
   const history = useHistory();
   // 透過 UserContext 拿到用戶資訊
-  const userContext = useContext(UserContext);
+  const user = useContext(UserContext);
   // 透過 CartContext 拿到購物車資訊
   const { cartContext, setCartContext } = useContext(CartContext);
   // 透過 WatchedProductContext 拿到近期瀏覽的商品
@@ -536,7 +536,7 @@ export default function SingleProductPage() {
               <BSCarousel slides={slidesForMobile} />
               <ProductInfoContainer>
                 <ProductName>女版襯衫</ProductName>
-                {userContext !== null && (
+                {user !== null && (
                   <>
                     {isLiked ? (
                       <FavoriteFilledIcon onClick={handleAddToLikedItems} />
@@ -575,7 +575,7 @@ export default function SingleProductPage() {
               <ProductInfoContainer>
                 <ProductHeaderContainer>
                   <ProductName>{productInfo.name}</ProductName>
-                  {userContext !== null && (
+                  {user !== null && (
                     <>
                       {isLiked && (
                         <FavoriteFilledIcon onClick={handleAddToLikedItems} />

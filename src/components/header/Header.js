@@ -120,14 +120,14 @@ const NavForPad = styled.div`
 export default function Header() {
   const history = useHistory();
   // 透過 Context 拿到當前用戶資料
-  const userContext = useContext(UserContext);
+  const { user } = useContext(UserContext);
   // 透過 Context 拿到當前購物袋資訊
   const { cartContext, setCartContext } = useContext(CartContext);
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
     useForLinks: true,
     options:
-      userContext === null
+      user === null
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -153,7 +153,7 @@ export default function Header() {
   });
   const [offcanvaInfo, setOffcanvaInfo] = useState({
     links:
-      userContext === null
+      user === null
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -167,8 +167,8 @@ export default function Header() {
           ],
     displayUserInfo: true,
     user: {
-      isLogin: userContext === null ? false : true,
-      name: userContext === null ? "訪客" : userContext.nickname,
+      isLogin: user === null ? false : true,
+      name: user === null ? "訪客" : user.nickname,
     },
   });
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function Header() {
             <ProfileContainer>
               <ProfileIcon />
               <UserNickname>
-                {userContext === null ? "訪客" : userContext.nickname}
+                {user === null ? "訪客" : user.nickname}
               </UserNickname>
             </ProfileContainer>
           </DropDown>
