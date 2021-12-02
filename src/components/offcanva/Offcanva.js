@@ -8,6 +8,8 @@ import {
   BG_SECONDARY3,
   COLOR_PRIMARY1,
   COLOR_SECONDARY1,
+  Z_INDEX_LV5,
+  Z_INDEX_LV6,
 } from "../../constant";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -26,7 +28,7 @@ const MaskContainer = styled(animated.div).attrs(() => ({
   className: "bg-mask",
 }))`
   position: fixed;
-  z-index: 5;
+  z-index: ${Z_INDEX_LV5};
   top: 0;
   right: 0;
   bottom: 0;
@@ -39,7 +41,7 @@ const OffcanvaBody = styled(animated.div).attrs(() => ({
   height: 100vh;
   width: fit-content;
   position: absolute;
-  z-index: 6;
+  z-index: ${Z_INDEX_LV6};
   top: 0;
   right: 0;
   background-color: ${BG_SECONDARY3};
