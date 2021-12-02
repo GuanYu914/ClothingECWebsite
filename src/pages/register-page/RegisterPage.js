@@ -16,7 +16,10 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
 } from "../../constant";
-import { useEffect } from "react";
+import Modal from "../../components/modal";
+import { sendUserRegisterDataApi, getSessionDataApi } from "../../Webapi";
+import { useContext } from "react";
+import { UserContext } from "../../context";
 
 const PageContainer = styled.div.attrs(() => ({
   className: "bg-primary1",
@@ -92,6 +95,9 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function RegisterPage() {
+  // 從 context 拿到設定用戶的 setter function
+  const { setUser } = useContext(UserContext);
+  // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
       id: 1,
@@ -134,11 +140,35 @@ export default function RegisterPage() {
       isValid: false,
     },
   ]);
+  // 是否要顯示相同帳號 modal 提示訊息
+  const [showModalForSameAccount, setShowModalForSameAccount] = useState(false);
+  // 資料庫有相同帳號存在時的 modal 提示資訊
+  const [modalInfoForSameAccount] = useState({
+    selectionMode: false,
+    title: "帳戶已被使用囉",
+    content: "麻煩您換組帳號試試看",
+  });
+  // 是否要顯示註冊成功 modal 提示訊息
+  const [
+    showModalForRegisterSuccessfully,
+    setShowModalForRegisterSuccessfully,
+  ] = useState(false);
+  // 註冊成功 modal 提示資訊
+  const [modalInfoForRegisterSuccessfully] = useState({
+    selectionMode: false,
+    title: "註冊成功囉",
+    content: "關閉後將自動登入，並返回首頁",
+  });
+  // 是否要顯示 api 錯誤 modal 提示訊息
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 錯誤 modal 提示資訊
+  const [modalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
-
+  // 處理輸入框改變事件
   function handleInputChange(id, e) {
     setForm(
       form.map((formData) =>
@@ -148,7 +178,7 @@ export default function RegisterPage() {
       )
     );
   }
-
+  // 處理註冊按鈕，送出資料事件
   function handleSubmit() {
     // check all field's validation state
     let postData = {
@@ -178,12 +208,14 @@ export default function RegisterPage() {
       isValidPostData = true;
     }
     if (isValidPostData) {
-      console.log("送出", postData);
-    } else {
-      console.log("資料有誤");
+      sendUserRegisterDataFromApi(
+        postData.nickname,
+        postData.account,
+        postData.password
+      );
     }
   }
-
+  // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
   function setFieldState(fieldName, helperMsg, helperColor, validationState) {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
@@ -199,7 +231,7 @@ export default function RegisterPage() {
       );
     });
   }
-
+  // 檢查每個輸入欄位的資料，有符合條件才給過
   function checkFieldValidation(fieldName, fieldValue) {
     if (fieldName === "暱稱") {
       if (fieldValue === "") {
@@ -266,9 +298,98 @@ export default function RegisterPage() {
       }
     }
   }
-
+  // 當用戶切換到其他欄位的觸發事件
   function handleFocusOut(fieldName, e) {
     checkFieldValidation(fieldName, e.target.value);
+  }
+  // 送出用戶的資訊到後端 API
+  function sendUserRegisterDataFromApi(nickname, account, password) {
+    sendUserRegisterDataApi(nickname, account, password)
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          if (json_data.msg === "detect same account") {
+            setShowModalForSameAccount(true);
+            return;
+          }
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          setShowModalForRegisterSuccessfully(true);
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情境: 資料庫有相同帳號
+  // 處理點選按鈕的事件
+  function handleSubmitOpForSameAccount() {
+    setShowModalForSameAccount(false);
+  }
+  // modal 顯示情境: 資料庫有相同帳號
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForSameAccount() {
+    setShowModalForSameAccount(false);
+  }
+  // modal 顯示情境: 註冊成功
+  // 處理點選按鈕的事件
+  function handleSubmitOpForRegisterSuccessfully() {
+    setShowModalForRegisterSuccessfully(false);
+    getSessionDataApi()
+      .then((resp) => {
+        const json_data = resp.data.data;
+        // 自動跳轉到首頁
+        setUser({
+          userId: json_data.id,
+          nickname: json_data.nickname,
+          account: json_data.account,
+          pass: json_data.password,
+        });
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情境: 註冊成功
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForRegisterSuccessfully() {
+    setShowModalForRegisterSuccessfully(false);
+    getSessionDataApi()
+      .then((resp) => {
+        const json_data = resp.data.data;
+        // 自動跳轉到首頁
+        setUser({
+          userId: json_data.id,
+          nickname: json_data.nickname,
+          account: json_data.account,
+        });
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情境: 發送 API 過程有異常
+  // 處理點選按鈕的事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: 發送 API 過程有異常
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
   }
 
   return (
@@ -301,6 +422,27 @@ export default function RegisterPage() {
             useForRegister={true}
           />
         </FormForPad>
+        {showModalForSameAccount && (
+          <Modal
+            modalInfo={modalInfoForSameAccount}
+            handleSubmitOp={handleSubmitOpForSameAccount}
+            handleCancelOp={handleCancelOpForSameAccount}
+          />
+        )}
+        {showModalForRegisterSuccessfully && (
+          <Modal
+            modalInfo={modalInfoForRegisterSuccessfully}
+            handleSubmitOp={handleSubmitOpForRegisterSuccessfully}
+            handleCancelOp={handleCancelOpForRegisterSuccessfully}
+          />
+        )}
+        {showModalForApiError && (
+          <Modal
+            modalInfo={modalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
       </ContentContainer>
       <Footer
         marginTop={"0"}
