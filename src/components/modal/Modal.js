@@ -63,6 +63,7 @@ const CloseButton = styled(closeIcon).attrs(() => ({
 }))`
   width: 1.4rem;
   height: 1.4rem;
+  cursor: pointer;
 `;
 
 const ModalBody = styled.h3.attrs(() => ({
@@ -92,21 +93,21 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
       {showModalMsgAnimation(
         (props, item) =>
           item && (
-            <MaskContainer
-              style={props}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleCancelOp();
-                setShowModalMsg(false);
-              }}
-            >
+            <>
+              <MaskContainer
+                style={props}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCancelOp();
+                  setShowModalMsg(false);
+                }}
+              ></MaskContainer>
               <ModalContainer>
                 <ModalHeader>
                   <ModalTitle>{modalInfo.title}</ModalTitle>
                   <CloseButton
                     onClick={(e) => {
                       e.stopPropagation();
-
                       handleCancelOp();
                       setShowModalMsg(false);
                     }}
@@ -152,7 +153,7 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
                   )}
                 </ModalButtons>
               </ModalContainer>
-            </MaskContainer>
+            </>
           )
       )}
     </Container>
