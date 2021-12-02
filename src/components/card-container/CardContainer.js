@@ -118,14 +118,16 @@ export default function CardContainer({
               <>
                 {item.isLiked && (
                   <FavoriteFilledIcon
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleLiked(item.id);
                     }}
                   />
                 )}
                 {!item.isLiked && (
                   <FavoriteIcon
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleLiked(item.id);
                     }}
                   />
