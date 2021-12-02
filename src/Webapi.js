@@ -130,9 +130,29 @@ export const sendUserRegisterDataApi = async function (
     .catch(errorHandling);
 };
 
+// 發送用戶登入資訊
+export const sendUserLoginDataApi = async function (account, password) {
+  return await axios
+    .post(
+      `${DevURL}/handleLogin.php`,
+      { account, password },
+      {
+        withCredentials: true,
+      }
+    )
+    .catch(errorHandling);
+};
+
 // 取得 session 資料
 export const getSessionDataApi = async function () {
   return await axios(`${DevURL}/getSession.php`, {
+    withCredentials: true,
+  }).catch(errorHandling);
+};
+
+// 登出 api
+export const LogoutApi = async function () {
+  return await axios(`${DevURL}/handleLogout.php`, {
     withCredentials: true,
   }).catch(errorHandling);
 };
