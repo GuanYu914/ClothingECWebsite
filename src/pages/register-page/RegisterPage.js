@@ -342,14 +342,19 @@ export default function RegisterPage() {
     setShowModalForRegisterSuccessfully(false);
     getSessionDataApi()
       .then((resp) => {
-        const json_data = resp.data.data;
-        // 自動跳轉到首頁
-        setUser({
-          userId: json_data.id,
-          nickname: json_data.nickname,
-          account: json_data.account,
-          pass: json_data.password,
-        });
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 自動跳轉到首頁
+          setUser({
+            userId: json_data.data.id,
+            nickname: json_data.data.nickname,
+            account: json_data.data.account,
+            pass: json_data.data.password,
+          });
+        }
       })
       .catch((e) => {
         console.log(
@@ -365,13 +370,19 @@ export default function RegisterPage() {
     setShowModalForRegisterSuccessfully(false);
     getSessionDataApi()
       .then((resp) => {
-        const json_data = resp.data.data;
-        // 自動跳轉到首頁
-        setUser({
-          userId: json_data.id,
-          nickname: json_data.nickname,
-          account: json_data.account,
-        });
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 自動跳轉到首頁
+          setUser({
+            userId: json_data.data.id,
+            nickname: json_data.data.nickname,
+            account: json_data.data.account,
+            pass: json_data.data.password,
+          });
+        }
       })
       .catch((e) => {
         console.log(
