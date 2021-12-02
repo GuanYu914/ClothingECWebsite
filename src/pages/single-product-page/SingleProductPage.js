@@ -213,7 +213,7 @@ export default function SingleProductPage() {
   // 透過此 hook 換頁
   const history = useHistory();
   // 透過 UserContext 拿到用戶資訊
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
   // 透過 CartContext 拿到購物車資訊
   const { cartContext, setCartContext } = useContext(CartContext);
   // 透過 WatchedProductContext 拿到近期瀏覽的商品
