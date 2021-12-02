@@ -10,6 +10,7 @@ import ProductsPage from "./pages/products-page";
 import SingleProductPage from "./pages/single-product-page";
 import CartPage from "./pages/cart-page";
 import LoginPage from "./pages/login-page";
+import LogoutPage from "./pages/logout-page";
 import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
@@ -18,100 +19,13 @@ import ScrollToTop from "./components/scroll-to-top";
 
 function App() {
   // Call Web API 拿用戶資訊
-  // const [user, setUser] = useState(null);
-  const [user, setUser] = useState({
-    userId: 12456,
-    nickname: "冠宇",
-    account: "Emory914",
-    pass: "Fish950914",
-  });
+  const [user, setUser] = useState(null);
   // 當 user 更新時，才更新此數值
   const memorizedUser = useMemo(() => {
-    return user;
+    return { user, setUser };
   }, [user]);
-  // 模擬購物車有產品的時候
-  const [cartContext, setCartContext] = useState([
-    {
-      id: 1,
-      pid: 2315,
-      name: "女版針織衫",
-      urls: [
-        { id: 1, src: "https://i.imgur.com/C7SYk0P.jpg", alt: "product_pic" },
-        { id: 2, src: "https://i.imgur.com/Dfav1Yk.jpg", alt: "product_pic" },
-      ],
-      colors: [
-        { id: 1, hexcode: "#ffce30", selected: false },
-        { id: 2, hexcode: "#e83845", selected: false },
-        { id: 3, hexcode: "#e389b9", selected: false },
-        { id: 4, hexcode: "#746ab0", selected: true },
-        { id: 5, hexcode: "#288ba8", selected: false },
-      ],
-      sizes: [
-        { id: 1, name: "XS", selected: false },
-        { id: 2, name: "S", selected: true },
-        { id: 3, name: "M", selected: false },
-        { id: 4, name: "L", selected: false },
-        { id: 5, name: "XL", selected: false },
-        { id: 6, name: "2L", selected: false },
-      ],
-      quantity: 1,
-      unitPrice: 490,
-    },
-    {
-      id: 2,
-      pid: 1574,
-      name: "男版針織衫",
-      urls: [
-        { id: 1, src: "https://i.imgur.com/C7SYk0P.jpg", alt: "product_pic" },
-        { id: 2, src: "https://i.imgur.com/Dfav1Yk.jpg", alt: "product_pic" },
-      ],
-      colors: [
-        { id: 1, hexcode: "#ffce30", selected: false },
-        { id: 2, hexcode: "#e83845", selected: false },
-        { id: 3, hexcode: "#e389b9", selected: false },
-        { id: 4, hexcode: "#746ab0", selected: false },
-        { id: 5, hexcode: "#288ba8", selected: true },
-      ],
-      sizes: [
-        { id: 1, name: "XS", selected: false },
-        { id: 2, name: "S", selected: false },
-        { id: 3, name: "M", selected: false },
-        { id: 4, name: "L", selected: false },
-        { id: 5, name: "XL", selected: false },
-        { id: 6, name: "2L", selected: true },
-      ],
-      quantity: 2,
-      unitPrice: 790,
-    },
-    {
-      id: 3,
-      pid: 5846,
-      name: "針織衫外套",
-      urls: [
-        { id: 1, src: "https://i.imgur.com/C7SYk0P.jpg", alt: "product_pic" },
-        { id: 2, src: "https://i.imgur.com/Dfav1Yk.jpg", alt: "product_pic" },
-      ],
-      colors: [
-        { id: 1, hexcode: "#ffce30", selected: false },
-        { id: 2, hexcode: "#e83845", selected: true },
-        { id: 3, hexcode: "#e389b9", selected: false },
-        { id: 4, hexcode: "#746ab0", selected: false },
-        { id: 5, hexcode: "#288ba8", selected: false },
-      ],
-      sizes: [
-        { id: 1, name: "XS", selected: false },
-        { id: 2, name: "S", selected: false },
-        { id: 3, name: "M", selected: false },
-        { id: 4, name: "L", selected: false },
-        { id: 5, name: "XL", selected: true },
-        { id: 6, name: "2L", selected: false },
-      ],
-      quantity: 4,
-      unitPrice: 1290,
-    },
-  ]);
   // 模擬購物車是空的時候
-  // const [cartContext, setCartContext] = useState([]);
+  const [cartContext, setCartContext] = useState([]);
   // 當 cartContext 更新，才更新此數值
   const memorizedCart = useMemo(
     () => ({ cartContext, setCartContext }),
@@ -154,6 +68,9 @@ function App() {
                 <Route path="/register">
                   {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
                   {user !== null ? <Redirect to="/" /> : <RegisterPage />}
+                </Route>
+                <Route path="/logout">
+                  <LogoutPage />
                 </Route>
                 {/* 使用 ? 代表可能沒有的欄位 */}
                 <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
