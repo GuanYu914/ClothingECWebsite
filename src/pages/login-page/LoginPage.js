@@ -15,7 +15,10 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
 } from "../../constant";
-import { useEffect } from "react";
+import { useContext } from "react";
+import { UserContext } from "../../context";
+import Modal from "../../components/modal";
+import { getSessionDataApi, sendUserLoginDataApi } from "../../Webapi";
 
 const PageContainer = styled.div.attrs(() => ({
   className: "bg-primary1",
@@ -91,6 +94,9 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function LoginPage() {
+  // 從 context 拿到設定用戶的 setter function
+  const { setUser } = useContext(UserContext);
+  // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
       id: 1,
@@ -109,11 +115,33 @@ export default function LoginPage() {
       isValid: false,
     },
   ]);
+  // 是否要顯示登入失敗 modal 提示訊息
+  const [showModalForLoginFailed, setShowModalForLoginFailed] = useState(false);
+  // 登入失敗 modal 提示資訊
+  const [modalInfoForLoginFailed] = useState({
+    selectionMode: false,
+    title: "帳號或密碼有誤",
+    content: "請更換其中一項並再試一次",
+  });
+  // 是否要顯示登入成功 modal 提示訊息
+  const [showModalForLoginSuccessfully, setShowModalForLoginSuccessfully] =
+    useState(false);
+  // 登入成功 modal 提示資訊
+  const [modalInfoForLoginSuccessfully] = useState({
+    selectionMode: false,
+    title: "登入成功",
+    content: "關閉後將自動登入，並返回首頁",
+  });
+  // 是否要顯示 api 錯誤 modal 提示訊息
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 錯誤 modal 提示資訊
+  const [modalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
-
+  // 處理輸入框改變事件
   function handleInputChange(id, e) {
     setForm(
       form.map((formData) =>
@@ -123,7 +151,7 @@ export default function LoginPage() {
       )
     );
   }
-
+  // 處理登入按鈕，送出資料事件
   function handleSubmit() {
     // check all field's validation state
     let postData = {
@@ -147,16 +175,14 @@ export default function LoginPage() {
     }
 
     if (isValidPostData) {
-      console.log("送出", postData);
-    } else {
-      console.log("資料有誤");
+      sendUserLoginDataFromApi(postData.account, postData.password);
     }
   }
-
+  // 當用戶切換到其他欄位觸發事件
   function handleFocusOut(fieldName, e) {
     checkFieldValidation(fieldName, e.target.value);
   }
-
+  // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
   function setFieldState(fieldName, helperMsg, helperColor, validationState) {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
@@ -172,7 +198,7 @@ export default function LoginPage() {
       );
     });
   }
-  // form field validation
+  // 檢查每個欄位的資料，有符合條件才給過
   function checkFieldValidation(fieldName, fieldValue) {
     if (fieldName === "帳號") {
       if (fieldValue === "") {
@@ -208,6 +234,106 @@ export default function LoginPage() {
       }
     }
   }
+  // 送出登入資料到後端 API
+  function sendUserLoginDataFromApi(account, password) {
+    sendUserLoginDataApi(account, password)
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          if (json_data.msg === "not founded in database") {
+            setShowModalForLoginFailed(true);
+            return;
+          }
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          setShowModalForLoginSuccessfully(true);
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情境: 登入失敗
+  // 處理點選按鈕事件
+  function handleSubmitOpForLoginFailed() {
+    setShowModalForLoginFailed(false);
+  }
+  // modal顯示情境: 登入失敗
+  // 處理點選按鈕之外事件
+  function handleCancelOpForLoginFailed() {
+    setShowModalForLoginFailed(false);
+  }
+  // modal 顯示情境: 登入成功
+  // 處理點選按鈕事件
+  function handleSubmitOpForLoginSuccessfully() {
+    setShowModalForLoginSuccessfully(false);
+    getSessionDataApi()
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 自動跳轉到首頁
+          setUser({
+            userId: json_data.data.id,
+            nickname: json_data.data.nickname,
+            account: json_data.data.account,
+            pass: json_data.data.password,
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情漸: 登入成功
+  // 處理點選按鈕以外事件
+  function handleCancelOpForLoginSuccessfully() {
+    setShowModalForLoginSuccessfully(false);
+    getSessionDataApi()
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 自動跳轉到首頁
+          setUser({
+            userId: json_data.data.id,
+            nickname: json_data.data.nickname,
+            account: json_data.data.account,
+            pass: json_data.data.password,
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
+  }
+  // modal 顯示情境: 發送 API 過程有異常
+  // 處理點選按鈕事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: 發送 API 過程中有異常
+  // 處理點選按鈕以外事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
+  }
 
   return (
     <PageContainer>
@@ -239,6 +365,27 @@ export default function LoginPage() {
             useForLogin={true}
           />
         </FormForPad>
+        {showModalForLoginFailed && (
+          <Modal
+            modalInfo={modalInfoForLoginFailed}
+            handleSubmitOp={handleSubmitOpForLoginFailed}
+            handleCancelOp={handleCancelOpForLoginFailed}
+          />
+        )}
+        {showModalForLoginSuccessfully && (
+          <Modal
+            modalInfo={modalInfoForLoginSuccessfully}
+            handleSubmitOp={handleSubmitOpForLoginSuccessfully}
+            handleCancelOp={handleCancelOpForLoginSuccessfully}
+          />
+        )}
+        {showModalForApiError && (
+          <Modal
+            modalInfo={modalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
       </ContentContainer>
       <Footer
         marginTop={"0"}
