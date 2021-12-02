@@ -12,7 +12,7 @@ import {
   Z_INDEX_LV6,
 } from "../../constant";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Container = styled.div``;
 
@@ -65,6 +65,7 @@ const OffcanvaLink = styled.h2.attrs(() => ({
   className: "fs-h2 color-secondary1",
 }))`
   padding: 0.4rem 0 0.4rem;
+  cursor: pointer;
 `;
 
 const CloseButton = styled(close)`
@@ -98,6 +99,7 @@ const ProfileIcon = styled(profile)`
 `;
 
 export default function Offcanva({ offcanvaInfo }) {
+  const history = useHistory();
   const [active, setActive] = useState(false);
   const maskContainerTransitionRef = useSpringRef();
   const offcanvaBodyTransitionRef = useSpringRef();
@@ -179,9 +181,14 @@ export default function Offcanva({ offcanvaInfo }) {
                   }}
                 />
                 {offcanvaInfo.links.map((link) => (
-                  <Link key={link.id} to={link.url}>
-                    <OffcanvaLink>{link.name}</OffcanvaLink>
-                  </Link>
+                  <OffcanvaLink
+                    key={link.id}
+                    onClick={() => {
+                      history.push(`${link.url}`);
+                    }}
+                  >
+                    {link.name}
+                  </OffcanvaLink>
                 ))}
               </OffcanvaBody>
             )
