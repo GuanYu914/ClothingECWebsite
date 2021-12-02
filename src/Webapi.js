@@ -110,3 +110,29 @@ export const getProductByIDApi = async function (pid) {
     errorHandling
   );
 };
+
+// 發送用戶註冊資訊
+export const sendUserRegisterDataApi = async function (
+  nickname,
+  account,
+  password
+) {
+  return await axios
+    .post(
+      `${DevURL}/handleRegister.php`,
+      {
+        nickname,
+        account,
+        password,
+      },
+      { withCredentials: true }
+    )
+    .catch(errorHandling);
+};
+
+// 取得 session 資料
+export const getSessionDataApi = async function () {
+  return await axios(`${DevURL}/getSession.php`, {
+    withCredentials: true,
+  }).catch(errorHandling);
+};
