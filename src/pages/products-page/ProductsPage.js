@@ -23,6 +23,7 @@ import { getAllCategoriesApi, getProductsByCategoryApi } from "../../Webapi";
 import DropDown from "../../components/dropdown";
 import Loader from "../../components/loader";
 import { useParams, useHistory } from "react-router";
+import Modal from "../../components/modal";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -263,29 +264,48 @@ export default function ProductsPage() {
     useState(false);
   // 使否要顯示載入時動畫
   const [isLoadingMoreProducts, setIsLoadingMoreProducts] = useState(false);
+  // 是否要顯示 api 發送錯誤的 modal
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 發送錯誤的 modal 資訊
+  const [ModalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
+
   // 拿到所有分類清單
   function getAllCategoriesFromApi() {
-    getAllCategoriesApi().then((resp) => {
-      if (resp.data.isSuccessful === "failed") {
-        console.log("server side error, check response...", resp.data);
-        return;
-      }
-      const json_data = resp.data.data;
-      // 傳入 function 拿到最新的 state
-      setProductsInfo((prevProductsInfo) => {
-        return {
-          categoryPath: prevProductsInfo.categoryPath,
-          productsList: prevProductsInfo.productsList,
-          categoriesList: json_data.map((el) => ({
-            id: el.id,
-            name: el.name,
-            category: JSON.parse(el.category),
-            isSelected: el.name === mainCategoryFromRouter ? true : false,
-          })),
-        };
+    getAllCategoriesApi()
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 傳入 function 拿到最新的 state
+          setProductsInfo((prevProductsInfo) => {
+            return {
+              categoryPath: prevProductsInfo.categoryPath,
+              productsList: prevProductsInfo.productsList,
+              categoriesList: json_data.data.map((el) => ({
+                id: el.id,
+                name: el.name,
+                category: JSON.parse(el.category),
+                isSelected: el.name === mainCategoryFromRouter ? true : false,
+              })),
+            };
+          });
+          setIsLoadingCategories(false);
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
-      setIsLoadingCategories(false);
-    });
   }
   // 透過分類路徑拿到相對應得產品清單，並設定相關狀態
   function getProductsByCategoryFromApi(
@@ -296,14 +316,6 @@ export default function ProductsPage() {
     limit,
     flagLoadMore = false
   ) {
-    // 只要載入部分產品清單
-    if (flagLoadMore) {
-      setIsLoadingProductsBlock(false);
-      setIsLoadingMoreProducts(true);
-    } else {
-      setIsLoadingProductsBlock(true);
-      setIsLoadingMoreProducts(false);
-    }
     // 先隱藏 filter
     setShowFilter(false);
     getProductsByCategoryApi(
@@ -312,52 +324,66 @@ export default function ProductsPage() {
       detailedCategory,
       offset,
       limit
-    ).then((resp) => {
-      if (resp.data.isSuccessful === "failed") {
-        console.log("server side error, check response...", resp.data);
-        return;
-      }
-      const json_data = resp.data.data;
-      // 如果資料總筆數小於等於目前 indicator 的限制筆數，則資料已讀取完畢，反之相反
-      if (resp.data.totals <= productsListIndicator.limit) {
-        setDisableProductsListButton(true);
-      } else {
-        setDisableProductsListButton(false);
-      }
-      // 儲存未被 filter 套用的產品清單，便於 reset 時套用
-      setNoneFilteredProducts(
-        json_data.map((el) => ({
-          id: el.id,
-          product: {
-            name: el.name,
-            price: `${el.price}`,
-            img: JSON.parse(el.imgs)[0].src,
-          },
-          isLiked: false,
-        }))
-      );
-      // 傳入 function 拿到最新的 state
-      setProductsInfo((prevProductsInfo) => {
-        return {
-          categoryPath: prevProductsInfo.categoryPath,
-          categoriesList: prevProductsInfo.categoriesList,
-          totalProductsNumber: resp.data.totals,
-          productsList: json_data.map((el) => ({
-            id: el.id,
-            product: {
-              name: el.name,
-              price: `${el.price}`,
-              img: JSON.parse(el.imgs)[0].src,
-            },
-            isLiked: false,
-          })),
-        };
+    )
+      .then((resp) => {
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          // 儲存未被 filter 套用的產品清單，便於 reset 時套用
+          setNoneFilteredProducts(
+            json_data.data.map((el) => ({
+              id: el.id,
+              product: {
+                name: el.name,
+                price: `${el.price}`,
+                img: JSON.parse(el.imgs)[0].src,
+              },
+              isLiked: false,
+            }))
+          );
+          // 傳入 function 拿到最新的 state
+          setProductsInfo((prevProductsInfo) => {
+            return {
+              categoryPath: prevProductsInfo.categoryPath,
+              categoriesList: prevProductsInfo.categoriesList,
+              totalProductsNumber: resp.data.totals,
+              productsList: json_data.data.map((el) => ({
+                id: el.id,
+                product: {
+                  name: el.name,
+                  price: `${el.price}`,
+                  img: JSON.parse(el.imgs)[0].src,
+                },
+                isLiked: false,
+              })),
+            };
+          });
+          // 如果資料總筆數小於等於目前 indicator 的限制筆數，則資料已讀取完畢，反之相反
+          if (json_data.totals <= productsListIndicator.limit) {
+            setDisableProductsListButton(true);
+          } else {
+            setDisableProductsListButton(false);
+          }
+          // 顯示 filter，並隱藏相關載入動畫
+          setShowFilter(true);
+          // 根據讀取的情境，取消該讀取動畫
+          if (flagLoadMore) {
+            setIsLoadingMoreProducts(false);
+          } else {
+            setIsLoadingProductsBlock(false);
+          }
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
-      // 顯示 filter，並隱藏相關載入動畫
-      setShowFilter(true);
-      setIsLoadingProductsBlock(false);
-      setIsLoadingMoreProducts(false);
-    });
   }
   // 從 react router 拿相對應的路徑資訊
   function getCurrentCategoryPathFromRouter() {
@@ -425,6 +451,8 @@ export default function ProductsPage() {
     const categoryFromDOM = getSubCategoryPath(e);
     const categoryFromDOMArray = categoryFromDOM.split("/");
     history.push(`/products/${categoryFromDOM}`);
+    // 顯示整個產品清單讀取動畫
+    setIsLoadingProductsBlock(true);
     // 如果與當前選擇的分類不符，則重設 ProductsListIndicator，
     // 並根據 indicator 的參數重新讀取產品清單
     if (categoryFromDOM !== categoryFromRouter) {
@@ -450,6 +478,8 @@ export default function ProductsPage() {
     const categoryFromDOM = getDetailedCategoryPath(e);
     const categoryFromDOMArray = categoryFromDOM.split("/");
     history.push(`/products/${categoryFromDOM}`);
+    // 顯示整個產品清單讀取動畫
+    setIsLoadingProductsBlock(true);
     // 如果與當前選擇的分類不符，則重設 ProductsListIndicator
     // 並根據 indicator 的參數重新讀取產品清單
     if (categoryFromRouter !== categoryFromDOM) {
@@ -563,6 +593,8 @@ export default function ProductsPage() {
   }
   // 點擊載入更多事件
   function handleGetMoreProducts() {
+    // 顯示部分產品讀取動畫
+    setIsLoadingMoreProducts(true);
     setProductsListIndicator({
       offset: productsListIndicator.offset,
       limit: productsListIndicator.limit + PRODUCTS_QUERY_LIMIT,
@@ -572,22 +604,28 @@ export default function ProductsPage() {
   function handleScrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
-  //
+  // 導引到相對應的產品頁面
   function handleRedirectToProductPage(e) {
     const id = e.target.getAttribute("data-id");
     history.push(`/product/${id}`);
   }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕之外事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
+  }
+
   // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單
   useEffect(() => {
     getCurrentCategoryPathFromRouter();
     getAllCategoriesFromApi();
-    getProductsByCategoryFromApi(
-      mainCategoryFromRouter,
-      subCategoryFromRouter,
-      detailedCategoryFromRouter,
-      productsListIndicator.offset,
-      productsListIndicator.limit
-    );
+    // 顯示整個產品清單讀取動畫
+    setIsLoadingProductsBlock(true);
   }, []);
   // 如果分類路徑有變，則更新顯示路徑
   useEffect(() => {
@@ -600,15 +638,30 @@ export default function ProductsPage() {
     }
   }, [showFilter]);
   // 根據 indicator 讀取更多產品
+  // 因為 indicator 會被初始化導致開始抓取相對應的產品清單
   useEffect(() => {
-    getProductsByCategoryFromApi(
-      mainCategoryFromRouter,
-      subCategoryFromRouter,
-      detailedCategoryFromRouter,
-      productsListIndicator.offset,
-      productsListIndicator.limit,
-      true
-    );
+    // 讀取部分產品清單
+    if (isLoadingMoreProducts) {
+      getProductsByCategoryFromApi(
+        mainCategoryFromRouter,
+        subCategoryFromRouter,
+        detailedCategoryFromRouter,
+        productsListIndicator.offset,
+        productsListIndicator.limit,
+        true
+      );
+    }
+    // 讀取整個產品清單
+    if (isLoadingProducts) {
+      getProductsByCategoryFromApi(
+        mainCategoryFromRouter,
+        subCategoryFromRouter,
+        detailedCategoryFromRouter,
+        productsListIndicator.offset,
+        productsListIndicator.limit,
+        false
+      );
+    }
   }, [productsListIndicator]);
 
   return (
@@ -756,6 +809,13 @@ export default function ProductsPage() {
           <ScrollToTopIcon />
           回到頂端
         </FloatingButtonForMobileAndPad>
+        {showModalForApiError && (
+          <Modal
+            modalInfo={ModalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
       </ContentContainer>
       <Footer />
     </PageContainer>
