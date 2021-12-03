@@ -6,7 +6,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/reset.css";
 import "./css/effect.css";
 import "./css/font.css";
-import "./css/color.css";
 import "./css/global.css";
 import App from "./App";
 
