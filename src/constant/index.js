@@ -47,6 +47,9 @@ export const BG_SECONDARY3 = "#FFFFFF";
 export const BG_OFFCANVA = "rgba(53, 53, 53, 0.8)";
 export const BG_TRANSPARENT = "rgba(255, 255, 255, 0.8)";
 
+/* 提供給需要遮罩元件使用 */
+export const BG_MASK = "rgba(53, 53, 53, 0.8)";
+
 // 控制 HomePage hotItems 的資料庫相關常數
 export const HOT_ITEMS_QUERY_INIT_OFFSET = 0;
 export const HOT_ITEMS_QUERY_INIT_LIMIT = 5;
