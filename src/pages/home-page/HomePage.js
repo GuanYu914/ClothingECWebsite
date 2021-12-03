@@ -42,6 +42,7 @@ import {
 } from "../../Webapi";
 import Loader from "../../components/loader";
 import { useHistory } from "react-router";
+import Modal from "../../components/modal";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -113,6 +114,14 @@ export default function HomePage() {
     offset: COMMENTS_QUERY_INIT_OFFSET,
     limit: COMMENTS_QUERY_INIT_LIMIT,
   });
+  // 是否要顯示 api 發送錯誤的 modal
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 發送錯誤的 modal 資訊
+  const [modalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
 
   // 更新 hotItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
@@ -122,99 +131,137 @@ export default function HomePage() {
       )
     );
   }
-  // 拿 banner 資訊
+  // 拿 banner 資訊，並設定相關的狀態
   function getBannersFromApi() {
     getBannersApi()
       .then((resp) => {
-        if (resp.data.isSuccessful === "failed") {
-          console.log("server side error, check response...", resp.data);
-          return;
+        // 因為 axios 機制，response.data 才是真正回傳的資料
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
         }
-        const json_data = resp.data.data;
-        setBanners({
-          ...banners,
-          slide: json_data,
-        });
-        setIsLoadingBanner(false);
+        if (json_data.isSuccessful === "successful") {
+          setBanners({
+            ...banners,
+            slide: json_data.data,
+          });
+          setIsLoadingBanner(false);
+        }
       })
       .catch((e) => {
-        console.log("xhr request isn't successful, error is ", e);
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
   }
-  // 拿商品分類
+  // 拿商品分類，並設定相關的狀態
   function getCategoriesFromApi() {
-    getMainCategoriesApi().then((resp) => {
-      if (resp.data.isSuccessful === "failed") {
-        console.log("server side error, check response...", resp.data);
-        return;
-      }
-      const json_data = resp.data.data;
-      setCategories(
-        json_data.map((el) => ({
-          id: el.id,
-          name: el.name,
-        }))
-      );
-      setIsLoadingCategories(false);
-    });
+    getMainCategoriesApi()
+      .then((resp) => {
+        // 因為 axios 機制，response.data 才是真正回傳的資料
+        const json_data = resp.data;
+        if (resp.data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
+        }
+        if (json_data.isSuccessful === "successful") {
+          setCategories(
+            json_data.data.map((el) => ({
+              id: el.id,
+              name: el.name,
+            }))
+          );
+          setIsLoadingCategories(false);
+        }
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
   }
-  // 拿熱銷品項資訊
+  // 拿熱銷品項資訊，並設定相關的狀態
   function getHotItemsFromApi(offset, limit) {
     getHotItemsApi(offset, limit)
       .then((resp) => {
-        if (resp.data.isSuccessful === "failed") {
-          console.log("server side error, check response...", resp.data);
-          return;
+        // 因為 axios 機制，response.data 才是真正回傳的資料
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
         }
-        const json_data = resp.data.data;
-        // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-        if (resp.data.totals <= hotItemsIndicator.limit) {
-          setDisableHotItemsButton(true);
+        if (json_data.isSuccessful === "successful") {
+          SetHotItems(
+            json_data.data.map((el) => ({
+              id: el.id,
+              product: {
+                name: el.name,
+                price: `${el.price}`,
+                img: JSON.parse(el.imgs)[0].src,
+              },
+              // 之後要根據 user 做調整
+              isLiked: false,
+            }))
+          );
+          // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
+          // 若資料讀取完畢，則不顯示 "載入更多" 按鈕，反之相反
+          if (json_data.totals <= hotItemsIndicator.limit) {
+            setDisableHotItemsButton(true);
+          } else {
+            setDisableHotItemsButton(false);
+          }
+          setIsLoadingHotItems(false);
+          setIsHotItemsButtonClicked(false);
         }
-        SetHotItems(
-          json_data.map((el) => ({
-            id: el.id,
-            product: {
-              name: el.name,
-              price: `${el.price}`,
-              img: JSON.parse(el.imgs)[0].src,
-            },
-            // 之後要根據 user 做調整
-            isLiked: false,
-          }))
-        );
-        setIsLoadingHotItems(false);
-        setIsHotItemsButtonClicked(false);
       })
       .catch((e) => {
-        console.log("xhr request isn't successful, error is ", e);
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
   }
-  // 拿顧客評價資訊
+  // 拿顧客評價資訊，並設定相關的狀態
   function getUserCommentsFromApi(offset, limit) {
     getUserCommentsApi(offset, limit)
       .then((resp) => {
-        if (resp.data.isSuccessful === "failed") {
-          console.log("server side error, check response...", resp.data);
-          return;
+        // 因為 axios 機制，response.data 才是真正回傳的資料
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
         }
-        const json_data = resp.data.data;
-        // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-        if (resp.data.totals <= commentsIndicator.limit) {
-          setDisableCommentsButton(true);
+        if (json_data.isSuccessful === "successful") {
+          setComments(
+            json_data.data.map((el) => ({
+              id: el.id,
+              avatar: el.avatar,
+              comment: el.comment,
+            }))
+          );
+          // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
+          // 若資料讀取完畢，則不顯示 "載入更多" 按鈕，反之相反
+          if (json_data.totals <= commentsIndicator.limit) {
+            setDisableCommentsButton(true);
+          } else {
+            setDisableCommentsButton(false);
+          }
+          setIsLoadingComments(false);
+          setIsCommentsButtonClicked(false);
         }
-        setComments(
-          json_data.map((el) => ({
-            id: el.id,
-            avatar: el.avatar,
-            comment: el.comment,
-          }))
-        );
-        setIsLoadingComments(false);
-        setIsCommentsButtonClicked(false);
       })
       .catch((e) => {
-        console.log("xhr request isn't successful, error is ", e);
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
   }
   // 用戶點擊 "熱銷品項"、"顧客評價" 的 "載入更多" 按鈕
@@ -237,13 +284,22 @@ export default function HomePage() {
     const id = e.target.getAttribute("data-id");
     history.push(`/product/${id}`);
   }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕之外事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
+  }
 
   // DOM 載入完畢後只執行一次，用來抓一開始的資訊
+  // hotItems, comments 會因為設定 indicator 而自動發送 api，所以寫在下面兩個 useEffect functions
   useEffect(() => {
     getBannersFromApi();
     getCategoriesFromApi();
-    getHotItemsFromApi(hotItemsIndicator.offset, hotItemsIndicator.limit);
-    getUserCommentsFromApi(commentsIndicator.offset, commentsIndicator.limit);
   }, []);
   // hotItemsIndicator 改變時執行
   useEffect(() => {
@@ -344,6 +400,13 @@ export default function HomePage() {
             </>
           )}
         </UserCommentBlock>
+        {showModalForApiError && (
+          <Modal
+            modalInfo={modalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
       </ContentContainer>
       <Footer marginTop={"6rem"} />
     </PageContainer>
