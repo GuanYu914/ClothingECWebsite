@@ -28,6 +28,7 @@ import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
 import Loader from "../../components/loader";
+import Modal from "../../components/modal";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -263,6 +264,14 @@ export default function SingleProductPage() {
       duration: showCartReminderDuration,
     },
   });
+  // 是否要顯示 api 發送錯誤的 modal
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 發送錯誤的 modal 資訊
+  const [modalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
 
   // mobile 裝置下，點選 "選擇商品規格" 事件
   function handleSelectProductSpecOnMobile() {
@@ -411,61 +420,68 @@ export default function SingleProductPage() {
     setIsLoadingWatchedProducts(true);
     getProductByIDApi(pid)
       .then((resp) => {
-        if (resp.data.isSuccessful === "failed") {
-          console.log("server side error, check response...", resp.data);
-          return;
+        const json_data = resp.data;
+        if (json_data.isSuccessful === "failed") {
+          console.log("server side error, check response...", json_data);
+          setShowModalForApiError(true);
         }
-        const json_data = resp.data.data[0];
-        setProductInfo({
-          id: json_data.pid,
-          pid: json_data.pid,
-          category: JSON.parse(json_data.category),
-          name: json_data.name,
-          detail: JSON.parse(json_data.detail),
-          imgs: JSON.parse(json_data.imgs),
-          picker: {
-            sizes: JSON.parse(json_data.sizes).map((size) => ({
-              ...size,
-              selected: false,
-            })),
-            colors: JSON.parse(json_data.colors).map((color) => ({
-              ...color,
-              selected: false,
-            })),
-            quantity: 1,
-            unitPrice: json_data.price,
-          },
-        });
-        setSlidesForMobile({
-          ...slidesForMobile,
-          slide: JSON.parse(json_data.imgs),
-        });
-        setSlidesForPad({
-          ...slidesForPad,
-          slide: JSON.parse(json_data.imgs),
-        });
-        // 加到 watchedProductContext
-        const watchedProducts = filteredWatchedProducts(
-          watchedProductsContext,
-          json_data.pid
-        );
-        setWatchedProductsContext([
-          {
-            id: json_data.pid,
-            product: {
-              name: json_data.name,
-              price: `${json_data.price}`,
-              img: JSON.parse(json_data.imgs)[0].src,
+        if (json_data.isSuccessful === "successful") {
+          const json_data_for_product = resp.data.data[0];
+          setProductInfo({
+            id: json_data_for_product.pid,
+            pid: json_data_for_product.pid,
+            category: JSON.parse(json_data_for_product.category),
+            name: json_data_for_product.name,
+            detail: JSON.parse(json_data_for_product.detail),
+            imgs: JSON.parse(json_data_for_product.imgs),
+            picker: {
+              sizes: JSON.parse(json_data_for_product.sizes).map((size) => ({
+                ...size,
+                selected: false,
+              })),
+              colors: JSON.parse(json_data_for_product.colors).map((color) => ({
+                ...color,
+                selected: false,
+              })),
+              quantity: 1,
+              unitPrice: json_data_for_product.price,
             },
-            isLiked: false,
-          },
-          ...watchedProducts,
-        ]);
-        setIsLoadingProduct(false);
-        setIsLoadingWatchedProducts(false);
+          });
+          setSlidesForMobile({
+            ...slidesForMobile,
+            slide: JSON.parse(json_data_for_product.imgs),
+          });
+          setSlidesForPad({
+            ...slidesForPad,
+            slide: JSON.parse(json_data_for_product.imgs),
+          });
+          // 加到 watchedProductContext
+          const watchedProducts = filteredWatchedProducts(
+            watchedProductsContext,
+            json_data_for_product.pid
+          );
+          setWatchedProductsContext([
+            {
+              id: json_data_for_product.pid,
+              product: {
+                name: json_data_for_product.name,
+                price: `${json_data_for_product.price}`,
+                img: JSON.parse(json_data_for_product.imgs)[0].src,
+              },
+              isLiked: false,
+            },
+            ...watchedProducts,
+          ]);
+          setIsLoadingProduct(false);
+          setIsLoadingWatchedProducts(false);
+        }
       })
       .catch((e) => {
-        console.log("xhr request isn't successful, error is ", e);
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
   }
   // 拿到產品所在分類目錄
@@ -496,6 +512,16 @@ export default function SingleProductPage() {
     if (productID === id) return;
     getProductInfoFromApi(id);
     history.push(`/product/${id}`);
+  }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: api 發送過程中有誤
+  // 處理點選按鈕之外事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
   }
 
   // 第一次 Render 結束
@@ -671,6 +697,13 @@ export default function SingleProductPage() {
               <ReminderMsg>已加入購物車</ReminderMsg>
             </AddToCartReminderMsg>
           )
+      )}
+      {showModalForApiError && (
+        <Modal
+          modalInfo={modalInfoForApiError}
+          handleSubmitOp={handleSubmitOpForApiError}
+          handleCancelOp={handleCancelOpForApiError}
+        />
       )}
       <Footer marginTop="6rem" marginBottom="4rem" />
     </PageContainer>
