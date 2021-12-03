@@ -234,7 +234,7 @@ export default function SingleProductPage() {
   // 透過 CartContext 拿到購物車資訊
   const { cart, setCart } = useContext(CartContext);
   // 透過 WatchedProductContext 拿到近期瀏覽的商品
-  const { watchedProductsContext, setWatchedProductsContext } = useContext(
+  const { watchedProducts, setWatchedProducts } = useContext(
     WatchedProductsContext
   );
   //  產品資訊讀取狀態
@@ -424,8 +424,8 @@ export default function SingleProductPage() {
   }
   // 更新 watchedItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
-    setWatchedProductsContext(
-      watchedProductsContext.map((item) =>
+    setWatchedProducts(
+      watchedProducts.map((item) =>
         item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
       )
     );
@@ -471,12 +471,12 @@ export default function SingleProductPage() {
             ...slidesForPad,
             slide: JSON.parse(json_data_for_product.imgs),
           });
-          // 加到 watchedProductContext
-          const watchedProducts = filteredWatchedProducts(
-            watchedProductsContext,
+          // 加到 watchedProducts
+          const newWatchedProducts = filteredWatchedProducts(
+            watchedProducts,
             json_data_for_product.pid
           );
-          setWatchedProductsContext([
+          setWatchedProducts([
             {
               id: json_data_for_product.pid,
               product: {
@@ -486,7 +486,7 @@ export default function SingleProductPage() {
               },
               isLiked: false,
             },
-            ...watchedProducts,
+            ...newWatchedProducts,
           ]);
           setIsLoadingProduct(false);
           setIsLoadingWatchedProducts(false);
@@ -675,7 +675,7 @@ export default function SingleProductPage() {
           <WatchedItemsContainer>
             <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>
             <CardContainer
-              items={watchedProductsContext}
+              items={watchedProducts}
               handleLiked={handleUpdateItemLikedState}
               handleOnClick={handleRedirectToProductPage}
               marginLeft={"0"}

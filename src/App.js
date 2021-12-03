@@ -29,10 +29,10 @@ function App() {
   // 當 cartContext 更新，才更新此數值
   const memorizedCart = useMemo(() => ({ cart, setCart }), [cart]);
   // 以前看過的產品
-  const [watchedProductsContext, setWatchedProductsContext] = useState([]);
+  const [watchedProducts, setWatchedProducts] = useState([]);
   const memorizeWatchProducts = useMemo(
-    () => ({ watchedProductsContext, setWatchedProductsContext }),
-    [watchedProductsContext]
+    () => ({ watchedProducts, setWatchedProducts }),
+    [watchedProducts]
   );
 
   return (
