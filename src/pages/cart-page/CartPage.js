@@ -204,8 +204,8 @@ export default function CartPage() {
   // 透過 cart 拿到目前購物車內容
   const { cart, setCart } = useContext(CartContext);
   // pid 不能當作 id 使用，因為合併產品時需要
-  // cartProducts 為本地的購物車內容
-  const [cartProducts, setCartProducts] = useState(
+  // cartForLocal 為本地的購物車內容
+  const [cartForLocal, setCartForLocal] = useState(
     cart.map((product) => ({
       id: product.id,
       pid: product.pid,
@@ -264,8 +264,8 @@ export default function CartPage() {
     mergeProductId.current = checkSameProduct(productId, colorId, null);
     // 如果沒有找到相同的產品需要合併的
     if (mergeProductId.current === undefined) {
-      setCartProducts(
-        cartProducts.map((cartProduct) =>
+      setCartForLocal(
+        cartForLocal.map((cartProduct) =>
           cartProduct.id === productId
             ? {
                 ...cartProduct,
@@ -292,8 +292,8 @@ export default function CartPage() {
     mergeProductId.current = checkSameProduct(productId, null, sizeId);
     // 如果沒有找到相同的產品需要合併的
     if (mergeProductId.current === undefined) {
-      setCartProducts(
-        cartProducts.map((cartProduct) =>
+      setCartForLocal(
+        cartForLocal.map((cartProduct) =>
           cartProduct.id === productId
             ? {
                 ...cartProduct,
@@ -317,8 +317,8 @@ export default function CartPage() {
   }
   // 增加產品數量
   function handleIncreaseQuantity(productId) {
-    setCartProducts(
-      cartProducts.map((cartProduct) =>
+    setCartForLocal(
+      cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
           ? {
               ...cartProduct,
@@ -333,8 +333,8 @@ export default function CartPage() {
   }
   // 減少產品數量
   function handleDecreaseQuantity(productId) {
-    setCartProducts(
-      cartProducts.map((cartProduct) =>
+    setCartForLocal(
+      cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
           ? {
               ...cartProduct,
@@ -352,8 +352,8 @@ export default function CartPage() {
   }
   // 選擇要結帳的產品
   function handleChangeProductSelectedState(productId) {
-    setCartProducts(
-      cartProducts.map((cartProduct) =>
+    setCartForLocal(
+      cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
           ? { ...cartProduct, selected: !cartProduct.selected }
           : { ...cartProduct }
@@ -362,8 +362,8 @@ export default function CartPage() {
   }
   // 刪除購物車中的產品
   function handleDeleteSelectedProduct(productId) {
-    setCartProducts(
-      cartProducts.filter((cartProduct) => cartProduct.id !== productId)
+    setCartForLocal(
+      cartForLocal.filter((cartProduct) => cartProduct.id !== productId)
     );
   }
   // 檢查所有產品的選取狀態
@@ -371,13 +371,13 @@ export default function CartPage() {
     let selectedCounter = 0;
     let allChecked = false;
     let singleChecked = false;
-    cartProducts.forEach((cartProduct) => {
+    cartForLocal.forEach((cartProduct) => {
       if (cartProduct.selected) {
         selectedCounter++;
       }
     });
 
-    if (selectedCounter === cartProducts.length) {
+    if (selectedCounter === cartForLocal.length) {
       singleChecked = true;
       allChecked = true;
     }
@@ -385,7 +385,7 @@ export default function CartPage() {
       singleChecked = false;
       allChecked = false;
     }
-    if (selectedCounter >= 1 && selectedCounter !== cartProducts.length) {
+    if (selectedCounter >= 1 && selectedCounter !== cartForLocal.length) {
       singleChecked = true;
       allChecked = false;
     }
@@ -398,7 +398,7 @@ export default function CartPage() {
   // 計算所有選取產品的總價格
   function handleCalcAllSelectedProductPrice() {
     let checkedPrice = 0;
-    cartProducts.forEach((cartProduct) => {
+    cartForLocal.forEach((cartProduct) => {
       if (cartProduct.selected) {
         checkedPrice +=
           cartProduct.picker.quantity * cartProduct.picker.unitPrice;
@@ -409,8 +409,8 @@ export default function CartPage() {
   // 點選 "全選" 按鈕事件
   function handleToggleSelectAllProducts() {
     const flagCheckedAll = handleCheckAllSelectedState().allChecked;
-    setCartProducts(
-      cartProducts.map((cartProduct) => ({
+    setCartForLocal(
+      cartForLocal.map((cartProduct) => ({
         ...cartProduct,
         selected: flagCheckedAll === true ? false : true,
       }))
@@ -420,10 +420,10 @@ export default function CartPage() {
   // mergeParent 代表合併那方，mergeChild 代表被合併那方
   function handleMergeSameProduct() {
     const { mergeParent, mergeChild } = mergeProductId.current;
-    let priceOfChild = cartProducts.filter(
+    let priceOfChild = cartForLocal.filter(
       (product) => product.id === mergeChild
     )[0].picker.quantity;
-    let newCartProducts = cartProducts
+    let newCartForLocal = cartForLocal
       .filter((product) => product.id !== mergeChild)
       .map((product) =>
         product.id === mergeParent
@@ -436,7 +436,7 @@ export default function CartPage() {
             }
           : { ...product }
       );
-    setCartProducts(newCartProducts);
+    setCartForLocal(newCartForLocal);
     setShowMergeProductMsg(false);
   }
 
@@ -450,43 +450,43 @@ export default function CartPage() {
       size: null,
     };
     // 根據 productId 拿到要搜尋的 pid, color, size
-    for (let i = 0; i < cartProducts.length; i++) {
-      if (cartProducts[i].id === productId) {
-        searchedProduct.pid = cartProducts[i].pid;
-        // 代表用戶點選 size，color 欄位必須從 cartProducts 拿，size 則從給定的 selectedSizeId 拿
+    for (let i = 0; i < cartForLocal.length; i++) {
+      if (cartForLocal[i].id === productId) {
+        searchedProduct.pid = cartForLocal[i].pid;
+        // 代表用戶點選 size，color 欄位必須從 cartForLocal 拿，size 則從給定的 selectedSizeId 拿
         if (selectedColorId === null) {
-          searchedProduct.color = cartProducts[i].picker.colors.filter(
+          searchedProduct.color = cartForLocal[i].picker.colors.filter(
             (color) => color.selected
           )[0].hexcode;
-          searchedProduct.size = cartProducts[i].picker.sizes.filter(
+          searchedProduct.size = cartForLocal[i].picker.sizes.filter(
             (size) => size.id === selectedSizeId
           )[0].name;
         }
-        // 代表用戶點選 color，size 欄位必須從 cartProducts 拿，color 則從給定的 selectedColorId 拿
+        // 代表用戶點選 color，size 欄位必須從 cartForLocal 拿，color 則從給定的 selectedColorId 拿
         if (selectedSizeId === null) {
-          searchedProduct.color = cartProducts[i].picker.colors.filter(
+          searchedProduct.color = cartForLocal[i].picker.colors.filter(
             (color) => color.id === selectedColorId
           )[0].hexcode;
-          searchedProduct.size = cartProducts[i].picker.sizes.filter(
+          searchedProduct.size = cartForLocal[i].picker.sizes.filter(
             (size) => size.selected
           )[0].name;
         }
       }
     }
     // 搜尋原本產品以外的產品，確認規格是否有相同
-    for (let i = 0; i < cartProducts.length; i++) {
-      if (cartProducts[i].id !== productId) {
-        if (cartProducts[i].pid === searchedProduct.pid) {
+    for (let i = 0; i < cartForLocal.length; i++) {
+      if (cartForLocal[i].id !== productId) {
+        if (cartForLocal[i].pid === searchedProduct.pid) {
           if (
-            cartProducts[i].picker.colors.filter((color) => color.selected)[0]
+            cartForLocal[i].picker.colors.filter((color) => color.selected)[0]
               .hexcode === searchedProduct.color
           ) {
             if (
-              cartProducts[i].picker.sizes.filter((size) => size.selected)[0]
+              cartForLocal[i].picker.sizes.filter((size) => size.selected)[0]
                 .name === searchedProduct.size
             ) {
               return {
-                mergeParent: cartProducts[i].id,
+                mergeParent: cartForLocal[i].id,
                 mergeChild: productId,
               };
             }
@@ -501,10 +501,10 @@ export default function CartPage() {
     history.push(`/product/${pid}`);
   }
 
-  // cartProducts 更新時，同步更新 cart 內容
+  // cartForLocal 更新時，同步更新 cart 內容
   useEffect(() => {
     setCart(
-      cartProducts.map((cartProduct) => ({
+      cartForLocal.map((cartProduct) => ({
         id: cartProduct.id,
         pid: cartProduct.pid,
         name: cartProduct.name,
@@ -520,13 +520,13 @@ export default function CartPage() {
         unitPrice: cartProduct.picker.unitPrice,
       }))
     );
-  }, [cartProducts]);
-  // cartProducts 更新時，更新總金額、商品選取狀態
+  }, [cartForLocal]);
+  // cartForLocal 更新時，更新總金額、商品選取狀態
   useEffect(() => {
     setCheckedPrice(handleCalcAllSelectedProductPrice());
     setSingleCheckedState(handleCheckAllSelectedState().singleChecked);
     setAllCheckedState(handleCheckAllSelectedState().allChecked);
-  }, [cartProducts]);
+  }, [cartForLocal]);
 
   return (
     <PageContainer>
@@ -534,7 +534,7 @@ export default function CartPage() {
       <ContentContainer>
         <CartTitle>購物袋中商品</CartTitle>
         <CartProductsForMobile>
-          {cartProducts.map((cartProduct) => (
+          {cartForLocal.map((cartProduct) => (
             <CartProduct key={cartProduct.id}>
               {!cartProduct.selected && (
                 <NoneCheckedButton
@@ -585,7 +585,7 @@ export default function CartPage() {
           />
         </CartProductsForMobile>
         <CartProductsForPad>
-          {cartProducts.map((cartProduct) => (
+          {cartForLocal.map((cartProduct) => (
             <CartProductFlexContainer key={cartProduct.id}>
               <CartProduct key={cartProduct.id}>
                 {!cartProduct.selected && (
