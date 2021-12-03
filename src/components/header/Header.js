@@ -121,8 +121,8 @@ export default function Header() {
   const history = useHistory();
   // 透過 Context 拿到當前用戶資料
   const { user } = useContext(UserContext);
-  // 透過 Context 拿到當前購物袋資訊
-  const { cartContext, setCartContext } = useContext(CartContext);
+  // 透過 cart 拿到當前購物袋資訊
+  const { cart, setCart } = useContext(CartContext);
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
     useForLinks: true,
@@ -139,10 +139,10 @@ export default function Header() {
           ],
   });
   const [dropDownForCart, setDropDownForCart] = useState({
-    width: cartContext.length ? "fit-content" : "20rem",
-    height: cartContext.length >= 4 ? "24rem" : "fit-content",
+    width: cart.length ? "fit-content" : "20rem",
+    height: cart.length >= 4 ? "24rem" : "fit-content",
     useForCart: true,
-    products: cartContext.map((product) => ({
+    products: cart.map((product) => ({
       id: product.id,
       name: product.name,
       url: product.urls[0].src,
@@ -172,12 +172,12 @@ export default function Header() {
     },
   });
   useEffect(() => {
-    // 如果 cartContext 有更新的話，則更新購物車 dropdown 元件
+    // 如果 cart 有更新的話，則更新購物車 dropdown 元件
     setDropDownForCart({
-      width: cartContext.length ? "fit-content" : "20rem",
-      height: cartContext.length >= 4 ? "24rem" : "fit-content",
+      width: cart.length ? "fit-content" : "20rem",
+      height: cart.length >= 4 ? "24rem" : "fit-content",
       useForCart: true,
-      products: cartContext.map((product) => ({
+      products: cart.map((product) => ({
         id: product.id,
         name: product.name,
         url: product.urls[0].src,
@@ -187,7 +187,7 @@ export default function Header() {
         quantity: product.quantity,
       })),
     });
-  }, [cartContext]);
+  }, [cart]);
   return (
     <NavBarContainer>
       <BrandLogo

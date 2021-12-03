@@ -232,7 +232,7 @@ export default function SingleProductPage() {
   // 透過 UserContext 拿到用戶資訊
   const { user } = useContext(UserContext);
   // 透過 CartContext 拿到購物車資訊
-  const { cartContext, setCartContext } = useContext(CartContext);
+  const { cart, setCart } = useContext(CartContext);
   // 透過 WatchedProductContext 拿到近期瀏覽的商品
   const { watchedProductsContext, setWatchedProductsContext } = useContext(
     WatchedProductsContext
@@ -369,19 +369,19 @@ export default function SingleProductPage() {
   function handleAddToCart(selectedPickerColor, selectedPickerSize) {
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
-    for (let i = 0; i < cartContext.length; i++) {
-      if (cartContext[i].pid === productInfo.pid) {
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].pid === productInfo.pid) {
         if (
-          cartContext[i].colors.filter((color) => color.selected)[0].hexcode ===
+          cart[i].colors.filter((color) => color.selected)[0].hexcode ===
           selectedPickerColor
         ) {
           if (
-            cartContext[i].sizes.filter((size) => size.selected)[0].name ===
+            cart[i].sizes.filter((size) => size.selected)[0].name ===
             selectedPickerSize
           ) {
             // 找到一樣規格的產品，更新該產品目前數量
             // 防止 state 被 batch，造成資料不是預期的
-            setCartContext((prevCartContext) => {
+            setCart((prevCartContext) => {
               return prevCartContext.map((product, index) =>
                 index === i
                   ? {
@@ -399,10 +399,10 @@ export default function SingleProductPage() {
     }
     // 未找到相同規格的產品，新增到購物車頂端
     if (!flagFind) {
-      // 複製 cartContext 內容，但 ref 不一樣，造成 react 去更新
-      const newCartContext = [...cartContext];
-      newCartContext.unshift({
-        id: cartContext.length + 1,
+      // 複製 cart 內容，但 ref 不一樣，造成 react 去更新
+      const newCart = [...cart];
+      newCart.unshift({
+        id: cart.length + 1,
         pid: productInfo.pid,
         name: productInfo.name,
         urls: productInfo.imgs,
@@ -411,7 +411,7 @@ export default function SingleProductPage() {
         quantity: productInfo.picker.quantity,
         unitPrice: productInfo.picker.unitPrice,
       });
-      setCartContext(newCartContext);
+      setCart(newCart);
     }
     // 顯示加入購物車訊息動畫
     setShowCartReminder(true);

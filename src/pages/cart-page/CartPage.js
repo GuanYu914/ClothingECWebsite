@@ -201,11 +201,12 @@ const LinkButton = styled(linkIcon)`
 export default function CartPage() {
   // 透過 react router hook 換頁
   const history = useHistory();
-  // 透過 cartContext 拿到目前購物車內容
-  const { cartContext, setCartContext } = useContext(CartContext);
+  // 透過 cart 拿到目前購物車內容
+  const { cart, setCart } = useContext(CartContext);
   // pid 不能當作 id 使用，因為合併產品時需要
+  // cartProducts 為本地的購物車內容
   const [cartProducts, setCartProducts] = useState(
-    cartContext.map((product) => ({
+    cart.map((product) => ({
       id: product.id,
       pid: product.pid,
       name: product.name,
@@ -500,9 +501,9 @@ export default function CartPage() {
     history.push(`/product/${pid}`);
   }
 
-  // cartProducts 更新時，同步更新 CartContext 內容
+  // cartProducts 更新時，同步更新 cart 內容
   useEffect(() => {
-    setCartContext(
+    setCart(
       cartProducts.map((cartProduct) => ({
         id: cartProduct.id,
         pid: cartProduct.pid,

@@ -25,12 +25,9 @@ function App() {
     return { user, setUser };
   }, [user]);
   // 模擬購物車是空的時候
-  const [cartContext, setCartContext] = useState([]);
+  const [cart, setCart] = useState([]);
   // 當 cartContext 更新，才更新此數值
-  const memorizedCart = useMemo(
-    () => ({ cartContext, setCartContext }),
-    [cartContext]
-  );
+  const memorizedCart = useMemo(() => ({ cart, setCart }), [cart]);
   // 以前看過的產品
   const [watchedProductsContext, setWatchedProductsContext] = useState([]);
   const memorizeWatchProducts = useMemo(
