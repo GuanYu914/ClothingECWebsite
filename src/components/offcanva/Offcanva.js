@@ -10,6 +10,7 @@ import {
   COLOR_SECONDARY1,
   Z_INDEX_LV5,
   Z_INDEX_LV6,
+  BG_MASK,
 } from "../../constant";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -24,9 +25,8 @@ const OffcanvaButton = styled(list)`
 
 const OffcanvaContainer = styled.div``;
 
-const MaskContainer = styled(animated.div).attrs(() => ({
-  className: "bg-mask",
-}))`
+const MaskContainer = styled(animated.div)`
+  background-color: ${BG_MASK};
   position: fixed;
   z-index: ${Z_INDEX_LV5};
   top: 0;
@@ -62,8 +62,9 @@ const OffcanvaBody = styled(animated.div).attrs(() => ({
 `;
 
 const OffcanvaLink = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary1",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY1};
   padding: 0.4rem 0 0.4rem;
   cursor: pointer;
 `;
@@ -89,8 +90,10 @@ const OffcanvaHeader = styled.div`
 `;
 
 const UserName = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary1",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY1};
+`;
 
 const ProfileIcon = styled(profile)`
   width: 2rem;

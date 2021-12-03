@@ -13,13 +13,14 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   BOX_SHADOW_LIGHT,
+  BG_SECONDARY3,
+  COLOR_SECONDARY2,
 } from "../../constant";
 import { useEffect, useState, useContext } from "react";
 import { UserContext, CartContext } from "../../context";
 
-const NavBarContainer = styled.nav.attrs(() => ({
-  className: "bg-secondary3",
-}))`
+const NavBarContainer = styled.nav`
+  background-color: ${BG_SECONDARY3};
   position: fixed;
   top: 0;
   left: 0;
@@ -48,9 +49,8 @@ const NavBarContainer = styled.nav.attrs(() => ({
   }
 `;
 
-const BrandLogo = styled(logo).attrs(() => ({
-  className: "color-secondary2",
-}))`
+const BrandLogo = styled(logo)`
+  color: ${COLOR_SECONDARY2};
   width: 2rem;
   height: 2rem;
   cursor: pointer;

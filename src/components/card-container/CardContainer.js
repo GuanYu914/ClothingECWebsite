@@ -7,6 +7,7 @@ import {
   BREAKPOINT_PAD,
   Z_INDEX_LV1,
   BG_TRANSPARENT,
+  BG_SECONDARY1,
 } from "../../constant";
 import { useContext } from "react";
 import { UserContext } from "../../context";
@@ -21,8 +22,9 @@ const ItemsContainer = styled.div`
 `;
 
 const ItemContainer = styled.div.attrs(() => ({
-  className: "bg-secondary1 box-shadow-dark",
+  className: "box-shadow-dark",
 }))`
+  background-color: ${BG_SECONDARY1};
   width: 18rem;
   height: 14rem;
   border-radius: 1.2rem;
@@ -47,9 +49,7 @@ const ItemContainer = styled.div.attrs(() => ({
   }
 `;
 
-const ItemHeader = styled.div.attrs(() => ({
-  className: "bg-secondary3",
-}))`
+const ItemHeader = styled.div`
   width: 100%;
   height: fit-content;
   position: absolute;

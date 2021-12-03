@@ -1,11 +1,18 @@
 import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { CTAPrimaryButton } from "../../components/button";
-import { BR_PRIMARY1, BR_SECONDARY1, COLOR_PRIMARY1 } from "../../constant";
+import {
+  BG_SECONDARY3,
+  BR_PRIMARY1,
+  BR_SECONDARY1,
+  COLOR_PRIMARY1,
+  COLOR_SECONDARY1,
+} from "../../constant";
 
 const Container = styled.div.attrs(() => ({
-  className: "bg-secondary3 box-shadow-light",
+  className: "box-shadow-light",
 }))`
+  background-color: ${BG_SECONDARY3};
   width: ${(props) => props.width || "24rem"};
   height: fit-content;
   border-radius: 1rem;
@@ -24,8 +31,9 @@ const FieldContainer = styled.div`
 `;
 
 const FormField = styled.h2.attrs(() => ({
-  className: "fs-h2 color-primary1",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_PRIMARY1};
   margin-bottom: 0.5rem;
 `;
 
@@ -49,7 +57,7 @@ const InputArea = styled.input.attrs((props) => ({
 `;
 
 const FormHelper = styled.h3.attrs(() => ({
-  className: "fs-h3 color-primary1",
+  className: "fs-h3",
 }))`
   color: ${(props) => props.color || COLOR_PRIMARY1};
 `;
@@ -57,10 +65,11 @@ const FormHelper = styled.h3.attrs(() => ({
 const ButtonContainer = styled.div``;
 
 const RegisterButton = styled.a.attrs(() => ({
-  className: "fs-h3 color-secondary1",
+  className: "fs-h3",
   href: "/register",
   target: "_blank",
 }))`
+  color: ${COLOR_SECONDARY1};
   display: block;
   text-decoration: none;
   cursor: pointer;
@@ -73,10 +82,11 @@ const RegisterButton = styled.a.attrs(() => ({
 `;
 
 const LoginButton = styled.a.attrs(() => ({
-  className: "fs-h3 color-secondary1",
+  className: "fs-h3",
   href: "/login",
   target: "_blank",
 }))`
+  color: ${COLOR_SECONDARY1};
   text-decoration: none;
   cursor: pointer;
 

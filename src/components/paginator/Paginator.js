@@ -2,7 +2,7 @@ import styled from "styled-components/macro";
 import { ReactComponent as arrowLeft } from "../../imgs/components/paginator/arrow-left.svg";
 import { ReactComponent as arrowRight } from "../../imgs/components/paginator/arrow-right.svg";
 import PropTypes from "prop-types";
-import { COLOR_PRIMARY1 } from "../../constant";
+import { COLOR_PRIMARY1, COLOR_SECONDARY2 } from "../../constant";
 
 const Container = styled.div`
   display: flex;
@@ -31,8 +31,9 @@ const PageIndicator = styled.div`
 `;
 
 const PageButton = styled.button.attrs(() => ({
-  className: "fs-h2 color-secondary2 btn-reset",
+  className: "fs-h2 btn-reset",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 1.2rem;
   user-select: none;
   color: ${(props) => props.isSelected && COLOR_PRIMARY1}};

@@ -7,15 +7,19 @@ import {
   BREAKPOINT_PAD,
   Z_INDEX_LV5,
   Z_INDEX_LV6,
+  BG_MASK,
+  BG_SECONDARY3,
+  COLOR_SECONDARY3,
+  BG_PRIMARY1,
+  COLOR_SECONDARY2,
 } from "../../constant";
 import { useState } from "react";
 import { CTAPrimaryButton, CTASecondaryButton } from "../button";
 
 const Container = styled.div``;
 
-const MaskContainer = styled(animated.div).attrs(() => ({
-  className: "bg-mask",
-}))`
+const MaskContainer = styled(animated.div)`
+  background-color: ${BG_MASK};
   position: fixed;
   top: 0;
   left: 0;
@@ -24,9 +28,8 @@ const MaskContainer = styled(animated.div).attrs(() => ({
   z-index: ${Z_INDEX_LV5};
 `;
 
-const ModalContainer = styled.div.attrs(() => ({
-  className: "bg-secondary3",
-}))`
+const ModalContainer = styled.div`
+  background-color: ${BG_SECONDARY3};
   width: 18rem;
   position: fixed;
   top: 50%;
@@ -45,9 +48,9 @@ const ModalContainer = styled.div.attrs(() => ({
   }
 `;
 
-const ModalHeader = styled.div.attrs(() => ({
-  className: "bg-primary1 color-secondary3",
-}))`
+const ModalHeader = styled.div`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -58,17 +61,17 @@ const ModalTitle = styled.h1.attrs(() => ({
   className: "fs-h2",
 }))``;
 
-const CloseButton = styled(closeIcon).attrs(() => ({
-  className: "color-secondary3",
-}))`
+const CloseButton = styled(closeIcon)`
+  color: ${COLOR_SECONDARY3};
   width: 1.4rem;
   height: 1.4rem;
   cursor: pointer;
 `;
 
 const ModalBody = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   padding: 2rem 0.5rem;
 `;
 

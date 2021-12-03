@@ -2,11 +2,11 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import { ReactComponent as github } from "../../imgs/components/footer/github.svg";
 import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";
-import { BG_PRIMARY1, COLOR_SECONDARY3 } from "../../constant";
+import { BG_PRIMARY1, BG_SECONDARY1, COLOR_SECONDARY3 } from "../../constant";
 
-const Container = styled.div.attrs(() => ({
-  className: "color-secondary3 bg-secondary1",
-}))`
+const Container = styled.div`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_SECONDARY1};
   width: 100%;
   height: 8rem;
   text-align: center;

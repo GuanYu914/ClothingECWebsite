@@ -2,6 +2,7 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import {
   BG_PRIMARY1,
+  BG_SECONDARY3,
   COLOR_PRIMARY1,
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
@@ -15,8 +16,10 @@ const DropDownContainer = styled.div`
   z-index: ${(props) => props.zIndex};
 `;
 const DropDownContent = styled.div.attrs(() => ({
-  className: "box-shadow-dark color-secondary2 fs-h3 bg-secondary3",
+  className: "fs-h3 box-shadow-dark",
 }))`
+  color: ${COLOR_SECONDARY2};
+  background-color: ${BG_SECONDARY3};
   visibility: hidden;
   opacity: 0;
   border-radius: 0.5rem;
@@ -56,8 +59,9 @@ const LinkName = styled.a.attrs(() => ({
 `;
 
 const OptionName = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 1.6rem;
   cursor: pointer;
 
@@ -96,8 +100,9 @@ const ProductSpecs = styled.div`
   margin-right: 1rem;
 `;
 const ProductName = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -116,14 +121,17 @@ const ProductColor = styled.div`
 `;
 
 const ProductSize = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-left: 0.5rem;
 `;
 
 const ProductQuantity = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
-}))``;
+  className: "fs-h3",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 export default function DropDown({
   dropDownInfo,
