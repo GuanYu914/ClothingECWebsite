@@ -1,10 +1,15 @@
 import styled from "styled-components";
-import { BREAKPOINT_PAD } from "../../constant";
-
-const CTAPrimaryStyle = "color-secondary3 bg-primary1";
-const CTASecondaryStyle = "color-secondary3 bg-secondary1";
-const GhostPrimaryStyle = "color-primary1 br-primary1 bg-secondary3";
-const GhostSecondaryStyle = "color-secondary1 br-secondary1 bg-secondary3";
+import {
+  BG_PRIMARY1,
+  BG_SECONDARY1,
+  BG_SECONDARY3,
+  BREAKPOINT_PAD,
+  BR_PRIMARY1,
+  BR_SECONDARY1,
+  COLOR_PRIMARY1,
+  COLOR_SECONDARY1,
+  COLOR_SECONDARY3,
+} from "../../constant";
 
 // 一般樣式使用
 const DefaultButton = styled.div.attrs(() => ({
@@ -15,6 +20,7 @@ const DefaultButton = styled.div.attrs(() => ({
   align-items: center;
   width: 8.6rem;
   height: 3.2rem;
+  cursor: pointer;
 
   ${BREAKPOINT_PAD} {
     width: 10.6rem;
@@ -22,26 +28,26 @@ const DefaultButton = styled.div.attrs(() => ({
   }
 `;
 
-export const CTAPrimaryButton = styled(DefaultButton).attrs(() => ({
-  className: CTAPrimaryStyle,
-}))`
-  border-radius: ${(props) => props.isRounded && "1.4rem"};
-  width: ${(props) => props.width};
-  margin: ${(props) => props.margin || "0"};
-  cursor: pointer;
-`;
-
-export const CTASecondaryButton = styled(DefaultButton).attrs(() => ({
-  className: CTASecondaryStyle,
-}))`
+export const CTAPrimaryButton = styled(DefaultButton)`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
 
-export const GhostPrimaryButton = styled(DefaultButton).attrs(() => ({
-  className: GhostPrimaryStyle,
-}))`
+export const CTASecondaryButton = styled(DefaultButton)`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_SECONDARY1};
+  border-radius: ${(props) => props.isRounded && "1.4rem"};
+  width: ${(props) => props.width};
+  margin: ${(props) => props.margin || "0"};
+`;
+
+export const GhostPrimaryButton = styled(DefaultButton)`
+  color: ${COLOR_PRIMARY1};
+  border-color: ${BR_PRIMARY1};
+  background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
@@ -49,12 +55,12 @@ export const GhostPrimaryButton = styled(DefaultButton).attrs(() => ({
   // border-width: 0.4rem;
   // 根據 border props 設置 border-width
   border-width: ${(props) => props.border || "0.4rem"};
-  cursor: pointer;
 `;
 
-export const GhostSecondaryButton = styled(DefaultButton).attrs(() => ({
-  className: GhostSecondaryStyle,
-}))`
+export const GhostSecondaryButton = styled(DefaultButton)`
+  color: ${COLOR_SECONDARY1};
+  border-color: ${BR_SECONDARY1};
+  background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
@@ -71,35 +77,31 @@ const DefaultPickerButton = styled.div.attrs(() => ({
   justify-content: center;
   align-items: center;
   height: 4rem;
-`;
-
-export const PickerCTAPrimaryButton = styled(DefaultPickerButton).attrs(() => ({
-  className: CTAPrimaryStyle,
-}))`
   cursor: pointer;
 `;
 
-export const PickerCTASecondaryButton = styled(DefaultPickerButton).attrs(
-  () => ({
-    className: CTASecondaryStyle,
-  })
-)``;
+export const PickerCTAPrimaryButton = styled(DefaultPickerButton)`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
+`;
 
-export const PickerGhostPrimaryButton = styled(DefaultPickerButton).attrs(
-  () => ({
-    className: GhostPrimaryStyle,
-  })
-)`
+export const PickerCTASecondaryButton = styled(DefaultPickerButton)`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_SECONDARY1};
+`;
+
+export const PickerGhostPrimaryButton = styled(DefaultPickerButton)`
+  color: ${COLOR_PRIMARY1};
+  border-color: ${BR_PRIMARY1};
+  background-color: ${BG_SECONDARY3};
   border-style: solid;
   border-width: 0.4rem;
-  cursor: pointer;
 `;
 
-export const PickerGhostSecondaryButton = styled(DefaultPickerButton).attrs(
-  () => ({
-    className: GhostSecondaryStyle,
-  })
-)`
+export const PickerGhostSecondaryButton = styled(DefaultPickerButton)`
+  color: ${COLOR_SECONDARY1};
+  border-color: ${BR_SECONDARY1};
+  background-color: ${BG_SECONDARY3};
   border-style: solid;
   border-width: 0.4rem;
 `;
