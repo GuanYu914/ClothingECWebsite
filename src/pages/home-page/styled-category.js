@@ -1,4 +1,9 @@
-import { BREAKPOINT_PAD } from "../../constant";
+import {
+  BG_SECONDARY1,
+  BREAKPOINT_PAD,
+  COLOR_SECONDARY2,
+  COLOR_SECONDARY3,
+} from "../../constant";
 import styled from "styled-components/macro";
 
 export const CategoryBlock = styled.div`
@@ -12,6 +17,7 @@ export const CategoryBlock = styled.div`
 export const CategoryTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2};
   text-align: center;
 `;
 
@@ -23,8 +29,10 @@ export const CategoriesContainer = styled.div`
 `;
 
 export const Category = styled.div.attrs(() => ({
-  className: "fs-h2 color-secondary3 bg-secondary1",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_SECONDARY1};
   width: fit-content;
   height: fit-content;
   width: 8rem;

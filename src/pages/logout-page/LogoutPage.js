@@ -7,6 +7,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   BREAKPOINT_PAD,
   HEADER_HEIGHT_PAD,
+  COLOR_SECONDARY2,
 } from "../../constant";
 import { CTAPrimaryButton, GhostPrimaryButton } from "../../components/button";
 import Loader from "../../components/loader";
@@ -36,6 +37,7 @@ const ContentContainer = styled.div`
 const LogoutTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2};
   text-align: center;
 
   ${BREAKPOINT_MOBILE} {
@@ -50,6 +52,7 @@ const LogoutTitle = styled.h1.attrs(() => ({
 const LogoutContent = styled.h2.attrs(() => ({
   className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-top: 2rem;
   text-align: center;
 `;

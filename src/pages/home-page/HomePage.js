@@ -2,6 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import {
   BREAKPOINT_MOBILE,
+  COLOR_SECONDARY2,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
 } from "../../constant";
@@ -72,6 +73,7 @@ const HotSellingItemBlock = styled.div`
 const HotSellingItemTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2};
   text-align: center;
 `;
 

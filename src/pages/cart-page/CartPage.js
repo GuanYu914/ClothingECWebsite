@@ -17,8 +17,10 @@ import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/sq
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { ReactComponent as linkIcon } from "../../imgs/pages/cart-page/link-45deg.svg";
 import {
+  BG_SECONDARY1,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
+  COLOR_SECONDARY2,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
@@ -47,8 +49,9 @@ const ContentContainer = styled.div`
 `;
 
 const CartTitle = styled.h1.attrs(() => ({
-  className: "fs-h1 color-secondary2",
+  className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 8rem;
   // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
   ${BREAKPOINT_MOBILE} {
@@ -111,8 +114,10 @@ const ProductHeader = styled.div`
 `;
 
 const ProductName = styled.h2.attrs(() => ({
-  className: "fs-h1 color-secondary2",
-}))``;
+  className: "fs-h1",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const ProductDeleteButton = styled(trash)`
   width: 2rem;
@@ -120,17 +125,15 @@ const ProductDeleteButton = styled(trash)`
   cursor: pointer;
 `;
 
-const ProductUnderline = styled.div.attrs(() => ({
-  className: "bg-secondary1",
-}))`
+const ProductUnderline = styled.div`
+  background-color: ${BG_SECONDARY1};
   margin-top: 4rem;
   width: 100%;
   height: 0.4rem;
 `;
 
-const NoneCheckedButton = styled(checkNoneFilled).attrs(() => ({
-  className: "color-secondary2",
-}))`
+const NoneCheckedButton = styled(checkNoneFilled)`
+  color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
   cursor: pointer;
@@ -147,9 +150,8 @@ const NoneCheckedButton = styled(checkNoneFilled).attrs(() => ({
   }
 `;
 
-const CheckedButton = styled(checkFilled).attrs(() => ({
-  className: "color-secondary2",
-}))`
+const CheckedButton = styled(checkFilled)`
+  color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
   cursor: pointer;

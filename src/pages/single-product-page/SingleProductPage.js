@@ -18,6 +18,9 @@ import {
   Z_INDEX_LV2,
   Z_INDEX_LV6,
   COLOR_PRIMARY1,
+  COLOR_SECONDARY2,
+  COLOR_SECONDARY3,
+  BG_PRIMARY1,
 } from "../../constant";
 import {
   CartContext,
@@ -55,8 +58,9 @@ const ContentContainer = styled.div`
 `;
 
 const ProductCategoryPath = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 1rem;
   // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
   ${BREAKPOINT_MOBILE} {
@@ -102,8 +106,10 @@ const ProductHeaderContainer = styled.div`
 `;
 
 const ProductName = styled.h1.attrs(() => ({
-  className: "fs-h1 color-secondary2",
-}))``;
+  className: "fs-h1",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const FavoriteIcon = styled(heart)`
   width: 1.8rem;
@@ -122,20 +128,25 @@ const DetailInfoContainer = styled.div`
 `;
 
 const DetailInfoTitle = styled.h1.attrs(() => ({
-  className: "fs-h2 color-secondary2",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const DetailInfoDescBlock = styled.div`
   margin-top: 1rem;
 `;
 
 const DetailInfoDescBlockSubTitle = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const DetailInfoDescBlockBody = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 2rem;
 `;
 
@@ -156,12 +167,16 @@ const WatchedItemsContainer = styled.div`
 `;
 
 const WatchedItemsTitle = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const ProductAddButton = styled.div.attrs(() => ({
-  className: "fs-h2 bg-primary1 color-secondary3",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
   width: 100%;
   position: fixed;
   bottom: 0;
@@ -196,17 +211,18 @@ const AddToCartReminderMsg = styled(animated.div).attrs(() => ({
   border-radius: 0.8rem;
 `;
 
-const CartIcon = styled(cart).attrs(() => ({
-  className: "color-secondary3",
-}))`
+const CartIcon = styled(cart)`
+  color: ${COLOR_SECONDARY3};
   width: 4rem;
   height: 4rem;
   margin-bottom: 1rem;
 `;
 
 const ReminderMsg = styled.h2.attrs(() => ({
-  className: "fs-h3 color-secondary3",
-}))``;
+  className: "fs-h3",
+}))`
+  color: ${COLOR_SECONDARY3};
+`;
 
 export default function SingleProductPage() {
   // 透過 React router hook 拿到特定網址資訊

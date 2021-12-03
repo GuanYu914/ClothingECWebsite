@@ -15,12 +15,14 @@ import {
   COLOR_SECONDARY1,
   COLOR_PRIMARY2,
   COLOR_PRIMARY3,
+  BG_PRIMARY1,
+  COLOR_SECONDARY3,
 } from "../../constant";
 import { UserContext } from "../../context";
 
-const PageContainer = styled.div.attrs(() => ({
-  className: "bg-primary1",
-}))``;
+const PageContainer = styled.div`
+  background-color: ${BG_PRIMARY1};
+`;
 
 const ContentContainer = styled.div`
   // 設定容器最大寬度
@@ -64,26 +66,31 @@ const FormForPad = styled.div`
 `;
 
 const ProfileEditingTitle = styled.h1.attrs(() => ({
-  className: "fs-h1 color-secondary3",
+  className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY3};
   padding-top: 1rem;
   margin-bottom: 0.5rem;
 `;
 
 const ProfileEditingSubTitle = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary3",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY3};
   margin-bottom: 1rem;
 `;
 
 const BrandInfo = styled.div``;
 const BrandName = styled.h1.attrs(() => ({
-  className: "fs-h1 color-secondary3",
-}))``;
+  className: "fs-h1",
+}))`
+  color: ${COLOR_SECONDARY3};
+`;
 
 const BrandSlogan = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary3",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY3};
   margin-bottom: 2rem;
 `;
 

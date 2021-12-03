@@ -2,12 +2,11 @@ import styled from "styled-components/macro";
 import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/square.svg";
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
-import { Z_INDEX_LV4 } from "../../constant";
+import { BG_SECONDARY3, COLOR_SECONDARY2, Z_INDEX_LV4 } from "../../constant";
 import PropTypes from "prop-types";
 
-const Container = styled.div.attrs(() => ({
-  className: "bg-secondary3",
-}))`
+const Container = styled.div`
+  background-color: ${BG_SECONDARY3};
   width: 100%;
   height: 10rem;
   padding: 1rem;
@@ -20,25 +19,24 @@ const Container = styled.div.attrs(() => ({
 `;
 
 const SelectionHeader = styled.div.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   display: flex;
   align-items: center;
   margin-bottom: 0.6rem;
 `;
 
-const NoneCheckedAllButton = styled(checkNoneFilled).attrs(() => ({
-  className: "color-secondary2",
-}))`
+const NoneCheckedAllButton = styled(checkNoneFilled)`
+  color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
   margin-right: 1rem;
   cursor: pointer;
 `;
 
-const CheckedAllButton = styled(checkFilled).attrs(() => ({
-  className: "color-secondary2",
-}))`
+const CheckedAllButton = styled(checkFilled)`
+  color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
   margin-right: 1rem;
@@ -46,8 +44,9 @@ const CheckedAllButton = styled(checkFilled).attrs(() => ({
 `;
 
 const TotalPriceShower = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 0.8rem;
 `;
 

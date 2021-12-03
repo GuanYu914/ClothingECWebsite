@@ -7,6 +7,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
+  COLOR_SECONDARY2,
 } from "../../constant";
 import CardContainer from "../../components/card-container";
 import { useState } from "react";
@@ -29,8 +30,9 @@ const ContentContainer = styled.div`
 `;
 
 const PageTitle = styled.h1.attrs(() => ({
-  className: "fs-h1 color-secondary2",
+  className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2}
   margin-left: 1rem;
   margin-bottom: 2rem;
 

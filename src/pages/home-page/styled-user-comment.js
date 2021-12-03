@@ -1,4 +1,11 @@
-import { Z_INDEX_LV1, BREAKPOINT_LAPTOP, BREAKPOINT_PAD } from "../../constant";
+import {
+  Z_INDEX_LV1,
+  BREAKPOINT_LAPTOP,
+  BREAKPOINT_PAD,
+  COLOR_SECONDARY2,
+  COLOR_SECONDARY3,
+  BG_SECONDARY1,
+} from "../../constant";
 import styled from "styled-components/macro";
 
 export const UserCommentBlock = styled.div.attrs(() => ({
@@ -12,8 +19,9 @@ export const UserCommentBlock = styled.div.attrs(() => ({
 `;
 
 export const UserCommentTitle = styled.h2.attrs(() => ({
-  className: "color-secondary2 fs-h1",
+  className: "fs-h1",
 }))`
+  color: ${COLOR_SECONDARY2};
   text-align: center;
 `;
 
@@ -24,8 +32,10 @@ export const UserCommentsContainer = styled.div`
 `;
 
 export const UserComment = styled.div.attrs(() => ({
-  className: "bg-secondary1 color-secondary3 fs-h3",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_SECONDARY1};
   width: 18rem;
   height: 10rem;
   padding: 1.2rem;

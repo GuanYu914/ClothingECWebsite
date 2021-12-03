@@ -17,8 +17,9 @@ const PickerColorContainer = styled.div`
 `;
 
 const PickerColorName = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 1rem;
   flex-shrink: 0;
 `;
@@ -53,8 +54,9 @@ const PickerSizeContainer = styled.div`
 `;
 
 const PickerSizeName = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 1rem;
   flex-shrink: 0;
 `;
@@ -67,8 +69,9 @@ const PickerSizes = styled.div`
 `;
 
 const PickerSize = styled.h3.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
   margin-right: 0.8rem;
@@ -87,8 +90,9 @@ const PickerQuantityContainer = styled.div`
 `;
 
 const PickerQuantityName = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 1rem;
 `;
 
@@ -107,8 +111,10 @@ const QuantityPlus = styled(plusSquare)`
 `;
 
 const PickerQuantityNumber = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const PickerPriceShower = styled.div`
   display: flex;
@@ -116,14 +122,17 @@ const PickerPriceShower = styled.div`
 `;
 
 const PickerPriceName = styled.h2.attrs(() => ({
-  className: "fs-h2 color-secondary2",
+  className: "fs-h2",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 1rem;
 `;
 
 const PickerPriceNumber = styled.h3.attrs(() => ({
-  className: "fs-h2 color-secondary2",
-}))``;
+  className: "fs-h2",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 export default function CartPicker({
   picker,

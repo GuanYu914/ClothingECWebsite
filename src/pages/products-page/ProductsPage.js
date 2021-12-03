@@ -15,6 +15,9 @@ import {
   PRODUCTS_QUERY_INIT_OFFSET,
   PRODUCTS_QUERY_INIT_LIMIT,
   PRODUCTS_QUERY_LIMIT,
+  COLOR_SECONDARY2,
+  COLOR_SECONDARY3,
+  BG_PRIMARY1,
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
 import { ReactComponent as scrollUpIcon } from "../../imgs/pages/products-page/caret-up-fill.svg";
@@ -44,8 +47,9 @@ const ContentContainer = styled.div`
 `;
 
 const ProductsCategoryPath = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 2rem;
   // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
   ${BREAKPOINT_MOBILE} {
@@ -64,8 +68,10 @@ const ProductsInfo = styled.div`
 `;
 
 const ProductsCounter = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
-}))``;
+  className: "fs-h3",
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const ProductsFilter = styled.div`
   display: flex;
@@ -74,8 +80,9 @@ const ProductsFilter = styled.div`
 `;
 
 const FilterName = styled.h3.attrs(() => ({
-  className: "fs-h3 color-secondary2",
+  className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-right: 0.8rem;
 `;
 
@@ -113,6 +120,7 @@ const ProductsCategoryListContainer = styled.div`
 const CategoryMainTitle = styled.ul.attrs(() => ({
   className: "fs-h2 color-secondary2 list-reset",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: 1rem;
   list-style: none;
   position: relative;
@@ -128,8 +136,9 @@ const CategoryMainTitle = styled.ul.attrs(() => ({
 const fadeInAnimation = keyframes`${fadeIn}`;
 
 const CategorySubTitle = styled.ul.attrs(() => ({
-  className: "fs-h3 color-secondary2 list-reset",
+  className: "fs-h3 list-reset",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-bottom: ${(props) => props.marginBottom || "0"};
   margin-left: 1rem;
   list-style: none;
@@ -143,8 +152,9 @@ const CategorySubTitle = styled.ul.attrs(() => ({
 `;
 
 const CategoryDetailTitle = styled.li.attrs(() => ({
-  className: "fs-h3 color-secondary2 list-reset",
+  className: "fs-h3 list-reset",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-left: 1rem;
   list-style: none;
   user-select: none;
@@ -181,8 +191,10 @@ const ButtonContainer = styled.div`
 `;
 
 const FloatingButtonForMobileAndPad = styled.button.attrs(() => ({
-  className: "bg-primary1 color-secondary3 box-shadow-light fs-h3",
+  className: "box-shadow-light fs-h3",
 }))`
+  color: ${COLOR_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
