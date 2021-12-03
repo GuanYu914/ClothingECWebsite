@@ -145,7 +145,7 @@ export const sendUserLoginDataApi = async function (account, password) {
 
 // 取得 session 資料
 export const getSessionDataApi = async function () {
-  return await axios(`${DevURL}/getSession.php`, {
+  return await axios(`${DevURL}/handleGetSession.php`, {
     withCredentials: true,
   }).catch(errorHandling);
 };
