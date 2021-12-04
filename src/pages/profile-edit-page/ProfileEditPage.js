@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import styled from "styled-components/macro";
 import Form from "../../components/form";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import {
   BG_SECONDARY3,
   COLOR_PRIMARY1,
@@ -19,6 +19,9 @@ import {
   COLOR_SECONDARY3,
 } from "../../constant";
 import { UserContext } from "../../context";
+import Modal from "../../components/modal";
+import { sendUpdatedUserDataApi } from "../../Webapi";
+import { useHistory } from "react-router";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -97,7 +100,9 @@ const BrandSlogan = styled.h2.attrs(() => ({
 export default function ProfileEditPage() {
   // 透過 UserContext 拿到用戶資訊
   const { user } = useContext(UserContext);
-
+  // 透過 useHistory 換頁
+  const history = useHistory();
+  // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
       id: 1,
@@ -141,11 +146,25 @@ export default function ProfileEditPage() {
       isValid: false,
     },
   ]);
+  // 是否要顯示 api 錯誤 modal 提示訊息
+  const [showModalForApiError, setShowModalForApiError] = useState(false);
+  // api 錯誤 modal 提示資訊
+  const [modalInfoForApiError] = useState({
+    selectionMode: false,
+    title: "發生一點小錯誤",
+    content: "由於伺服器或網路異常，請稍後再試一次",
+  });
+  // 是否要顯示更新成功的 modal 提示訊息
+  const [showModalForUpdatedSuccessfully, setShowModalForUpdatedSuccessfully] =
+    useState(false);
+  // 更新成功的 modal 提示訊息
+  const [modalInfoForUpdatedSuccessfully] = useState({
+    selectionMode: false,
+    title: "修改用戶資料成功",
+    content: "視窗關閉後將自動登出，請使用修改後的帳密登入",
+  });
 
-  useEffect(() => {
-    console.log(form);
-  }, [form]);
-
+  // 處理輸入框改變事件
   function handleInputChange(id, e) {
     setForm(
       form.map((formData) =>
@@ -155,7 +174,7 @@ export default function ProfileEditPage() {
       )
     );
   }
-
+  // 處理修改按鈕，送出資料事件
   function handleSubmit() {
     // check all field's validation state
     let postData = {
@@ -175,7 +194,6 @@ export default function ProfileEditPage() {
     checkFieldValidation("新的密碼", postData.newPassword);
 
     let allValidationState = form.map((formData) => formData.isValid);
-    console.log(allValidationState);
     let isValidPostData = false;
     for (let i = 0; i < allValidationState.length; i++) {
       if (!allValidationState[i]) {
@@ -185,16 +203,34 @@ export default function ProfileEditPage() {
       isValidPostData = true;
     }
     if (isValidPostData) {
-      console.log("送出", postData);
-    } else {
-      console.log("資料有誤");
+      sendUpdatedUserDataApi(
+        postData.nickname,
+        postData.account,
+        postData.newPassword
+      )
+        .then((resp) => {
+          const json_data = resp.data;
+          if (json_data.isSuccessful === "failed") {
+            setShowModalForApiError(true);
+          }
+          if (json_data.isSuccessful === "successful") {
+            setShowModalForUpdatedSuccessfully(true);
+          }
+        })
+        .catch((e) => {
+          console.log(
+            "some errors were happened when setting data from api, error is ",
+            e
+          );
+          setShowModalForApiError(true);
+        });
     }
   }
-
+  // 當用戶切換到其他欄位的觸發事件
   function handleFocusOut(fieldName, e) {
     checkFieldValidation(fieldName, e.target.value);
   }
-
+  // 檢查每個輸入欄位的資料，有符合條件才給過
   function checkFieldValidation(fieldName, fieldValue) {
     if (fieldName === "暱稱") {
       if (fieldValue === "") {
@@ -258,7 +294,7 @@ export default function ProfileEditPage() {
       }
     }
   }
-
+  // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
   function setFieldState(fieldName, helperMsg, helperColor, validationState) {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
@@ -273,6 +309,26 @@ export default function ProfileEditPage() {
           : { ...formData }
       );
     });
+  }
+  // modal 顯示情境: 發送 API 過程有異常
+  // 處理點選按鈕的事件
+  function handleSubmitOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: 發送 API 過程有異常
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForApiError() {
+    setShowModalForApiError(false);
+  }
+  // modal 顯示情境: 修改用戶資料成功
+  // 處理點選按鈕的事件
+  function handleSubmitOpForUpdatedSuccessfully() {
+    history.push("/logout");
+  }
+  // modal 顯示情境: 修改用戶資料成功
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForUpdatedSuccessfully() {
+    history.push("/logout");
   }
   return (
     <PageContainer>
@@ -308,6 +364,20 @@ export default function ProfileEditPage() {
             useForProfileEditing={true}
           />
         </FormForPad>
+        {showModalForApiError && (
+          <Modal
+            modalInfo={modalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
+        {showModalForUpdatedSuccessfully && (
+          <Modal
+            modalInfo={modalInfoForUpdatedSuccessfully}
+            handleSubmitOp={handleSubmitOpForUpdatedSuccessfully}
+            handleCancelOp={handleCancelOpForUpdatedSuccessfully}
+          />
+        )}
       </ContentContainer>
       <Footer
         marginTop={"0"}
