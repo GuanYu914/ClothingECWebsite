@@ -26,6 +26,8 @@ import {
 } from "../../components/button";
 import { slideInUp } from "react-animations";
 import PropTypes from "prop-types";
+import { UserContext } from "../../context";
+import { useContext } from "react";
 
 const slideInUpAnimation = keyframes`${slideInUp}`;
 
@@ -254,6 +256,7 @@ export default function ProductPicker({
   handleAddToCart,
   handleCheckout,
 }) {
+  const { user } = useContext(UserContext);
   return (
     <Switcher>
       {usedOnMobile && (
@@ -263,19 +266,25 @@ export default function ProductPicker({
               <PickerHeader>
                 <PickerProductName>女版襯衫</PickerProductName>
                 <PickerHeaderButton>
-                  {isLiked && (
-                    <FavoriteFilledIcon
-                      onClick={() => {
-                        handleAddToLikedItems();
-                      }}
-                    />
-                  )}
-                  {!isLiked && (
-                    <FavoriteIcon
-                      onClick={() => {
-                        handleAddToLikedItems();
-                      }}
-                    />
+                  {user !== null ? (
+                    <>
+                      {isLiked && (
+                        <FavoriteFilledIcon
+                          onClick={() => {
+                            handleAddToLikedItems();
+                          }}
+                        />
+                      )}
+                      {!isLiked && (
+                        <FavoriteIcon
+                          onClick={() => {
+                            handleAddToLikedItems();
+                          }}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <></>
                   )}
                   <CloseButton
                     onClick={() => {
