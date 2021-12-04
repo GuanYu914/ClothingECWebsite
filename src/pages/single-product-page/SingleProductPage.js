@@ -291,6 +291,22 @@ export default function SingleProductPage() {
 
   // mobile 裝置下，點選 "選擇商品規格" 事件
   function handleSelectProductSpecOnMobile() {
+    // 重設所有先前用戶點選的選項
+    setProductInfo({
+      ...productInfo,
+      picker: {
+        ...productInfo.picker,
+        colors: productInfo.picker.colors.map((color) => ({
+          ...color,
+          selected: false,
+        })),
+        sizes: productInfo.picker.sizes.map((size) => ({
+          ...size,
+          selected: false,
+        })),
+        quantity: 1,
+      },
+    });
     // 叫出 mobile 裝置底下的 product-picker 元件
     setMobilePickerState(true);
   }
