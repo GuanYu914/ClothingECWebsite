@@ -203,11 +203,7 @@ export default function ProfileEditPage() {
       isValidPostData = true;
     }
     if (isValidPostData) {
-      sendUpdatedUserDataApi(
-        postData.nickname,
-        postData.account,
-        postData.newPassword
-      )
+      sendUpdatedUserDataApi(postData.nickname, postData.newPassword)
         .then((resp) => {
           const json_data = resp.data;
           if (json_data.isSuccessful === "failed") {
