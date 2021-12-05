@@ -143,6 +143,17 @@ export const sendUserLoginDataApi = async function (account, password) {
     .catch(errorHandling);
 };
 
+// 修改用戶資訊
+export const sendUpdatedUserDataApi = async function (nickname, password) {
+  return await axios
+    .post(
+      `${DevURL}/handleProfileEdit.php`,
+      { nickname, password },
+      { withCredentials: true }
+    )
+    .catch(errorHandling);
+};
+
 // 取得 session 資料
 export const getSessionDataApi = async function () {
   return await axios(`${DevURL}/handleGetSession.php`, {
