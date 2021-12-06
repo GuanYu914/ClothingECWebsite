@@ -11,6 +11,11 @@ import {
 } from "../../constant";
 import CardContainer from "../../components/card-container";
 import { useState } from "react";
+import { useEffect, useContext, useRef } from "react";
+import { FavoriteItemsContext } from "../../context";
+import Modal from "../../components/modal";
+import { CTAPrimaryButton } from "../../components/button";
+import { useHistory } from "react-router";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -45,55 +50,94 @@ const PageTitle = styled.h1.attrs(() => ({
   }
 `;
 
-export default function FavoritePage() {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      product: {
-        name: "修身寬褲",
-        price: "499",
-      },
-      isLiked: true,
-    },
-    {
-      id: 2,
-      product: {
-        name: "短版針織罩衫",
-        price: "699",
-      },
-      isLiked: true,
-    },
-    {
-      id: 3,
-      product: {
-        name: "短版西裝外套",
-        price: "1299",
-      },
-      isLiked: true,
-    },
-    {
-      id: 4,
-      product: {
-        name: "針織洋裝",
-        price: "699",
-      },
-      isLiked: true,
-    },
-  ]);
+const ContentTitle = styled.h2.attrs(() => ({
+  className: "fs-h2",
+}))`
+  text-align: center;
+  margin-bottom: 2rem;
+`;
 
+export default function FavoritePage() {
+  // 透過 history hook 換頁
+  const history = useHistory();
+  // 透過 FavoriteItemsContext 拿到 favoriteItems 跟 setter function
+  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
+  // 用來暫存要被刪除的收藏產品
+  const tmpRemovingItem = useRef(null);
+  // 頁面的產品收藏清單
+  const [items, setItems] = useState(favoriteItems);
+  // 是否顯示移除收藏產品的 modal 提示
+  const [
+    showModalForRemovingFavoriteItem,
+    setShowModalForRemovingFavoriteItem,
+  ] = useState(false);
+  // 收藏產品的 modal 資訊
+  const [modalInfoForRemovingFavoriteItem] = useState({
+    selectionMode: true,
+    title: "從收藏清單中移除？",
+    content: "此操作將會從此頁面直接移除，確定嗎？",
+  });
+
+  // 點擊愛心圖示事件
   function handleLiked(id) {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
-      )
-    );
+    setShowModalForRemovingFavoriteItem(true);
+    tmpRemovingItem.current = id;
   }
+  // modal 顯示情境: 要否要刪除收藏產品
+  // 處理點選按鈕事件
+  function handleSubmitOpForRemovingFavoriteItem() {
+    setShowModalForRemovingFavoriteItem(false);
+    const id = tmpRemovingItem.current;
+    setItems(items.filter((item) => item.id !== id));
+  }
+  // modal 顯示情境: 是否要刪除收藏產品
+  // 處理點選按鈕以外的事件
+  function handleCancelOpForRemovingFavoriteItem() {
+    setShowModalForRemovingFavoriteItem(false);
+  }
+  // 導引到相對應產品的畫面
+  function handleRedirectToProductPage(e) {
+    const id = e.target.getAttribute("data-id");
+    history.push(`/product/${id}`);
+  }
+
+  // 當本地的收藏清單更新時，同步更新 favoriteItems
+  useEffect(() => {
+    setFavoriteItems(items);
+  }, [items]);
+
   return (
     <PageContainer>
       <Header />
       <ContentContainer>
         <PageTitle>收藏清單</PageTitle>
-        <CardContainer items={items} handleLiked={handleLiked}></CardContainer>
+        {items.length === 0 ? (
+          <>
+            <ContentTitle>目前還沒有產品喔，先去逛逛吧！</ContentTitle>
+            <CTAPrimaryButton
+              isRounded={true}
+              margin={"0 auto"}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              首頁
+            </CTAPrimaryButton>
+          </>
+        ) : (
+          <CardContainer
+            items={items}
+            handleLiked={handleLiked}
+            handleOnClick={handleRedirectToProductPage}
+          ></CardContainer>
+        )}
+        {showModalForRemovingFavoriteItem && (
+          <Modal
+            modalInfo={modalInfoForRemovingFavoriteItem}
+            handleSubmitOp={handleSubmitOpForRemovingFavoriteItem}
+            handleCancelOp={handleCancelOpForRemovingFavoriteItem}
+          />
+        )}
       </ContentContainer>
       <Footer />
     </PageContainer>
