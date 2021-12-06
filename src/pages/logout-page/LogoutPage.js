@@ -12,7 +12,11 @@ import {
 import { CTAPrimaryButton, GhostPrimaryButton } from "../../components/button";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
-import { UserContext } from "../../context";
+import {
+  FavoriteItemsContext,
+  UserContext,
+  WatchedProductsContext,
+} from "../../context";
 import { useContext, useEffect, useState } from "react";
 import { LogoutApi } from "../../Webapi";
 import { useHistory } from "react-router";
@@ -67,6 +71,10 @@ export default function LogoutPage() {
   const history = useHistory();
   // 從 UserContext 拿到用戶的 setter function
   const { setUser } = useContext(UserContext);
+  // 透過 FavoriteItemsContext 拿到用戶收藏清單的 setter function
+  const { setFavoriteItems } = useContext(FavoriteItemsContext);
+  // 透過 WatchedProductsContext 拿到產品觀看紀錄清單跟 setter function
+  const { setWatchedProducts } = useContext(WatchedProductsContext);
   // 頁面讀取狀態
   const [isLoading, setIsLoading] = useState(true);
   // 是否顯示 api error 的 modal
@@ -99,6 +107,9 @@ export default function LogoutPage() {
         }
         if (json_data.isSuccessful === "successful") {
           setIsLoading(false);
+          // 重設所有 Context 狀態
+          setFavoriteItems([]);
+          setWatchedProducts([]);
           setUser(null);
         }
       })
