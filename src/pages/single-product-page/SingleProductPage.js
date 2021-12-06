@@ -25,6 +25,7 @@ import {
 import {
   CartContext,
   UserContext,
+  FavoriteItemsContext,
   WatchedProductsContext,
 } from "../../context";
 import { useTransition, animated } from "react-spring";
@@ -231,6 +232,8 @@ export default function SingleProductPage() {
   const history = useHistory();
   // 透過 UserContext 拿到用戶資訊
   const { user } = useContext(UserContext);
+  // 透過 FavoriteItemsContext 拿到當前用戶收藏清單跟 setter function
+  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
   // 透過 CartContext 拿到購物車資訊
   const { cart, setCart } = useContext(CartContext);
   // 透過 WatchedProductContext 拿到近期瀏覽的商品
@@ -263,8 +266,6 @@ export default function SingleProductPage() {
   const [displayedCategoryPath, setDisplayedCategoryPath] = useState();
   // mobile 裝置底下， product-picker 元件啟用狀態
   const [mobilePickerState, setMobilePickerState] = useState(false);
-  // 儲存當前頁面，愛心是否被點擊狀態
-  const [isLiked, setIsLiked] = useState(false);
   // 當前頁面可以被執行有關購物車相關的操作狀態
   const [activeOpState, setActiveOpState] = useState(false);
   // 加入購物車動畫時間
@@ -312,7 +313,46 @@ export default function SingleProductPage() {
   }
   // 更新當前頁面愛心狀態
   function handleAddToLikedItems() {
-    setIsLiked(!isLiked);
+    // 更新當前頁面愛心狀態
+    setProductInfo({ ...productInfo, isLiked: !productInfo.isLiked });
+    // 透過當前頁面愛心狀態，更新用戶收藏清單跟產品觀看歷史紀錄清單的愛心狀態
+    if (!productInfo.isLiked) {
+      setFavoriteItems([
+        {
+          ...productInfo,
+          product: {
+            name: productInfo.name,
+            price: productInfo.picker.unitPrice,
+            img: productInfo.imgs[0].src,
+          },
+          isLiked: true,
+        },
+        ...favoriteItems,
+      ]);
+      setWatchedProducts(
+        watchedProducts.map((watchedProduct) =>
+          watchedProduct.id === productInfo.id
+            ? {
+                ...watchedProduct,
+                isLiked: true,
+              }
+            : { ...watchedProduct }
+        )
+      );
+    } else {
+      setFavoriteItems(
+        favoriteItems.filter(
+          (favoriteItem) => favoriteItem.id !== productInfo.id
+        )
+      );
+      setWatchedProducts(
+        watchedProducts.map((watchedProduct) =>
+          watchedProduct.id === productInfo.id
+            ? { ...watchedProduct, isLiked: false }
+            : { ...watchedProduct }
+        )
+      );
+    }
   }
   // 選擇商品顏色
   function handleSelectPickerColor(id) {
@@ -386,7 +426,7 @@ export default function SingleProductPage() {
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
     for (let i = 0; i < cart.length; i++) {
-      if (cart[i].pid === productInfo.pid) {
+      if (cart[i].pid === productInfo.id) {
         if (
           cart[i].colors.filter((color) => color.selected)[0].hexcode ===
           selectedPickerColor
@@ -419,7 +459,7 @@ export default function SingleProductPage() {
       const newCart = [...cart];
       newCart.unshift({
         id: cart.length + 1,
-        pid: productInfo.pid,
+        pid: productInfo.id,
         name: productInfo.name,
         urls: productInfo.imgs,
         colors: productInfo.picker.colors,
@@ -440,17 +480,38 @@ export default function SingleProductPage() {
   }
   // 更新 watchedItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
+    // 更新 watchedItems 裡面物件的 isLiked 屬性
     setWatchedProducts(
       watchedProducts.map((item) =>
         item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
       )
     );
+    // 根據 watchedItems 裡面的 isLiked 屬性，同步更新用戶收藏清單跟產品觀看歷史紀錄清單的愛心狀態
+    watchedProducts.forEach((el) => {
+      if (el.id === id) {
+        if (!el.isLiked) {
+          setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
+          setProductInfo({
+            ...productInfo,
+            isLiked: true,
+          });
+        } else {
+          setFavoriteItems(
+            favoriteItems.filter((favoriteItem) => favoriteItem.id !== id)
+          );
+          setProductInfo({
+            ...productInfo,
+            isLiked: false,
+          });
+        }
+      }
+    });
   }
   // 拿產品相關資訊，並設置相關狀態
-  function getProductInfoFromApi(pid) {
+  function getProductInfoFromApi(id) {
     setIsLoadingProduct(true);
     setIsLoadingWatchedProducts(true);
-    getProductByIDApi(pid)
+    getProductByIDApi(id)
       .then((resp) => {
         const json_data = resp.data;
         if (json_data.isSuccessful === "failed") {
@@ -460,8 +521,7 @@ export default function SingleProductPage() {
         if (json_data.isSuccessful === "successful") {
           const json_data_for_product = resp.data.data[0];
           setProductInfo({
-            id: json_data_for_product.pid,
-            pid: json_data_for_product.pid,
+            id: json_data_for_product.pid, // 將 pid 當作 productInfo.id
             category: JSON.parse(json_data_for_product.category),
             name: json_data_for_product.name,
             detail: JSON.parse(json_data_for_product.detail),
@@ -478,6 +538,7 @@ export default function SingleProductPage() {
               quantity: 1,
               unitPrice: json_data_for_product.price,
             },
+            isLiked: checkIfUserLikeTheProduct(json_data_for_product.pid),
           });
           setSlidesForMobile({
             ...slidesForMobile,
@@ -500,7 +561,7 @@ export default function SingleProductPage() {
                 price: `${json_data_for_product.price}`,
                 img: JSON.parse(json_data_for_product.imgs)[0].src,
               },
-              isLiked: false,
+              isLiked: checkIfUserLikeTheProduct(json_data_for_product.pid),
             },
             ...newWatchedProducts,
           ]);
@@ -555,6 +616,14 @@ export default function SingleProductPage() {
   function handleCancelOpForApiError() {
     setShowModalForApiError(false);
   }
+  // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
+  function checkIfUserLikeTheProduct(id) {
+    if (user === null) return;
+    for (let i = 0; i < favoriteItems.length; i++) {
+      if (favoriteItems[i].id === id) return true;
+    }
+    return false;
+  }
 
   // 第一次 Render 結束
   useEffect(() => {
@@ -596,7 +665,7 @@ export default function SingleProductPage() {
                 <ProductName>女版襯衫</ProductName>
                 {user !== null && (
                   <>
-                    {isLiked ? (
+                    {productInfo.isLiked ? (
                       <FavoriteFilledIcon onClick={handleAddToLikedItems} />
                     ) : (
                       <FavoriteIcon onClick={handleAddToLikedItems} />
@@ -635,10 +704,9 @@ export default function SingleProductPage() {
                   <ProductName>{productInfo.name}</ProductName>
                   {user !== null && (
                     <>
-                      {isLiked && (
+                      {productInfo.isLiked ? (
                         <FavoriteFilledIcon onClick={handleAddToLikedItems} />
-                      )}
-                      {!isLiked && (
+                      ) : (
                         <FavoriteIcon onClick={handleAddToLikedItems} />
                       )}
                     </>
@@ -653,7 +721,7 @@ export default function SingleProductPage() {
                   handleDecreaseQuantity={handleDecreaseQuantity}
                   activeOpState={activeOpState}
                   setMobilePickerState={handleSelectProductSpecOnMobile}
-                  isLiked={isLiked}
+                  isLiked={productInfo.isLiked}
                   handleAddToLikedItems={handleAddToLikedItems}
                   handleAddToCart={handleAddToCart}
                   handleCheckout={handleCheckout}
@@ -714,7 +782,7 @@ export default function SingleProductPage() {
           handleDecreaseQuantity={handleDecreaseQuantity}
           activeOpState={activeOpState}
           setMobilePickerState={setMobilePickerState}
-          isLiked={isLiked}
+          isLiked={productInfo.isLiked}
           handleAddToLikedItems={handleAddToLikedItems}
           handleAddToCart={handleAddToCart}
           handleCheckout={handleCheckout}
