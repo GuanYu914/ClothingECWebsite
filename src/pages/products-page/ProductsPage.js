@@ -27,6 +27,8 @@ import DropDown from "../../components/dropdown";
 import Loader from "../../components/loader";
 import { useParams, useHistory } from "react-router";
 import Modal from "../../components/modal";
+import { useContext } from "react";
+import { FavoriteItemsContext, UserContext } from "../../context";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -228,6 +230,10 @@ export default function ProductsPage() {
   // 拿到當前頁面的分類路徑
   // 透過 history 改變網址列內容
   let history = useHistory();
+  // 透過 UserContext 拿到當前用戶資訊
+  const { user } = useContext(UserContext);
+  // 透過 FavoriteItemsContext 拿到用戶收藏清單跟 setter function
+  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
   // 放分類路徑資訊、所有分類列表、該分類底下的所有產品清單
   const [productsInfo, setProductsInfo] = useState({
     categoryPath: {
@@ -369,7 +375,7 @@ export default function ProductsPage() {
                   price: `${el.price}`,
                   img: JSON.parse(el.imgs)[0].src,
                 },
-                isLiked: false,
+                isLiked: checkIfUserLikeTheProduct(el.id),
               })),
             };
           });
@@ -444,6 +450,18 @@ export default function ProductsPage() {
           ? { ...product, isLiked: !product.isLiked }
           : { ...product }
       ),
+    });
+    // 拿到目前用戶點擊的產品，並根據喜歡狀態添加到收藏清單
+    productsInfo.productsList.forEach((el) => {
+      if (el.id === id) {
+        if (!el.isLiked) {
+          setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
+        } else {
+          setFavoriteItems(
+            favoriteItems.filter((favoriteItem) => favoriteItem.id !== id)
+          );
+        }
+      }
     });
   }
   // 展開相對應的子分類
@@ -630,6 +648,14 @@ export default function ProductsPage() {
   // 處理點選按鈕之外事件
   function handleCancelOpForApiError() {
     setShowModalForApiError(false);
+  }
+  // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
+  function checkIfUserLikeTheProduct(id) {
+    if (user === null) return;
+    for (let i = 0; i < favoriteItems.length; i++) {
+      if (favoriteItems[i].id === id) return true;
+    }
+    return false;
   }
 
   // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單

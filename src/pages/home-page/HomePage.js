@@ -44,6 +44,8 @@ import {
 import Loader from "../../components/loader";
 import { useHistory } from "react-router";
 import Modal from "../../components/modal";
+import { useContext } from "react";
+import { FavoriteItemsContext, UserContext } from "../../context";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -86,6 +88,10 @@ const HotSellingItemsContainer = styled.div`
 
 export default function HomePage() {
   let history = useHistory();
+  // 透過 UserContext 拿到 setter function
+  const { user } = useContext(UserContext);
+  // 透過 FavoriteItemsContext 拿到 favoriteItems 跟 setter function
+  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
   // 表示每個區塊是否該顯示 loading 動畫還是內容
   const [isLoadingBanner, setIsLoadingBanner] = useState(true);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -132,6 +138,18 @@ export default function HomePage() {
         item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
       )
     );
+    // 拿到目前用戶點擊的熱銷產品，並根據喜歡狀態添加到收藏清單
+    hotItems.forEach((el) => {
+      if (el.id === id) {
+        if (!el.isLiked) {
+          setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
+        } else {
+          setFavoriteItems(
+            favoriteItems.filter((favoriteItem) => favoriteItem.id !== id)
+          );
+        }
+      }
+    });
   }
   // 拿 banner 資訊，並設定相關的狀態
   function getBannersFromApi() {
@@ -206,8 +224,8 @@ export default function HomePage() {
                 price: `${el.price}`,
                 img: JSON.parse(el.imgs)[0].src,
               },
-              // 之後要根據 user 做調整
-              isLiked: false,
+              // 根據目前用戶收藏清單，判斷用戶是否喜歡此產品
+              isLiked: checkIfUserLikeTheProduct(el.id),
             }))
           );
           // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
@@ -295,6 +313,14 @@ export default function HomePage() {
   // 處理點選按鈕之外事件
   function handleCancelOpForApiError() {
     setShowModalForApiError(false);
+  }
+  // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
+  function checkIfUserLikeTheProduct(id) {
+    if (user === null) return;
+    for (let i = 0; i < favoriteItems.length; i++) {
+      if (favoriteItems[i].id === id) return true;
+    }
+    return false;
   }
 
   // DOM 載入完畢後只執行一次，用來抓一開始的資訊
