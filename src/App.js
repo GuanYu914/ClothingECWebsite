@@ -14,8 +14,14 @@ import LogoutPage from "./pages/logout-page";
 import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
-import { UserContext, CartContext, WatchedProductsContext } from "./context";
+import {
+  UserContext,
+  CartContext,
+  WatchedProductsContext,
+  FavoriteItemsContext,
+} from "./context";
 import ScrollToTop from "./components/scroll-to-top";
+import { useEffect } from "react";
 
 function App() {
   // Call Web API 拿用戶資訊
@@ -34,6 +40,12 @@ function App() {
     () => ({ watchedProducts, setWatchedProducts }),
     [watchedProducts]
   );
+  // 收藏清單
+  const [favoriteItems, setFavoriteItems] = useState([]);
+  const memorizedFavoriteItems = useMemo(
+    () => ({ favoriteItems, setFavoriteItems }),
+    [favoriteItems]
+  );
 
   return (
     <main>
@@ -42,44 +54,50 @@ function App() {
         <Switch>
           <UserContext.Provider value={memorizedUser}>
             <CartContext.Provider value={memorizedCart}>
-              <WatchedProductsContext.Provider value={memorizeWatchProducts}>
-                <Route exact path="/">
-                  <HomePage />
-                </Route>
-                <Route path="/login">
-                  {/* 防止已經是會員用戶透過 url 存取登入頁面 */}
-                  {user !== null ? <Redirect to="/" /> : <LoginPage />}
-                </Route>
-                <Route path="/profile-edit">
-                  {/* 防止非用戶透過 url 存取編輯個人資訊頁面 */}
-                  {user === null ? (
-                    <Redirect to="/login" />
-                  ) : (
-                    <ProfileEditPage />
-                  )}
-                </Route>
-                <Route path="/favorite">
-                  {/* 防止非用戶透過 url 存取收藏清單頁面 */}
-                  {user === null ? <Redirect to="/login" /> : <FavoritePage />}
-                </Route>
-                <Route path="/register">
-                  {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
-                  {user !== null ? <Redirect to="/" /> : <RegisterPage />}
-                </Route>
-                <Route path="/logout">
-                  <LogoutPage />
-                </Route>
-                {/* 使用 ? 代表可能沒有的欄位 */}
-                <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
-                  <ProductsPage />
-                </Route>
-                <Route path="/product/:productID">
-                  <SingleProductPage />
-                </Route>
-                <Route path="/cart">
-                  <CartPage />
-                </Route>
-              </WatchedProductsContext.Provider>
+              <FavoriteItemsContext.Provider value={memorizedFavoriteItems}>
+                <WatchedProductsContext.Provider value={memorizeWatchProducts}>
+                  <Route exact path="/">
+                    <HomePage />
+                  </Route>
+                  <Route path="/login">
+                    {/* 防止已經是會員用戶透過 url 存取登入頁面 */}
+                    {user !== null ? <Redirect to="/" /> : <LoginPage />}
+                  </Route>
+                  <Route path="/profile-edit">
+                    {/* 防止非用戶透過 url 存取編輯個人資訊頁面 */}
+                    {user === null ? (
+                      <Redirect to="/login" />
+                    ) : (
+                      <ProfileEditPage />
+                    )}
+                  </Route>
+                  <Route path="/favorite">
+                    {/* 防止非用戶透過 url 存取收藏清單頁面 */}
+                    {user === null ? (
+                      <Redirect to="/login" />
+                    ) : (
+                      <FavoritePage />
+                    )}
+                  </Route>
+                  <Route path="/register">
+                    {/* 防止已經是會員用戶透過 url 存取註冊頁面 */}
+                    {user !== null ? <Redirect to="/" /> : <RegisterPage />}
+                  </Route>
+                  <Route path="/logout">
+                    <LogoutPage />
+                  </Route>
+                  {/* 使用 ? 代表可能沒有的欄位 */}
+                  <Route path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?">
+                    <ProductsPage />
+                  </Route>
+                  <Route path="/product/:productID">
+                    <SingleProductPage />
+                  </Route>
+                  <Route path="/cart">
+                    <CartPage />
+                  </Route>
+                </WatchedProductsContext.Provider>
+              </FavoriteItemsContext.Provider>
             </CartContext.Provider>
           </UserContext.Provider>
         </Switch>
