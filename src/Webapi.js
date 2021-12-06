@@ -167,3 +167,10 @@ export const LogoutApi = async function () {
     withCredentials: true,
   }).catch(errorHandling);
 };
+
+// 取得用戶收藏清單
+export const getFavoriteProductsApi = async function () {
+  return await axios
+    .post(`${DevURL}/handleGetFavoriteItems.php`, {}, { withCredentials: true })
+    .catch(errorHandling);
+};
