@@ -169,8 +169,37 @@ export const LogoutApi = async function () {
 };
 
 // 取得用戶收藏清單
-export const getFavoriteProductsApi = async function () {
+export const getFavoriteItemsApi = async function () {
   return await axios
     .post(`${DevURL}/handleGetFavoriteItems.php`, {}, { withCredentials: true })
+    .catch(errorHandling);
+};
+
+// 上傳用戶收藏清單
+export const uploadFavoriteItemsApi = async function (productsInfo) {
+  return await axios
+    .post(
+      `${DevURL}/handleUploadFavoriteItems.php`,
+      { productsInfo },
+      { withCredentials: true }
+    )
+    .catch(errorHandling);
+};
+
+// 取得用戶購物車清單
+export const getCartItemsApi = async function () {
+  return await axios
+    .post(`${DevURL}/handleGetCartItems.php`, {}, { withCredentials: true })
+    .catch(errorHandling);
+};
+
+// 上傳用戶購買
+export const uploadCartItemsApi = async function (productsInfo) {
+  return await axios
+    .post(
+      `${DevURL}/handleUploadCartItems.php`,
+      { productsInfo },
+      { withCredentials: true }
+    )
     .catch(errorHandling);
 };
