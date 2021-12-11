@@ -17,14 +17,9 @@ import {
   COLOR_SECONDARY3,
   BG_PRIMARY1,
 } from "../../constant";
-import { useContext } from "react";
-import { UserContext, FavoriteItemsContext } from "../../context";
+import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
-import {
-  getFavoriteProductsApi,
-  getSessionDataApi,
-  sendUserLoginDataApi,
-} from "../../Webapi";
+import { sendUserLoginDataApi } from "../../Webapi";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -105,10 +100,7 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function LoginPage() {
-  // 從 context 拿到設定用戶的 setter function
-  const { setUser } = useContext(UserContext);
-  // 從 context 拿到更新收藏清單的 setter function
-  const { setFavoriteItems } = useContext(FavoriteItemsContext);
+  const history = useHistory();
   // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
@@ -285,63 +277,13 @@ export default function LoginPage() {
   // 處理點選按鈕事件
   function handleSubmitOpForLoginSuccessfully() {
     setShowModalForLoginSuccessfully(false);
-    getSessionDataApi()
-      .then((resp) => {
-        const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          setShowModalForApiError(true);
-        }
-        if (json_data.isSuccessful === "successful") {
-          // 如果透過 api 拿到用戶收藏清單過程當中沒有出錯，則設置用戶訊息
-          getFavoriteProductsFromApi().then(() => {
-            // 自動跳轉到首頁
-            setUser({
-              userId: json_data.data.id,
-              nickname: json_data.data.nickname,
-              account: json_data.data.account,
-              pass: json_data.data.password,
-            });
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
-        setShowModalForApiError(true);
-      });
+    history.push("/");
   }
   // modal 顯示情漸: 登入成功
   // 處理點選按鈕以外事件
   function handleCancelOpForLoginSuccessfully() {
     setShowModalForLoginSuccessfully(false);
-    getSessionDataApi()
-      .then((resp) => {
-        const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          setShowModalForApiError(true);
-        }
-        if (json_data.isSuccessful === "successful") {
-          // 如果透過 api 拿到用戶收藏清單過程當中沒有出錯，則設置用戶訊息
-          getFavoriteProductsFromApi().then(() => {
-            // 自動跳轉到首頁
-            setUser({
-              userId: json_data.data.id,
-              nickname: json_data.data.nickname,
-              account: json_data.data.account,
-              pass: json_data.data.password,
-            });
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
-        setShowModalForApiError(true);
-      });
+    history.push("/");
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕事件
@@ -352,44 +294,6 @@ export default function LoginPage() {
   // 處理點選按鈕以外事件
   function handleCancelOpForApiError() {
     setShowModalForApiError(false);
-  }
-  // 根據 api 接收情況，再利用 promise 確定是否要繼續或回絕
-  function getFavoriteProductsFromApi() {
-    return new Promise((resolve, reject) => {
-      getFavoriteProductsApi()
-        .then((resp) => {
-          const json_data = resp.data;
-          if (json_data.isSuccessful === "failed") {
-            showModalForApiError(true);
-            reject();
-          }
-          if (json_data.isSuccessful === "successful") {
-            // 如果當前用戶有收藏清單
-            if (json_data.data !== []) {
-              setFavoriteItems(
-                json_data.data.map((item) => ({
-                  id: item.id,
-                  product: {
-                    name: item.name,
-                    price: `${item.price}`,
-                    img: JSON.parse(item.imgs)[0].src,
-                  },
-                  isLiked: true,
-                }))
-              );
-            }
-            resolve();
-          }
-        })
-        .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-          reject();
-        });
-    });
   }
 
   return (
