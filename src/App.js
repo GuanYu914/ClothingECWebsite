@@ -1,10 +1,5 @@
 import React, { useMemo, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import HomePage from "./pages/home-page";
 import ProductsPage from "./pages/products-page";
 import SingleProductPage from "./pages/single-product-page";
@@ -14,6 +9,7 @@ import LogoutPage from "./pages/logout-page";
 import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
+import ErrorPage from "./pages/error-page";
 import {
   UserContext,
   CartContext,
@@ -321,11 +317,7 @@ function App() {
                       componentPromise={getUserNecessaryInfoFromApis}
                     >
                       {/* 防止用戶透過 url 存取註冊頁面 */}
-                      {isEmptyObj(user) ? (
-                        <RegisterPage />
-                      ) : (
-                        <Redirect to="/" />
-                      )}
+                      {isEmptyObj(user) ? <RegisterPage /> : <ErrorPage />}
                     </AsyncComponent>
                   </Route>
                   <Route exact path="/login">
@@ -333,7 +325,7 @@ function App() {
                       componentPromise={getUserNecessaryInfoFromApis}
                     >
                       {/* 防止用戶透過 url 存取登入頁面 */}
-                      {isEmptyObj(user) ? <LoginPage /> : <Redirect to={"/"} />}
+                      {isEmptyObj(user) ? <LoginPage /> : <ErrorPage />}
                     </AsyncComponent>
                   </Route>
                   <Route exact path="/logout">
@@ -346,11 +338,7 @@ function App() {
                       componentPromise={getUserNecessaryInfoFromApis}
                     >
                       {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
-                      {isEmptyObj(user) ? (
-                        <Redirect to="/login" />
-                      ) : (
-                        <ProfileEditPage />
-                      )}
+                      {isEmptyObj(user) ? <ErrorPage /> : <ProfileEditPage />}
                     </AsyncComponent>
                   </Route>
                   <Route exact path="/favorite">
@@ -358,11 +346,7 @@ function App() {
                       componentPromise={getUserNecessaryInfoFromApis}
                     >
                       {/* 防止訪客透過 url 存取收藏清單頁面 */}
-                      {isEmptyObj(user) ? (
-                        <Redirect to="/login" />
-                      ) : (
-                        <FavoritePage />
-                      )}
+                      {isEmptyObj(user) ? <ErrorPage /> : <FavoritePage />}
                     </AsyncComponent>
                   </Route>
                   {/* 使用 ? 代表可能沒有的欄位 */}
