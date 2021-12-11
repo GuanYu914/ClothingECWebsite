@@ -18,6 +18,7 @@ import {
 } from "../../constant";
 import { useEffect, useState, useContext } from "react";
 import { UserContext, CartContext } from "../../context";
+import { isEmptyObj } from "../../util";
 
 const NavBarContainer = styled.nav`
   background-color: ${BG_SECONDARY3};
@@ -123,21 +124,22 @@ export default function Header() {
   const { user } = useContext(UserContext);
   // 透過 cart 拿到當前購物袋資訊
   const { cart, setCart } = useContext(CartContext);
+  // 用戶選單狀態 (dropdown UI)
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
     useForLinks: true,
-    options:
-      user === null
-        ? [
-            { id: 1, name: "登入", url: "/login" },
-            { id: 2, name: "註冊", url: "/register" },
-          ]
-        : [
-            { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
-            { id: 2, name: "收藏清單", url: "/favorite" },
-            { id: 3, name: "登出", url: "/logout" },
-          ],
+    options: isEmptyObj(user)
+      ? [
+          { id: 1, name: "登入", url: "/login" },
+          { id: 2, name: "註冊", url: "/register" },
+        ]
+      : [
+          { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
+          { id: 2, name: "收藏清單", url: "/favorite" },
+          { id: 3, name: "登出", url: "/logout" },
+        ],
   });
+  // 購物車選單狀態 (dropdown UI)
   const [dropDownForCart, setDropDownForCart] = useState({
     width: cart.length ? "fit-content" : "20rem",
     height: cart.length >= 4 ? "24rem" : "fit-content",
@@ -151,9 +153,45 @@ export default function Header() {
       quantity: product.quantity,
     })),
   });
+  // 用戶選單狀態 (offcanva UI)
   const [offcanvaInfo, setOffcanvaInfo] = useState({
-    links:
-      user === null
+    links: isEmptyObj(user)
+      ? [
+          { id: 1, name: "登入", url: "/login" },
+          { id: 2, name: "註冊", url: "/register" },
+          { id: 3, name: "購物車", url: "/cart" },
+        ]
+      : [
+          { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
+          { id: 2, name: "收藏清單", url: "/favorite" },
+          { id: 3, name: "購物車", url: "/cart" },
+          { id: 4, name: "登出", url: "/logout" },
+        ],
+    displayUserInfo: true,
+    user: {
+      isLogin: isEmptyObj(user) ? false : true,
+      name: isEmptyObj(user) ? "訪客" : user.nickname,
+    },
+  });
+
+  // 如果 user 有更新的話，則更新用戶選單 (dropdown & offcanva)
+  useEffect(() => {
+    setDropDownForProfile({
+      width: "12rem",
+      useForLinks: true,
+      options: isEmptyObj(user)
+        ? [
+            { id: 1, name: "登入", url: "/login" },
+            { id: 2, name: "註冊", url: "/register" },
+          ]
+        : [
+            { id: 1, name: "編輯個人資訊", url: "/profile-edit" },
+            { id: 2, name: "收藏清單", url: "/favorite" },
+            { id: 3, name: "登出", url: "/logout" },
+          ],
+    });
+    setOffcanvaInfo({
+      links: isEmptyObj(user)
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -165,14 +203,15 @@ export default function Header() {
             { id: 3, name: "購物車", url: "/cart" },
             { id: 4, name: "登出", url: "/logout" },
           ],
-    displayUserInfo: true,
-    user: {
-      isLogin: user === null ? false : true,
-      name: user === null ? "訪客" : user.nickname,
-    },
-  });
+      displayUserInfo: true,
+      user: {
+        isLogin: isEmptyObj(user) ? false : true,
+        name: isEmptyObj(user) ? "訪客" : user.nickname,
+      },
+    });
+  }, [user]);
+  // 如果 cart 有更新的話，則更新購物車 dropdown 元件
   useEffect(() => {
-    // 如果 cart 有更新的話，則更新購物車 dropdown 元件
     setDropDownForCart({
       width: cart.length ? "fit-content" : "20rem",
       height: cart.length >= 4 ? "24rem" : "fit-content",
@@ -188,6 +227,7 @@ export default function Header() {
       })),
     });
   }, [cart]);
+
   return (
     <NavBarContainer>
       <BrandLogo
@@ -204,7 +244,7 @@ export default function Header() {
             <ProfileContainer>
               <ProfileIcon />
               <UserNickname>
-                {user === null ? "訪客" : user.nickname}
+                {isEmptyObj(user) ? "訪客" : user.nickname}
               </UserNickname>
             </ProfileContainer>
           </DropDown>
