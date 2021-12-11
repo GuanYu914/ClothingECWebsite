@@ -46,6 +46,7 @@ import { useHistory } from "react-router";
 import Modal from "../../components/modal";
 import { useContext } from "react";
 import { FavoriteItemsContext, UserContext } from "../../context";
+import { isEmptyObj } from "../../util";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -316,7 +317,7 @@ export default function HomePage() {
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
-    if (user === null) return;
+    if (isEmptyObj(user)) return false;
     for (let i = 0; i < favoriteItems.length; i++) {
       if (favoriteItems[i].id === id) return true;
     }

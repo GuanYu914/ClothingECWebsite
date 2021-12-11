@@ -33,6 +33,7 @@ import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
+import { isEmptyObj } from "../../util";
 
 const PageContainer = styled.div``;
 const ContentContainer = styled.div`
@@ -618,7 +619,7 @@ export default function SingleProductPage() {
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
-    if (user === null) return;
+    if (isEmptyObj(user)) return false;
     for (let i = 0; i < favoriteItems.length; i++) {
       if (favoriteItems[i].id === id) return true;
     }
@@ -663,7 +664,7 @@ export default function SingleProductPage() {
               <BSCarousel slides={slidesForMobile} />
               <ProductInfoContainer>
                 <ProductName>女版襯衫</ProductName>
-                {user !== null && (
+                {!isEmptyObj(user) && (
                   <>
                     {productInfo.isLiked ? (
                       <FavoriteFilledIcon onClick={handleAddToLikedItems} />
@@ -702,7 +703,7 @@ export default function SingleProductPage() {
               <ProductInfoContainer>
                 <ProductHeaderContainer>
                   <ProductName>{productInfo.name}</ProductName>
-                  {user !== null && (
+                  {!isEmptyObj(user) && (
                     <>
                       {productInfo.isLiked ? (
                         <FavoriteFilledIcon onClick={handleAddToLikedItems} />

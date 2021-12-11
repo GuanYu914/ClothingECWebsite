@@ -28,6 +28,7 @@ import { slideInUp } from "react-animations";
 import PropTypes from "prop-types";
 import { UserContext } from "../../context";
 import { useContext } from "react";
+import { isEmptyObj } from "../../util";
 
 const slideInUpAnimation = keyframes`${slideInUp}`;
 
@@ -266,7 +267,7 @@ export default function ProductPicker({
               <PickerHeader>
                 <PickerProductName>女版襯衫</PickerProductName>
                 <PickerHeaderButton>
-                  {user !== null ? (
+                  {isEmptyObj(user) ? (
                     <>
                       {isLiked && (
                         <FavoriteFilledIcon

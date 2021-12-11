@@ -11,6 +11,7 @@ import {
 } from "../../constant";
 import { useContext } from "react";
 import { UserContext } from "../../context";
+import { isEmptyObj } from "../../util";
 
 const ItemsContainer = styled.div`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
@@ -114,7 +115,7 @@ export default function CardContainer({
               <ItemName data-id={item.id}>{item.product.name}</ItemName>
               <ItemPrice data-id={item.id}>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {user !== null && (
+            {!isEmptyObj(user) && (
               <>
                 {item.isLiked && (
                   <FavoriteFilledIcon
