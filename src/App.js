@@ -105,11 +105,11 @@ function App() {
           const json_data = resp.data;
           if (json_data.isSuccessful === "failed") {
             setShowModalForApiError(true);
-            reject();
+            return reject();
           }
           if (json_data.isSuccessful === "successful") {
             setUser({});
-            resolve();
+            return resolve();
           }
         })
         .catch((e) => {
@@ -118,7 +118,7 @@ function App() {
             e
           );
           setShowModalForApiError(true);
-          reject();
+          return reject();
         });
     });
   }
@@ -132,7 +132,7 @@ function App() {
             setUser({});
             flagGetUser.current = true;
             // 如果用戶為訪客，則會觸發 failed 條件，所以加上 resolve() 解決
-            resolve();
+            return resolve();
           }
           if (json_data.isSuccessful === "successful") {
             setUser({
@@ -142,7 +142,7 @@ function App() {
               pass: json_data.data.password,
             });
             flagGetUser.current = true;
-            resolve();
+            return resolve();
           }
         })
         .catch((e) => {
@@ -151,7 +151,7 @@ function App() {
             e
           );
           setShowModalForApiError(true);
-          reject();
+          return reject();
         });
     });
   }
@@ -162,9 +162,13 @@ function App() {
         .then((resp) => {
           const json_data = resp.data;
           if (json_data.isSuccessful === "failed") {
-            setFavoriteItems([]);
             // 如果用戶為訪客，則會觸發 failed 條件，所以加上 resolve() 解決
-            resolve();
+            if (json_data.msg === "session variable not set") {
+              setFavoriteItems([]);
+              return resolve();
+            }
+            setShowModalForApiError(true);
+            return reject();
           }
           if (json_data.isSuccessful === "successful") {
             // 如果當前用戶有收藏清單
@@ -181,7 +185,7 @@ function App() {
                 }))
               );
             }
-            resolve();
+            return resolve();
           }
         })
         .catch((e) => {
@@ -190,7 +194,7 @@ function App() {
             e
           );
           setShowModalForApiError(true);
-          reject();
+          return reject();
         });
     });
   }
@@ -201,15 +205,19 @@ function App() {
       getCartItemsApi()
         .then((resp) => {
           const json_data = resp.data;
-          // 如果是訪客，則從 cookie 拿購物車資訊
-          // 如果用戶為訪客，則會觸發 failed 條件，所以加上 resolve() 解決
           if (json_data.isSuccessful === "failed") {
-            if (getCookie("cart-guest") === undefined) {
-              setCookie("cart-guest", JSON.stringify([]), 7);
-            } else {
-              setCart(JSON.parse(getCookie("cart-guest")));
+            // 如果是訪客，則從 cookie 拿購物車資訊
+            if (json_data.msg === "session variable not set") {
+              if (getCookie("cart-guest") === undefined) {
+                setCookie("cart-guest", JSON.stringify([]), 7);
+              } else {
+                setCart(JSON.parse(getCookie("cart-guest")));
+              }
+              // 如果用戶為訪客，則會觸發 failed 條件，所以加上 resolve() 解決
+              return resolve();
             }
-            resolve();
+            setShowModalForApiError(true);
+            return reject();
           }
           if (json_data.isSuccessful === "successful") {
             setCart(
@@ -224,7 +232,7 @@ function App() {
                 quantity: item.quantity,
               }))
             );
-            resolve();
+            return resolve();
           }
         })
         .catch((e) => {
@@ -233,7 +241,7 @@ function App() {
             e
           );
           setShowModalForApiError(true);
-          reject();
+          return reject();
         });
     });
   }
