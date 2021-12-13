@@ -32,6 +32,7 @@ export const CTAPrimaryButton = styled(DefaultButton)`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_PRIMARY1};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  border-radius: ${(props) => props.borderRadius};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
@@ -40,6 +41,7 @@ export const CTASecondaryButton = styled(DefaultButton)`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_SECONDARY1};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  border-radius: ${(props) => props.borderRadius};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
@@ -49,6 +51,7 @@ export const GhostPrimaryButton = styled(DefaultButton)`
   border-color: ${BR_PRIMARY1};
   background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  border-radius: ${(props) => props.borderRadius};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
@@ -62,6 +65,7 @@ export const GhostSecondaryButton = styled(DefaultButton)`
   border-color: ${BR_SECONDARY1};
   background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
+  border-radius: ${(props) => props.borderRadius};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
