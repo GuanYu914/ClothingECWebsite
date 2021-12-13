@@ -120,15 +120,17 @@ const ProductName = styled.h1.attrs(() => ({
 `;
 
 const FavoriteIcon = styled(heart)`
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-left: 1rem;
   cursor: pointer;
 `;
 
 const FavoriteFilledIcon = styled(heartFilled)`
   color: ${COLOR_PRIMARY2};
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-left: 1rem;
   cursor: pointer;
 `;
 
@@ -670,7 +672,7 @@ export default function SingleProductPage() {
             <ProductInfoForMobile>
               <BSCarousel slides={slidesForMobile} />
               <ProductInfoContainer>
-                <ProductName>女版襯衫</ProductName>
+                <ProductName>{productInfo.name}</ProductName>
                 {!isEmptyObj(user) && (
                   <>
                     {productInfo.isLiked ? (
@@ -813,7 +815,7 @@ export default function SingleProductPage() {
           handleCancelOp={handleCancelOpForApiError}
         />
       )}
-      <Footer marginTop="6rem" marginBottom="4rem" />
+      <Footer bgColor={BG_PRIMARY1} marginTop="6rem" marginBottom="4rem" />
     </PageContainer>
   );
 }
