@@ -57,7 +57,7 @@ export const GhostPrimaryButton = styled(DefaultButton)`
   border-style: solid;
   // border-width: 0.4rem;
   // 根據 border props 設置 border-width
-  border-width: ${(props) => props.border || "0.4rem"};
+  border-width: ${(props) => props.border || "0.2rem"};
 `;
 
 export const GhostSecondaryButton = styled(DefaultButton)`
@@ -69,7 +69,7 @@ export const GhostSecondaryButton = styled(DefaultButton)`
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
-  border-width: 0.4rem;
+  border-width: ${(props) => props.border || "0.2rem"};
 `;
 
 // 給 styled-product-picker 使用
