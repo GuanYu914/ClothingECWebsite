@@ -18,6 +18,7 @@ import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-
 import { ReactComponent as linkIcon } from "../../imgs/pages/cart-page/link-45deg.svg";
 import {
   BG_SECONDARY1,
+  BG_SECONDARY4,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
   COLOR_SECONDARY2,
@@ -30,7 +31,9 @@ import { CartContext } from "../../context";
 import Modal from "../../components/modal";
 import { useHistory } from "react-router";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -52,14 +55,16 @@ const CartTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
   color: ${COLOR_SECONDARY2};
-  margin-bottom: 8rem;
-  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
+  padding-top: 2rem;
+  margin-bottom: 4rem;
+
+  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0rem
   ${BREAKPOINT_MOBILE} {
-    margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_MOBILE});
   }
 
   ${BREAKPOINT_PAD} {
-    margin-top: calc(${HEADER_HEIGHT_PAD} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_PAD});
   }
 `;
 
@@ -189,7 +194,9 @@ const CheckedAllButtonContainer = styled.div``;
 
 const CartProductsCheckedBlock = styled.div``;
 
-const ProductButtons = styled.div``;
+const ProductButtons = styled.div`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const LinkButton = styled(linkIcon)`
   width: 2.4rem;
@@ -250,7 +257,7 @@ export default function CartPage() {
   // 是否顯示合併產品訊息
   const [showMergeProductMsg, setShowMergeProductMsg] = useState(false);
   // 加入詢問合併產品訊息動畫
-  const [mergeProductMsgModalInfo, setMergeProductMsgModalInfo] = useState({
+  const [mergeProductMsgModalInfo] = useState({
     selectionMode: true,
     title: "貼心提醒",
     content: "購物車內有相同規格的產品，是否合併呢？",
