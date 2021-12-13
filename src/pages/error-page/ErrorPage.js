@@ -8,11 +8,14 @@ import {
   BREAKPOINT_PAD,
   HEADER_HEIGHT_PAD,
   COLOR_SECONDARY2,
+  BG_SECONDARY4,
 } from "../../constant";
 import { CTAPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
@@ -33,14 +36,16 @@ const ErrorTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
   color: ${COLOR_SECONDARY2};
+  padding-top: 2rem;
   text-align: center;
 
+  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0
   ${BREAKPOINT_MOBILE} {
-    margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_MOBILE});
   }
 
   ${BREAKPOINT_PAD} {
-    margin-top: calc(${HEADER_HEIGHT_PAD} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_PAD});
   }
 `;
 

@@ -8,6 +8,7 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
   COLOR_SECONDARY2,
+  BG_SECONDARY4,
 } from "../../constant";
 import CardContainer from "../../components/card-container";
 import { useState } from "react";
@@ -17,7 +18,9 @@ import Modal from "../../components/modal";
 import { CTAPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
@@ -37,16 +40,18 @@ const ContentContainer = styled.div`
 const PageTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`
-  color: ${COLOR_SECONDARY2}
+  color: ${COLOR_SECONDARY2};
+  padding-top: 1rem;
   margin-left: 1rem;
   margin-bottom: 2rem;
 
+  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0
   ${BREAKPOINT_MOBILE} {
-    margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_MOBILE});
   }
 
   ${BREAKPOINT_PAD} {
-    margin-top: calc(${HEADER_HEIGHT_PAD} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_PAD});
   }
 `;
 

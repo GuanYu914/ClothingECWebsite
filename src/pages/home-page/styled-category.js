@@ -1,5 +1,5 @@
 import {
-  BG_SECONDARY1,
+  BOX_SHADOW_DARK,
   BREAKPOINT_PAD,
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
@@ -29,24 +29,29 @@ export const CategoriesContainer = styled.div`
 `;
 
 export const Category = styled.div.attrs(() => ({
-  className: "fs-h2",
+  className: "fs-h1",
 }))`
   color: ${COLOR_SECONDARY3};
-  background-color: ${BG_SECONDARY1};
-  width: fit-content;
-  height: fit-content;
-  width: 8rem;
-  height: 5.6rem;
+  background-image: url(${(props) => props.img});
+  background-size: cover;
+  width: 10rem;
+  height: 7rem;
   margin: 0.4rem 0.4rem;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 1rem;
   cursor: pointer;
+  box-shadow: ${BOX_SHADOW_DARK};
 
   // 當裝置大於等於 768 px，加大尺寸
   ${BREAKPOINT_PAD} {
-    width: 9.2rem;
-    height: 6.2rem;
+    box-shadow: none;
+    width: 14rem;
+    height: 9.8rem;
+
+    &:hover {
+      box-shadow: ${BOX_SHADOW_DARK};
+    }
   }
 `;

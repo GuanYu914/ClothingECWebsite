@@ -5,12 +5,13 @@ import { ReactComponent as close } from "../../imgs/components/offcanva/x-lg.svg
 import { ReactComponent as list } from "../../imgs/components/offcanva/list.svg";
 import { ReactComponent as profile } from "../../imgs/components/offcanva/person-circle.svg";
 import {
-  BG_SECONDARY3,
   COLOR_PRIMARY1,
   COLOR_SECONDARY1,
   Z_INDEX_LV5,
   Z_INDEX_LV6,
   BG_MASK,
+  BG_PRIMARY1,
+  COLOR_SECONDARY3,
 } from "../../constant";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -44,7 +45,7 @@ const OffcanvaBody = styled(animated.div).attrs(() => ({
   z-index: ${Z_INDEX_LV6};
   top: 0;
   right: 0;
-  background-color: ${BG_SECONDARY3};
+  background-color: ${BG_PRIMARY1};
   overflow-x: hidden;
   padding: 4rem 2rem;
 
@@ -64,16 +65,17 @@ const OffcanvaBody = styled(animated.div).attrs(() => ({
 const OffcanvaLink = styled.h2.attrs(() => ({
   className: "fs-h2",
 }))`
-  color: ${COLOR_SECONDARY1};
-  padding: 0.4rem 0 0.4rem;
+  color: ${COLOR_SECONDARY3};
+  padding: 0.8rem 0 0.8rem;
   cursor: pointer;
 `;
 
 const CloseButton = styled(close)`
+  color: ${COLOR_SECONDARY3};
   position: absolute;
   cursor: pointer;
-  top: 1rem;
-  right: 1rem;
+  top: 2.8rem;
+  right: 2rem;
   width: 1.4rem;
   height: 1.4rem;
   transition: all 0.3s;
@@ -86,16 +88,18 @@ const CloseButton = styled(close)`
 const OffcanvaHeader = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 2.8rem;
   margin-bottom: 2rem;
 `;
 
 const UserName = styled.h2.attrs(() => ({
   className: "fs-h2",
 }))`
-  color: ${COLOR_SECONDARY1};
+  color: ${COLOR_SECONDARY3};
 `;
 
 const ProfileIcon = styled(profile)`
+  color: ${COLOR_SECONDARY3};
   width: 2rem;
   height: 2rem;
   margin-right: 1rem;

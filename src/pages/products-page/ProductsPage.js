@@ -18,6 +18,7 @@ import {
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
   BG_PRIMARY1,
+  BG_SECONDARY4,
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
 import { ReactComponent as scrollUpIcon } from "../../imgs/pages/products-page/caret-up-fill.svg";
@@ -31,7 +32,9 @@ import { useContext } from "react";
 import { FavoriteItemsContext, UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -53,10 +56,11 @@ const ProductsCategoryPath = styled.h3.attrs(() => ({
   className: "fs-h3",
 }))`
   color: ${COLOR_SECONDARY2};
+  padding-top: 1rem;
   margin-bottom: 2rem;
-  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
+  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0
   ${BREAKPOINT_MOBILE} {
-    margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_MOBILE});
   }
 
   ${BREAKPOINT_PAD} {
@@ -77,6 +81,7 @@ const ProductsCounter = styled.h3.attrs(() => ({
 `;
 
 const ProductsFilter = styled.div`
+  color: ${COLOR_SECONDARY2};
   display: flex;
   align-items: center;
   cursor: pointer;

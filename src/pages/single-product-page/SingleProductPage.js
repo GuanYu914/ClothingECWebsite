@@ -21,6 +21,8 @@ import {
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
   BG_PRIMARY1,
+  BG_SECONDARY4,
+  COLOR_PRIMARY2,
 } from "../../constant";
 import {
   CartContext,
@@ -35,7 +37,9 @@ import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { isEmptyObj } from "../../util";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   // 定義容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
@@ -63,14 +67,15 @@ const ProductCategoryPath = styled.h3.attrs(() => ({
   className: "fs-h3",
 }))`
   color: ${COLOR_SECONDARY2};
+  padding-top: 1rem;
   margin-bottom: 1rem;
-  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 1rem
+  // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0
   ${BREAKPOINT_MOBILE} {
-    margin-top: calc(${HEADER_HEIGHT_MOBILE} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_MOBILE});
   }
 
   ${BREAKPOINT_PAD} {
-    margin-top: calc(${HEADER_HEIGHT_PAD} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_PAD});
   }
 `;
 
@@ -87,6 +92,7 @@ const ProductInfoForMobile = styled.div`
 `;
 
 const ProductInfoContainer = styled.div`
+  color: ${COLOR_SECONDARY2};
   margin-top: 2rem;
   display: flex;
   justify-content: space-between;
@@ -120,6 +126,7 @@ const FavoriteIcon = styled(heart)`
 `;
 
 const FavoriteFilledIcon = styled(heartFilled)`
+  color: ${COLOR_PRIMARY2};
   width: 1.8rem;
   height: 1.8rem;
   cursor: pointer;

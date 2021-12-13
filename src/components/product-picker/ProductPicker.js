@@ -71,6 +71,7 @@ const PickerPaddingContainer = styled.div`
 `;
 
 const PickerHeader = styled.div`
+  color: ${COLOR_SECONDARY2};
   display: flex;
   justify-content: space-between;
   align-items: center;

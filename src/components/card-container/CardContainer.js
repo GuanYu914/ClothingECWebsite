@@ -8,6 +8,8 @@ import {
   Z_INDEX_LV1,
   BG_TRANSPARENT,
   BG_SECONDARY1,
+  COLOR_SECONDARY2,
+  COLOR_PRIMARY2,
 } from "../../constant";
 import { useContext } from "react";
 import { UserContext } from "../../context";
@@ -51,6 +53,7 @@ const ItemContainer = styled.div.attrs(() => ({
 `;
 
 const ItemHeader = styled.div`
+  color: ${COLOR_SECONDARY2};
   width: 100%;
   height: fit-content;
   position: absolute;
@@ -70,11 +73,14 @@ const ItemInfo = styled.div`
 
 const ItemName = styled.h3.attrs(() => ({
   className: "fs-h3",
-}))``;
+}))`
+  color: ${COLOR_SECONDARY2};
+`;
 
 const ItemPrice = styled.h3.attrs(() => ({
   className: "fs-h3",
 }))`
+  color: ${COLOR_SECONDARY2};
   margin-top: 0.4rem;
 `;
 
@@ -85,6 +91,7 @@ const FavoriteIcon = styled(heart)`
 `;
 
 const FavoriteFilledIcon = styled(heartFilled)`
+  color: ${COLOR_PRIMARY2};
   width: 1.4rem;
   height: 1.4rem;
   flex-shrink: 0;

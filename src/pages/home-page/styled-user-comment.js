@@ -3,14 +3,12 @@ import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_PAD,
   COLOR_SECONDARY2,
-  COLOR_SECONDARY3,
-  BG_SECONDARY1,
+  BG_SECONDARY3,
+  BOX_SHADOW_DARK,
 } from "../../constant";
 import styled from "styled-components/macro";
 
-export const UserCommentBlock = styled.div.attrs(() => ({
-  className: "bg-secondary1, color-primary3",
-}))`
+export const UserCommentBlock = styled.div`
   margin-top: 5rem;
 
   ${BREAKPOINT_PAD} {
@@ -34,8 +32,9 @@ export const UserCommentsContainer = styled.div`
 export const UserComment = styled.div.attrs(() => ({
   className: "fs-h3",
 }))`
-  color: ${COLOR_SECONDARY3};
-  background-color: ${BG_SECONDARY1};
+  color: ${COLOR_SECONDARY2};
+  background-color: ${BG_SECONDARY3};
+  box-shadow: ${BOX_SHADOW_DARK};
   width: 18rem;
   height: 10rem;
   padding: 1.2rem;

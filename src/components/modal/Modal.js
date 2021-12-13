@@ -34,6 +34,7 @@ const ModalContainer = styled.div`
   position: fixed;
   top: 50%;
   left: 50%;
+  border-radius: 1.4rem;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -49,12 +50,13 @@ const ModalContainer = styled.div`
 `;
 
 const ModalHeader = styled.div`
+  border-radius: 1.4rem 1.4rem 0 0;
+  padding: 0.8rem;
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_PRIMARY1};
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
 `;
 
 const ModalTitle = styled.h1.attrs(() => ({
@@ -72,7 +74,7 @@ const ModalBody = styled.h3.attrs(() => ({
   className: "fs-h3",
 }))`
   color: ${COLOR_SECONDARY2};
-  padding: 2rem 0.5rem;
+  padding: 1.4rem 1.4rem;
 `;
 
 const ModalButtons = styled.div`
@@ -122,6 +124,7 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
                     <>
                       <CTAPrimaryButton
                         width={"50%"}
+                        borderRadius={"0 0 0 1.4rem"}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSubmitOp();
@@ -131,6 +134,7 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
                       </CTAPrimaryButton>
                       <CTASecondaryButton
                         width={"50%"}
+                        borderRadius={"0 0 1.4rem 0"}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCancelOp();
@@ -144,6 +148,7 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
                     <>
                       <CTAPrimaryButton
                         width={"100%"}
+                        borderRadius={"0 0 1.4rem 1.4rem"}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSubmitOp();
