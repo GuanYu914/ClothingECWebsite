@@ -259,6 +259,7 @@ export default function SingleProductPage() {
   const [productInfo, setProductInfo] = useState({});
   // 產品幻燈片，根據螢幕寬度給不同 props 到 BSCarousel 元件
   const [slidesForMobile, setSlidesForMobile] = useState({
+    useForBanner: false,
     frame: {
       maxHeight: "30rem",
       borderRadius: "2rem",
@@ -266,6 +267,7 @@ export default function SingleProductPage() {
     slide: [],
   });
   const [slidesForPad, setSlidesForPad] = useState({
+    useForBanner: false,
     frame: {
       maxHeight: "40rem",
       borderRadius: "2rem",

@@ -226,6 +226,7 @@ export default function CartPage() {
       pid: product.pid,
       name: product.name,
       slidesForMobile: {
+        useForBanner: false,
         frame: {
           maxHeight: "30rem",
           borderRadius: "2rem",
@@ -237,6 +238,7 @@ export default function CartPage() {
         })),
       },
       slidesForPad: {
+        useForBanner: false,
         frame: {
           maxHeight: "40rem",
           borderRadius: "2rem",

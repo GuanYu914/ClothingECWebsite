@@ -110,6 +110,7 @@ export default function HomePage() {
   const [isCommentsButtonClicked, setIsCommentsButtonClicked] = useState(false);
   // 每個區塊的狀態
   const [banners, setBanners] = useState({
+    useForBanner: true,
     frame: {},
     slide: [],
   });
