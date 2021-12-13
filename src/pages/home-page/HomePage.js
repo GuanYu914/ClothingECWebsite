@@ -5,6 +5,7 @@ import {
   COLOR_SECONDARY2,
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
+  BG_SECONDARY4,
 } from "../../constant";
 import styled from "styled-components/macro";
 import { useState, useEffect } from "react";
@@ -34,7 +35,7 @@ import {
   COMMENTS_QUERY_LIMIT,
 } from "../../constant";
 import CardContainer from "../../components/card-container";
-import { CTASecondaryButton } from "../../components/button";
+import { CTAPrimaryButton } from "../../components/button";
 import {
   getBannersApi,
   getHotItemsApi,
@@ -48,7 +49,9 @@ import { useContext } from "react";
 import { FavoriteItemsContext, UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
 
-const PageContainer = styled.div``;
+const PageContainer = styled.div`
+  background-color: ${BG_SECONDARY4};
+`;
 const ContentContainer = styled.div`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
@@ -193,6 +196,7 @@ export default function HomePage() {
             json_data.data.map((el) => ({
               id: el.id,
               name: el.name,
+              img: el.src,
             }))
           );
           setIsLoadingCategories(false);
@@ -354,6 +358,7 @@ export default function HomePage() {
                 {categories.map((category) => (
                   <Category
                     key={category.id}
+                    img={category.img}
                     onClick={() => {
                       history.push(`/products/${category.name}`);
                     }}
@@ -384,7 +389,7 @@ export default function HomePage() {
           ) : (
             <>
               {isHotItemsButtonClicked ? <Loader marginTop={"2rem"} /> : <></>}
-              <CTASecondaryButton
+              <CTAPrimaryButton
                 isRounded={true}
                 margin={"3rem auto 0"}
                 onClick={() => {
@@ -392,7 +397,7 @@ export default function HomePage() {
                 }}
               >
                 載入更多
-              </CTASecondaryButton>
+              </CTAPrimaryButton>
             </>
           )}
         </HotSellingItemBlock>
@@ -417,7 +422,7 @@ export default function HomePage() {
           ) : (
             <>
               {isCommentsButtonClicked ? <Loader marginTop={"2rem"} /> : <></>}
-              <CTASecondaryButton
+              <CTAPrimaryButton
                 isRounded={true}
                 margin={"3rem auto 0"}
                 onClick={() => {
@@ -425,7 +430,7 @@ export default function HomePage() {
                 }}
               >
                 載入更多
-              </CTASecondaryButton>
+              </CTAPrimaryButton>
             </>
           )}
         </UserCommentBlock>
