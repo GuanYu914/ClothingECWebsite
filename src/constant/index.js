@@ -1,5 +1,5 @@
 // Component Header 相關常數
-export const HEADER_HEIGHT_MOBILE = "4rem";
+export const HEADER_HEIGHT_MOBILE = "4.8rem";
 export const HEADER_HEIGHT_PAD = "5.6rem";
 
 // Z-Index 相關常數
@@ -23,26 +23,38 @@ export const MAX_CONTAINER_WIDTH = "1440px";
 export const BOX_SHADOW_LIGHT = "rgba(0, 0, 0, 0.04) 0px 3px 5px";
 export const BOX_SHADOW_DARK = "rgba(149, 157, 165, 0.2) 0px 8px 24px";
 
-export const COLOR_PRIMARY1 = "#9DCBDF";
-export const COLOR_PRIMARY2 = "#F07759";
-export const COLOR_PRIMARY3 = "#22B45F";
-export const COLOR_SECONDARY1 = "#909090";
-export const COLOR_SECONDARY2 = "#1F1E1C";
-export const COLOR_SECONDARY3 = "#FFFFFF";
+// 目前套用的主題配色
+const THEME_PRIMARY1 = "#9ec6d9";
+const THEME_PRIMARY2 = "#F07759";
+const THEME_PRIMARY3 = "#22B45F";
+const THEME_SECONDARY1 = "#909090";
+const THEME_SECONDARY2 = "#1F1E1C";
+const THEME_SECONDARY3 = "#ffffff";
+const THEME_SECONDARY4 = "#FcFcFc";
 
-export const BR_PRIMARY1 = "#9DCBDF";
-export const BR_PRIMARY2 = "#F07759";
-export const BR_PRIMARY3 = "#22B45F";
-export const BR_SECONDARY1 = "#909090";
-export const BR_SECONDARY2 = "#1F1E1C";
-export const BR_SECONDARY3 = "#FFFFFF";
+export const COLOR_PRIMARY1 = THEME_PRIMARY1;
+export const COLOR_PRIMARY2 = THEME_PRIMARY2;
+export const COLOR_PRIMARY3 = THEME_PRIMARY3;
+export const COLOR_SECONDARY1 = THEME_SECONDARY1;
+export const COLOR_SECONDARY2 = THEME_SECONDARY2;
+export const COLOR_SECONDARY3 = THEME_SECONDARY3;
+export const COLOR_SECONDARY4 = THEME_SECONDARY4;
 
-export const BG_PRIMARY1 = "#9DCBDF";
-export const BG_PRIMARY2 = "#F07759";
-export const BG_PRIMARY3 = "#22B45F";
-export const BG_SECONDARY1 = "#909090";
-export const BG_SECONDARY2 = "#1F1E1C";
-export const BG_SECONDARY3 = "#FFFFFF";
+export const BR_PRIMARY1 = THEME_PRIMARY1;
+export const BR_PRIMARY2 = THEME_PRIMARY2;
+export const BR_PRIMARY3 = THEME_PRIMARY3;
+export const BR_SECONDARY1 = THEME_SECONDARY1;
+export const BR_SECONDARY2 = THEME_SECONDARY2;
+export const BR_SECONDARY3 = THEME_SECONDARY3;
+export const BR_SECONDARY4 = THEME_SECONDARY4;
+
+export const BG_PRIMARY1 = THEME_PRIMARY1;
+export const BG_PRIMARY2 = THEME_PRIMARY2;
+export const BG_PRIMARY3 = THEME_PRIMARY3;
+export const BG_SECONDARY1 = THEME_SECONDARY1;
+export const BG_SECONDARY2 = THEME_SECONDARY2;
+export const BG_SECONDARY3 = THEME_SECONDARY3;
+export const BG_SECONDARY4 = THEME_SECONDARY4;
 
 export const BG_OFFCANVA = "rgba(53, 53, 53, 0.8)";
 export const BG_TRANSPARENT = "rgba(255, 255, 255, 0.8)";
