@@ -6,7 +6,7 @@ import {
   BG_SECONDARY3,
   BOX_SHADOW_DARK,
 } from "../../constant";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const UserCommentBlock = styled.div`
   margin-top: 5rem;

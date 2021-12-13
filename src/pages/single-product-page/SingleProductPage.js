@@ -1,6 +1,6 @@
 import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import CardContainer from "../../components/card-container";
 import ProductPicker from "../../components/product-picker";

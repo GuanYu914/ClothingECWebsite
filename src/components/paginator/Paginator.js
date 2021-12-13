@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { ReactComponent as arrowLeft } from "../../imgs/components/paginator/arrow-left.svg";
 import { ReactComponent as arrowRight } from "../../imgs/components/paginator/arrow-right.svg";
 import PropTypes from "prop-types";

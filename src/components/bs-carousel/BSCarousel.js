@@ -1,5 +1,5 @@
 import { Carousel } from "react-bootstrap";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { useState } from "react";
 import PropTypes from "prop-types";
 

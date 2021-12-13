@@ -1,6 +1,6 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { useState } from "react";
 import Form from "../../components/form";
 import {

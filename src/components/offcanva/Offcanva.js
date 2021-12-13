@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import PropTypes from "prop-types";
 import { useTransition, useChain, useSpringRef, animated } from "react-spring";
 import { ReactComponent as close } from "../../imgs/components/offcanva/x-lg.svg";

@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components/macro";
+import styled, { keyframes } from "styled-components";
 import { ReactComponent as heart } from "../../imgs/components/product-picker/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/product-picker/heart-fill.svg";
 import { ReactComponent as minusSquare } from "../../imgs/components/product-picker/dash-square.svg";

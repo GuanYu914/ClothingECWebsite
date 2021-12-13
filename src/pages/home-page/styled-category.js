@@ -4,7 +4,7 @@ import {
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
 } from "../../constant";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 
 export const CategoryBlock = styled.div`
   margin-top: 5rem;

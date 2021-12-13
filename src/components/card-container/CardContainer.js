@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";

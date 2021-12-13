@@ -7,7 +7,7 @@ import {
   HEADER_HEIGHT_PAD,
   BG_SECONDARY4,
 } from "../../constant";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { useState, useEffect } from "react";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import {

@@ -1,4 +1,4 @@
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/square.svg";
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";

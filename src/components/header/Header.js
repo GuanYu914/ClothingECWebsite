@@ -4,7 +4,7 @@ import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag
 import DropDown from "../../components/dropdown/DropDown";
 import Offcanva from "../offcanva";
 import { useHistory } from "react-router";
-import styled from "styled-components/macro";
+import styled from "styled-components";
 import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,

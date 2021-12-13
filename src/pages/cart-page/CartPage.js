@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components/macro";
+import styled, { keyframes } from "styled-components";
 import { fadeIn } from "react-animations";
 import { useState, useEffect, useContext, useRef } from "react";
 import Footer from "../../components/footer";

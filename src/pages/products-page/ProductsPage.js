@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import CardContainer from "../../components/card-container";
 import { CTAPrimaryButton } from "../../components/button";
-import styled, { keyframes } from "styled-components/macro";
+import styled, { keyframes } from "styled-components";
 import { fadeIn } from "react-animations";
 import {
   MAX_CONTAINER_WIDTH,
