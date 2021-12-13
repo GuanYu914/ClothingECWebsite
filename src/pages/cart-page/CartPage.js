@@ -17,6 +17,7 @@ import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/sq
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { ReactComponent as linkIcon } from "../../imgs/pages/cart-page/link-45deg.svg";
 import {
+  BG_PRIMARY1,
   BG_SECONDARY1,
   BG_SECONDARY4,
   BREAKPOINT_MOBILE,
@@ -56,7 +57,8 @@ const CartTitle = styled.h1.attrs(() => ({
 }))`
   color: ${COLOR_SECONDARY2};
   padding-top: 2rem;
-  margin-bottom: 4rem;
+  margin: ${(props) => props.margin || "0 0 4rem 0"};
+  text-align: ${(props) => props.textAlign && "center"};
 
   // 根據不同裝置寬度預設跟 Header 保持 margin-top: 0rem
   ${BREAKPOINT_MOBILE} {
@@ -66,6 +68,12 @@ const CartTitle = styled.h1.attrs(() => ({
   ${BREAKPOINT_PAD} {
     margin-top: calc(${HEADER_HEIGHT_PAD});
   }
+`;
+
+const CartSubTitle = styled.h2.attrs(() => ({
+  className: "fs-h2",
+}))`
+  text-align: center;
 `;
 
 const CartProductsForMobile = styled.div`
@@ -539,78 +547,27 @@ export default function CartPage() {
     <PageContainer>
       <Header />
       <ContentContainer>
-        <CartTitle>購物袋中商品</CartTitle>
-        <CartProductsForMobile>
-          {cartForLocal.map((cartProduct) => (
-            <CartProduct key={cartProduct.id}>
-              {!cartProduct.selected && (
-                <NoneCheckedButton
-                  onClick={() => {
-                    handleChangeProductSelectedState(cartProduct.id);
-                  }}
-                />
-              )}
-              {cartProduct.selected && (
-                <CheckedButton
-                  onClick={() => {
-                    handleChangeProductSelectedState(cartProduct.id);
-                  }}
-                />
-              )}
-              <BSCarousel slides={cartProduct.slidesForMobile} />
-              <ProductHeader>
-                <ProductName>{cartProduct.name}</ProductName>
-                <ProductButtons>
-                  <LinkButton
-                    onClick={() => {
-                      handleRedirectToProductPage(cartProduct.pid);
-                    }}
-                  />
-                  <ProductDeleteButton
-                    onClick={() => {
-                      handleDeleteSelectedProduct(cartProduct.id);
-                    }}
-                  />
-                </ProductButtons>
-              </ProductHeader>
-              <CartPicker
-                picker={cartProduct.picker}
-                productId={cartProduct.id}
-                handleSelectPickerColor={handleSelectPickerColor}
-                handleSelectPickerSize={handleSelectPickerSize}
-                handleIncreaseQuantity={handleIncreaseQuantity}
-                handleDecreaseQuantity={handleDecreaseQuantity}
-              />
-              <ProductUnderline></ProductUnderline>
-            </CartProduct>
-          ))}
-          <FixedOffcanva
-            totalPrice={checkedPrice}
-            singleCheckedState={singleCheckedState}
-            allCheckedState={allCheckedState}
-            handleToggleSelectAllProducts={handleToggleSelectAllProducts}
-          />
-        </CartProductsForMobile>
-        <CartProductsForPad>
-          {cartForLocal.map((cartProduct) => (
-            <CartProductFlexContainer key={cartProduct.id}>
-              <CartProduct key={cartProduct.id}>
-                {!cartProduct.selected && (
-                  <NoneCheckedButton
-                    onClick={() => {
-                      handleChangeProductSelectedState(cartProduct.id);
-                    }}
-                  />
-                )}
-                {cartProduct.selected && (
-                  <CheckedButton
-                    onClick={() => {
-                      handleChangeProductSelectedState(cartProduct.id);
-                    }}
-                  />
-                )}
-                <BSCarousel slides={cartProduct.slidesForPad} />
-                <ProductInfo>
+        {cartForLocal.length ? (
+          <>
+            <CartTitle>購物袋中商品</CartTitle>
+            <CartProductsForMobile>
+              {cartForLocal.map((cartProduct) => (
+                <CartProduct key={cartProduct.id}>
+                  {!cartProduct.selected && (
+                    <NoneCheckedButton
+                      onClick={() => {
+                        handleChangeProductSelectedState(cartProduct.id);
+                      }}
+                    />
+                  )}
+                  {cartProduct.selected && (
+                    <CheckedButton
+                      onClick={() => {
+                        handleChangeProductSelectedState(cartProduct.id);
+                      }}
+                    />
+                  )}
+                  <BSCarousel slides={cartProduct.slidesForMobile} />
                   <ProductHeader>
                     <ProductName>{cartProduct.name}</ProductName>
                     <ProductButtons>
@@ -634,52 +591,123 @@ export default function CartPage() {
                     handleIncreaseQuantity={handleIncreaseQuantity}
                     handleDecreaseQuantity={handleDecreaseQuantity}
                   />
-                </ProductInfo>
-              </CartProduct>
-              <ProductUnderline></ProductUnderline>
-            </CartProductFlexContainer>
-          ))}
-          <CartProductsCheckedBlock>
-            <StyledSharedSelectionHeader>
-              <CheckedAllButtonContainer>
-                {allCheckedState ? (
-                  <SharedCheckedAllButton
-                    onClick={() => {
-                      handleToggleSelectAllProducts();
-                    }}
-                  />
+                  <ProductUnderline></ProductUnderline>
+                </CartProduct>
+              ))}
+              <FixedOffcanva
+                totalPrice={checkedPrice}
+                singleCheckedState={singleCheckedState}
+                allCheckedState={allCheckedState}
+                handleToggleSelectAllProducts={handleToggleSelectAllProducts}
+              />
+            </CartProductsForMobile>
+            <CartProductsForPad>
+              {cartForLocal.map((cartProduct) => (
+                <CartProductFlexContainer key={cartProduct.id}>
+                  <CartProduct key={cartProduct.id}>
+                    {!cartProduct.selected && (
+                      <NoneCheckedButton
+                        onClick={() => {
+                          handleChangeProductSelectedState(cartProduct.id);
+                        }}
+                      />
+                    )}
+                    {cartProduct.selected && (
+                      <CheckedButton
+                        onClick={() => {
+                          handleChangeProductSelectedState(cartProduct.id);
+                        }}
+                      />
+                    )}
+                    <BSCarousel slides={cartProduct.slidesForPad} />
+                    <ProductInfo>
+                      <ProductHeader>
+                        <ProductName>{cartProduct.name}</ProductName>
+                        <ProductButtons>
+                          <LinkButton
+                            onClick={() => {
+                              handleRedirectToProductPage(cartProduct.pid);
+                            }}
+                          />
+                          <ProductDeleteButton
+                            onClick={() => {
+                              handleDeleteSelectedProduct(cartProduct.id);
+                            }}
+                          />
+                        </ProductButtons>
+                      </ProductHeader>
+                      <CartPicker
+                        picker={cartProduct.picker}
+                        productId={cartProduct.id}
+                        handleSelectPickerColor={handleSelectPickerColor}
+                        handleSelectPickerSize={handleSelectPickerSize}
+                        handleIncreaseQuantity={handleIncreaseQuantity}
+                        handleDecreaseQuantity={handleDecreaseQuantity}
+                      />
+                    </ProductInfo>
+                  </CartProduct>
+                  <ProductUnderline></ProductUnderline>
+                </CartProductFlexContainer>
+              ))}
+              <CartProductsCheckedBlock>
+                <StyledSharedSelectionHeader>
+                  <CheckedAllButtonContainer>
+                    {allCheckedState ? (
+                      <SharedCheckedAllButton
+                        onClick={() => {
+                          handleToggleSelectAllProducts();
+                        }}
+                      />
+                    ) : (
+                      <SharedNoneCheckedButton
+                        onClick={() => {
+                          handleToggleSelectAllProducts();
+                        }}
+                      />
+                    )}
+                    全選
+                  </CheckedAllButtonContainer>
+                  <StyledSharedTotalPriceShower>
+                    總金額：NTD {checkedPrice}
+                  </StyledSharedTotalPriceShower>
+                </StyledSharedSelectionHeader>
+                {singleCheckedState ? (
+                  <CTAPrimaryButton
+                    margin={"0 0 0 auto"}
+                    width={"16rem"}
+                    isRounded={true}
+                  >
+                    結帳去
+                  </CTAPrimaryButton>
                 ) : (
-                  <SharedNoneCheckedButton
-                    onClick={() => {
-                      handleToggleSelectAllProducts();
-                    }}
-                  />
+                  <CTASecondaryButton
+                    margin={"0 0 0 auto"}
+                    width={"16rem"}
+                    isRounded={true}
+                  >
+                    沒有物品可結帳
+                  </CTASecondaryButton>
                 )}
-                全選
-              </CheckedAllButtonContainer>
-              <StyledSharedTotalPriceShower>
-                總金額：NTD {checkedPrice}
-              </StyledSharedTotalPriceShower>
-            </StyledSharedSelectionHeader>
-            {singleCheckedState ? (
-              <CTAPrimaryButton
-                margin={"0 0 0 auto"}
-                width={"16rem"}
-                isRounded={true}
-              >
-                結帳去
-              </CTAPrimaryButton>
-            ) : (
-              <CTASecondaryButton
-                margin={"0 0 0 auto"}
-                width={"16rem"}
-                isRounded={true}
-              >
-                沒有物品可結帳
-              </CTASecondaryButton>
-            )}
-          </CartProductsCheckedBlock>
-        </CartProductsForPad>
+              </CartProductsCheckedBlock>
+            </CartProductsForPad>
+          </>
+        ) : (
+          <>
+            <CartTitle margin={"2rem 0 2rem 0"} textAlign={true}>
+              購物車還是空的
+            </CartTitle>
+            <CartSubTitle>現在就去 shopping 吧</CartSubTitle>
+            <CTAPrimaryButton
+              isRounded={true}
+              margin={"1rem auto 0"}
+              onClick={() => {
+                history.push("/");
+              }}
+            >
+              回首頁
+            </CTAPrimaryButton>
+          </>
+        )}
       </ContentContainer>
       {/* 這是用來提醒用戶是否要合併相同產品的訊息 */}
       {showMergeProductMsg ? (
@@ -691,7 +719,7 @@ export default function CartPage() {
       ) : (
         <></>
       )}
-      <Footer marginBottom={"10rem"} />
+      <Footer bgColor={BG_PRIMARY1} marginBottom={"10rem"} />
     </PageContainer>
   );
 }
