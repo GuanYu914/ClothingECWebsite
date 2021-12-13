@@ -2,7 +2,7 @@ import styled from "styled-components/macro";
 import PropTypes from "prop-types";
 import {
   BG_PRIMARY1,
-  BG_SECONDARY3,
+  BG_SECONDARY4,
   COLOR_PRIMARY1,
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
@@ -19,7 +19,7 @@ const DropDownContent = styled.div.attrs(() => ({
   className: "fs-h3 box-shadow-dark",
 }))`
   color: ${COLOR_SECONDARY2};
-  background-color: ${BG_SECONDARY3};
+  background-color: ${BG_SECONDARY4};
   visibility: hidden;
   opacity: 0;
   border-radius: 0.5rem;
@@ -176,7 +176,13 @@ export default function DropDown({
             height={dropDownInfo.height}
           >
             {dropDownInfo.products.map((product) => (
-              <CartProductsContainer key={product.id}>
+              <CartProductsContainer
+                key={product.id}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  history.push(`/product/${product.pid}`);
+                }}
+              >
                 <ProductThumbnail url={product.url} />
                 <ProductSpecs>
                   <ProductName>{product.name}</ProductName>
@@ -191,7 +197,6 @@ export default function DropDown({
             <CTAPrimaryButton
               margin={"1rem 0 0 auto"}
               isRounded={true}
-              width={"100%"}
               onClick={() => {
                 history.push("/cart");
               }}
@@ -208,7 +213,6 @@ export default function DropDown({
             <CTAPrimaryButton
               margin={"1rem 0 0 auto"}
               isRounded={true}
-              width={"100%"}
               onClick={() => {
                 history.push("/cart");
               }}

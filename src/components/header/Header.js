@@ -1,4 +1,4 @@
-import { ReactComponent as logo } from "../../imgs/components/header/bootstrap.svg";
+import { ReactComponent as logo } from "../../imgs/components/header/brand-logo.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
 import DropDown from "../../components/dropdown/DropDown";
@@ -52,13 +52,13 @@ const NavBarContainer = styled.nav`
 
 const BrandLogo = styled(logo)`
   color: ${COLOR_SECONDARY2};
-  width: 2rem;
-  height: 2rem;
+  width: 2.4rem;
+  height: 2.4rem;
   cursor: pointer;
 
   ${BREAKPOINT_PAD} {
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 3rem;
+    height: 3rem;
   }
 `;
 
@@ -123,7 +123,7 @@ export default function Header() {
   // 透過 Context 拿到當前用戶資料
   const { user } = useContext(UserContext);
   // 透過 cart 拿到當前購物袋資訊
-  const { cart, setCart } = useContext(CartContext);
+  const { cart } = useContext(CartContext);
   // 用戶選單狀態 (dropdown UI)
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
@@ -146,6 +146,7 @@ export default function Header() {
     useForCart: true,
     products: cart.map((product) => ({
       id: product.id,
+      pid: product.pid,
       name: product.name,
       url: product.urls[0].src,
       color: product.colors.filter((item) => item.selected === true)[0].hexcode,
@@ -218,6 +219,7 @@ export default function Header() {
       useForCart: true,
       products: cart.map((product) => ({
         id: product.id,
+        pid: product.pid,
         name: product.name,
         url: product.urls[0].src,
         color: product.colors.filter((item) => item.selected === true)[0]
