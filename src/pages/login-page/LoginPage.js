@@ -8,7 +8,6 @@ import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
-  COLOR_PRIMARY1,
   COLOR_PRIMARY2,
   COLOR_PRIMARY3,
   HEADER_HEIGHT_MOBILE,
@@ -348,11 +347,7 @@ export default function LoginPage() {
           />
         )}
       </ContentContainer>
-      <Footer
-        marginTop={"0"}
-        bgColor={BG_SECONDARY3}
-        iconColor={COLOR_PRIMARY1}
-      />
+      <Footer marginTop={"0"} bgColor={BG_SECONDARY3} />
     </PageContainer>
   );
 }

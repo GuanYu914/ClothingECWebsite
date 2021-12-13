@@ -9,7 +9,6 @@ import {
   BREAKPOINT_LAPTOP,
   BREAKPOINT_MOBILE,
   BREAKPOINT_PAD,
-  COLOR_PRIMARY1,
   COLOR_PRIMARY2,
   COLOR_PRIMARY3,
   COLOR_SECONDARY1,
@@ -462,11 +461,7 @@ export default function RegisterPage() {
           />
         )}
       </ContentContainer>
-      <Footer
-        marginTop={"0"}
-        bgColor={BG_SECONDARY3}
-        iconColor={COLOR_PRIMARY1}
-      />
+      <Footer marginTop={"0"} bgColor={BG_SECONDARY3} />
     </PageContainer>
   );
 }

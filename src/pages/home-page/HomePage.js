@@ -6,6 +6,7 @@ import {
   HEADER_HEIGHT_MOBILE,
   HEADER_HEIGHT_PAD,
   BG_SECONDARY4,
+  BG_PRIMARY1,
 } from "../../constant";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -442,7 +443,7 @@ export default function HomePage() {
           />
         )}
       </ContentContainer>
-      <Footer marginTop={"6rem"} />
+      <Footer bgColor={BG_PRIMARY1} marginTop={"6rem"} />
     </PageContainer>
   );
 }

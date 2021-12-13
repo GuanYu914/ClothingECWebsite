@@ -5,7 +5,6 @@ import Form from "../../components/form";
 import { useState, useContext } from "react";
 import {
   BG_SECONDARY3,
-  COLOR_PRIMARY1,
   MAX_CONTAINER_WIDTH,
   BREAKPOINT_MOBILE,
   HEADER_HEIGHT_MOBILE,
@@ -375,11 +374,7 @@ export default function ProfileEditPage() {
           />
         )}
       </ContentContainer>
-      <Footer
-        marginTop={"0"}
-        bgColor={BG_SECONDARY3}
-        iconColor={COLOR_PRIMARY1}
-      />
+      <Footer marginTop={"0"} bgColor={BG_SECONDARY3} />
     </PageContainer>
   );
 }

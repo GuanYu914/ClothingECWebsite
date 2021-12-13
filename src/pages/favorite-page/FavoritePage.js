@@ -9,6 +9,7 @@ import {
   MAX_CONTAINER_WIDTH,
   COLOR_SECONDARY2,
   BG_SECONDARY4,
+  BG_PRIMARY1,
 } from "../../constant";
 import CardContainer from "../../components/card-container";
 import { useState } from "react";
@@ -144,7 +145,7 @@ export default function FavoritePage() {
           />
         )}
       </ContentContainer>
-      <Footer />
+      <Footer bgColor={BG_PRIMARY1} />
     </PageContainer>
   );
 }
