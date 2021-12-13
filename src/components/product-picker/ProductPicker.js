@@ -13,6 +13,8 @@ import {
   BG_MASK,
   BG_SECONDARY3,
   COLOR_SECONDARY2,
+  BR_PRIMARY1,
+  COLOR_PRIMARY2,
 } from "../../constant";
 import {
   GhostSecondaryButton,
@@ -98,6 +100,7 @@ const FavoriteIcon = styled(heart)`
 `;
 
 const FavoriteFilledIcon = styled(heartFilled)`
+  color: ${COLOR_PRIMARY2};
   width: 1.8rem;
   height: 1.8rem;
   cursor: pointer;
@@ -136,8 +139,8 @@ const PickerColors = styled.div`
 `;
 
 const PickerColor = styled.div`
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.2rem;
+  height: 2.2rem;
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
   margin-right: 1.4rem;
@@ -268,7 +271,7 @@ export default function ProductPicker({
               <PickerHeader>
                 <PickerProductName>女版襯衫</PickerProductName>
                 <PickerHeaderButton>
-                  {isEmptyObj(user) ? (
+                  {!isEmptyObj(user) ? (
                     <>
                       {isLiked && (
                         <FavoriteFilledIcon
@@ -305,8 +308,8 @@ export default function ProductPicker({
                         color={color.hexcode}
                         selected={
                           color.selected === true
-                            ? `0.2rem solid ${BR_SECONDARY2}`
-                            : "unset"
+                            ? `0.2rem solid ${BR_PRIMARY1}`
+                            : `0.2rem solid ${BR_SECONDARY2}`
                         }
                         onClick={() => {
                           handleSelectPickerColor(color.id);
@@ -405,8 +408,8 @@ export default function ProductPicker({
                   color={color.hexcode}
                   selected={
                     color.selected === true
-                      ? `0.2rem solid ${BR_SECONDARY2}`
-                      : "unset"
+                      ? `0.2rem solid ${BR_PRIMARY1}`
+                      : `0.2rem solid ${BR_SECONDARY2}`
                   }
                   onClick={() => {
                     handleSelectPickerColor(color.id);
