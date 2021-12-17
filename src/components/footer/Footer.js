@@ -59,6 +59,8 @@ const ProjectDescription = styled.h3.attrs(() => ({
   color: ${(props) =>
     props.color === COLOR_PRIMARY1 ? COLOR_SECONDARY3 : COLOR_PRIMARY1};
   padding-top: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 `;
 export default function Footer({ marginTop, marginBottom, bgColor }) {
   return (
