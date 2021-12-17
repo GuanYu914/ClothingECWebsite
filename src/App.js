@@ -15,6 +15,7 @@ import {
   CartContext,
   WatchedProductsContext,
   FavoriteItemsContext,
+  IntroductionModalContext,
 } from "./context";
 import ScrollToTop from "./components/scroll-to-top";
 import { useEffect, useRef } from "react";
@@ -54,6 +55,9 @@ function App() {
     () => ({ favoriteItems, setFavoriteItems }),
     [favoriteItems]
   );
+  // 紀錄 Home Page 的 introduction modal 是否有被看過
+  const [introductionModalIsDisplayed, setIntroductionModalIsDisplayed] =
+    useState(false);
   // 用來儲存目前是否有抓到當前用戶資訊
   const flagGetUser = useRef(false);
   // 是否要顯示 api 發送錯誤的 modal
@@ -304,7 +308,7 @@ function App() {
 
   return (
     <main>
-      <Router>
+      <Router basename="/clothing-ec/demo">
         <ScrollToTop />
         <Switch>
           <UserContext.Provider value={memorizedUser}>
@@ -313,13 +317,20 @@ function App() {
                 <WatchedProductsContext.Provider
                   value={memorizeWatchedProducts}
                 >
-                  <Route exact path="/">
-                    <AsyncComponent
-                      componentPromise={getUserNecessaryInfoFromApis}
-                    >
-                      <HomePage />
-                    </AsyncComponent>
-                  </Route>
+                  <IntroductionModalContext.Provider
+                    value={{
+                      introductionModalIsDisplayed,
+                      setIntroductionModalIsDisplayed,
+                    }}
+                  >
+                    <Route exact path="/">
+                      <AsyncComponent
+                        componentPromise={getUserNecessaryInfoFromApis}
+                      >
+                        <HomePage />
+                      </AsyncComponent>
+                    </Route>
+                  </IntroductionModalContext.Provider>
                   <Route exact path="/register">
                     <AsyncComponent
                       componentPromise={getUserNecessaryInfoFromApis}

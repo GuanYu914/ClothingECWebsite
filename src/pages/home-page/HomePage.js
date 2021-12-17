@@ -47,7 +47,11 @@ import Loader from "../../components/loader";
 import { useHistory } from "react-router";
 import Modal from "../../components/modal";
 import { useContext } from "react";
-import { FavoriteItemsContext, UserContext } from "../../context";
+import {
+  FavoriteItemsContext,
+  UserContext,
+  IntroductionModalContext,
+} from "../../context";
 import { isEmptyObj } from "../../util";
 
 const PageContainer = styled.div`
@@ -97,6 +101,9 @@ export default function HomePage() {
   const { user } = useContext(UserContext);
   // 透過 FavoriteItemsContext 拿到 favoriteItems 跟 setter function
   const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
+  // 透過 context 拿到目前 introductionModal 是否有被顯示
+  const { introductionModalIsDisplayed, setIntroductionModalIsDisplayed } =
+    useContext(IntroductionModalContext);
   // 表示每個區塊是否該顯示 loading 動畫還是內容
   const [isLoadingBanner, setIsLoadingBanner] = useState(true);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -136,6 +143,12 @@ export default function HomePage() {
     title: "發生一點小錯誤",
     content: "由於伺服器或網路異常，請稍後再試一次",
   });
+  // 是否要顯示 introduction modal
+  const [showModalForIntroductionLocally, setShowModalForIntroductionLocally] =
+    useState(false);
+  // introduction modal 相關資訊
+  const [modalInfoForIntroductionLocally, setModalInfoForIntroductionLocally] =
+    useState({});
 
   // 更新 hotItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
@@ -335,6 +348,20 @@ export default function HomePage() {
   useEffect(() => {
     getBannersFromApi();
     getCategoriesFromApi();
+    // 如果 context 顯示還沒被看過，則設置相關訊息
+    if (!introductionModalIsDisplayed) {
+      setModalInfoForIntroductionLocally({
+        selectionMode: false,
+        title: `歡迎光臨, ${isEmptyObj(user) ? "訪客" : user.nickname}`,
+        content: `
+使用網站前須注意事項 🔔
+
+• 目前版本尚不開放結帳金流服務
+• 網站未透過 SSL 加密，請勿輸入敏感資訊
+
+很開心見到您，祝您購物愉快 😘`,
+      });
+    }
   }, []);
   // hotItemsIndicator 改變時執行
   useEffect(() => {
@@ -344,6 +371,17 @@ export default function HomePage() {
   useEffect(() => {
     getUserCommentsFromApi(commentsIndicator.offset, commentsIndicator.limit);
   }, [commentsIndicator]);
+  // 當 introduction modal 內容被設置時執行
+  useEffect(() => {
+    // 如果 context 顯示已經被看過或還在初始值，則跳過
+    if (
+      introductionModalIsDisplayed === true ||
+      isEmptyObj(modalInfoForIntroductionLocally)
+    )
+      return;
+    setShowModalForIntroductionLocally(true);
+    setIntroductionModalIsDisplayed(true);
+  }, [modalInfoForIntroductionLocally]);
 
   return (
     <PageContainer>
@@ -441,6 +479,17 @@ export default function HomePage() {
             modalInfo={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
+          />
+        )}
+        {showModalForIntroductionLocally && (
+          <Modal
+            modalInfo={modalInfoForIntroductionLocally}
+            handleSubmitOp={() => {
+              setShowModalForIntroductionLocally(false);
+            }}
+            handleCancelOp={() => {
+              setShowModalForIntroductionLocally(false);
+            }}
           />
         )}
       </ContentContainer>
