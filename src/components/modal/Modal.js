@@ -30,7 +30,7 @@ const MaskContainer = styled(animated.div)`
 
 const ModalContainer = styled.div`
   background-color: ${BG_SECONDARY3};
-  width: 18rem;
+  width: fit-content;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -41,7 +41,7 @@ const ModalContainer = styled.div`
   z-index: ${Z_INDEX_LV6};
 
   ${BREAKPOINT_MOBILE} {
-    width: 18rem;
+    width: 20rem;
   }
 
   ${BREAKPOINT_PAD} {
@@ -75,6 +75,7 @@ const ModalBody = styled.h3.attrs(() => ({
 }))`
   color: ${COLOR_SECONDARY2};
   padding: 1.4rem 1.4rem;
+  white-space: pre-wrap;
 `;
 
 const ModalButtons = styled.div`
