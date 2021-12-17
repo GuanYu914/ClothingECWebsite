@@ -254,7 +254,9 @@ export default function ProfileEditPage() {
     if (fieldName === "目前密碼") {
       if (fieldValue === "") {
         setFieldState("目前密碼", "密碼不得為空", COLOR_PRIMARY2, false);
-      } else if (fieldValue === user.pass) {
+      }
+      // 解碼從 server 來的 Base64 編碼資料
+      else if (fieldValue === window.atob(user.pass)) {
         setFieldState("目前密碼", "密碼輸入正確", COLOR_PRIMARY3, true);
       } else {
         setFieldState(
@@ -268,7 +270,9 @@ export default function ProfileEditPage() {
     if (fieldName === "新的密碼") {
       if (fieldValue === "") {
         setFieldState("新的密碼", "密碼不得為空", COLOR_PRIMARY2, false);
-      } else if (fieldValue === user.pass) {
+      }
+      // 解碼從 server 來的 Base64 編碼資料
+      else if (fieldValue === window.atob(user.pass)) {
         setFieldState(
           "新的密碼",
           "目前新設的密碼與原本密碼相同，如果您不想變更，則忽略此訊息",
