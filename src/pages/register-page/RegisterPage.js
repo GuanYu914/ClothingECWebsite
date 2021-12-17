@@ -21,6 +21,7 @@ import Modal from "../../components/modal";
 import { sendUserRegisterDataApi, getSessionDataApi } from "../../Webapi";
 import { useContext } from "react";
 import { UserContext } from "../../context";
+import { useHistory } from "react-router-dom";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -101,6 +102,8 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function RegisterPage() {
+  // 透過 history hook 換頁
+  const history = useHistory();
   // 從 context 拿到設定用戶的 setter function
   const { setUser } = useContext(UserContext);
   // 表單欄位狀態資訊
@@ -354,12 +357,7 @@ export default function RegisterPage() {
         }
         if (json_data.isSuccessful === "successful") {
           // 自動跳轉到首頁
-          setUser({
-            userId: json_data.data.id,
-            nickname: json_data.data.nickname,
-            account: json_data.data.account,
-            pass: json_data.data.password,
-          });
+          history.push("/");
         }
       })
       .catch((e) => {
