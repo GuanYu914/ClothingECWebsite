@@ -613,9 +613,6 @@ export default function SingleProductPage() {
   // 導引到相對應的產品頁面
   function handleRedirectToProductPage(e) {
     const id = e.target.getAttribute("data-id");
-    // 如果點擊的是當前產品 id 則不理會
-    if (productID === id) return;
-    getProductInfoFromApi(id);
     history.push(`/product/${id}`);
   }
   // modal 顯示情境: api 發送過程中有誤
@@ -661,6 +658,11 @@ export default function SingleProductPage() {
       setDisplayedCategoryPath(getCategoryPathOfProduct());
     }
   }, [isLoadingProduct]);
+  // URL 格式 : /product/:productID
+  // 如果頁面的 productID 變動時，則抓取相對應的產品資訊
+  useEffect(() => {
+    getProductInfoFromApi(productID);
+  }, [productID]);
 
   return (
     <PageContainer>
