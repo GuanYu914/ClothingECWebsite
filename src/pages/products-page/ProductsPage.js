@@ -64,7 +64,7 @@ const ProductsCategoryPath = styled.h3.attrs(() => ({
   }
 
   ${BREAKPOINT_PAD} {
-    margin-top: calc(${HEADER_HEIGHT_PAD} + 1rem);
+    margin-top: calc(${HEADER_HEIGHT_PAD});
   }
 `;
 
@@ -486,12 +486,13 @@ export default function ProductsPage() {
     const categoryFromRouter = `${mainCategoryFromRouter}/${subCategoryFromRouter}`;
     const categoryFromDOM = getSubCategoryPath(e);
     const categoryFromDOMArray = categoryFromDOM.split("/");
-    history.push(`/products/${categoryFromDOM}`);
-    // 顯示整個產品清單讀取動畫
-    setIsLoadingProductsBlock(true);
-    // 如果與當前選擇的分類不符，則重設 ProductsListIndicator，
-    // 並根據 indicator 的參數重新讀取產品清單
+    // 如果與當前選擇的分類不符
     if (categoryFromDOM !== categoryFromRouter) {
+      // 更新網址
+      history.push(`/products/${categoryFromDOM}`);
+      // 顯示整個產品清單讀取動畫
+      setIsLoadingProductsBlock(true);
+      // 重設 ProductsListIndicator，並根據 indicator 的參數重新讀取產品清單
       setProductsListIndicator({
         offset: PRODUCTS_QUERY_INIT_OFFSET,
         limit: PRODUCTS_QUERY_INIT_LIMIT,
@@ -513,12 +514,13 @@ export default function ProductsPage() {
     const categoryFromRouter = `${mainCategoryFromRouter}/${subCategoryFromRouter}/${detailedCategoryFromRouter}`;
     const categoryFromDOM = getDetailedCategoryPath(e);
     const categoryFromDOMArray = categoryFromDOM.split("/");
-    history.push(`/products/${categoryFromDOM}`);
-    // 顯示整個產品清單讀取動畫
-    setIsLoadingProductsBlock(true);
-    // 如果與當前選擇的分類不符，則重設 ProductsListIndicator
-    // 並根據 indicator 的參數重新讀取產品清單
+    // 如果與當前選擇的分類不符
     if (categoryFromRouter !== categoryFromDOM) {
+      // 更新網址
+      history.push(`/products/${categoryFromDOM}`);
+      // 顯示整個產品清單讀取動畫
+      setIsLoadingProductsBlock(true);
+      // 重設 ProductsListIndicator，並根據 indicator 的參數重新讀取產品清單
       setProductsListIndicator({
         offset: PRODUCTS_QUERY_INIT_OFFSET,
         limit: PRODUCTS_QUERY_INIT_LIMIT,
