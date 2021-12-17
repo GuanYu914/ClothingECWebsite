@@ -726,23 +726,19 @@ export default function CartPage() {
         )}
       </ContentContainer>
       {/* 這是用來提醒用戶是否要合併相同產品的訊息 */}
-      {showMergeProductMsg ? (
+      {showMergeProductMsg && (
         <Modal
           modalInfo={mergeProductMsgModalInfo}
           handleSubmitOp={handleMergeSameProduct}
           handleCancelOp={() => setShowMergeProductMsg(false)}
         />
-      ) : (
-        <></>
       )}
-      {showCheckOutMsg ? (
+      {showCheckOutMsg && (
         <Modal
           modalInfo={checkOutMsgModalInfo}
           handleSubmitOp={() => setShowCheckOutMsg(false)}
           handleCancelOp={() => setShowCheckOutMsg(false)}
         />
-      ) : (
-        <></>
       )}
       <Footer bgColor={BG_PRIMARY1} marginBottom={"10rem"} />
     </PageContainer>
