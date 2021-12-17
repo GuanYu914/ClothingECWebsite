@@ -66,7 +66,7 @@ const ButtonContainer = styled.div``;
 
 const RegisterButton = styled.a.attrs(() => ({
   className: "fs-h3",
-  href: "/register",
+  href: "/clothing-ec/demo/register",
   target: "_blank",
 }))`
   color: ${COLOR_SECONDARY1};
@@ -83,7 +83,7 @@ const RegisterButton = styled.a.attrs(() => ({
 
 const LoginButton = styled.a.attrs(() => ({
   className: "fs-h3",
-  href: "/login",
+  href: "/clothing-ec/demo/login",
   target: "_blank",
 }))`
   color: ${COLOR_SECONDARY1};
