@@ -61,6 +61,7 @@ export default function FixedOffcanva({
   singleCheckedState,
   allCheckedState,
   handleToggleSelectAllProducts,
+  handleCheckOut,
 }) {
   return (
     <Container>
@@ -74,7 +75,11 @@ export default function FixedOffcanva({
       </SelectionHeader>
       <TotalPriceShower>總金額：NTD {totalPrice}</TotalPriceShower>
       {singleCheckedState ? (
-        <CTAPrimaryButton width={"100%"} isRounded={true}>
+        <CTAPrimaryButton
+          width={"100%"}
+          isRounded={true}
+          onClick={handleCheckOut}
+        >
           結帳去
         </CTAPrimaryButton>
       ) : (
@@ -91,4 +96,5 @@ FixedOffcanva.propTypes = {
   singleCheckedState: PropTypes.bool.isRequired,
   allCheckedState: PropTypes.bool.isRequired,
   handleToggleSelectAllProducts: PropTypes.func.isRequired,
+  handleCheckOut: PropTypes.func.isRequired,
 };

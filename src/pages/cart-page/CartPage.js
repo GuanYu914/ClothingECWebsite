@@ -272,6 +272,14 @@ export default function CartPage() {
     title: "貼心提醒",
     content: "購物車內有相同規格的產品，是否合併呢？",
   });
+  // 是否顯示結帳訊息
+  const [showCheckOutMsg, setShowCheckOutMsg] = useState(false);
+  // 加入詢問結帳時的訊息動畫
+  const [checkOutMsgModalInfo] = useState({
+    selectionMode: false,
+    title: "尚未開放此功能",
+    content: "目前版本還不能結帳扣款，敬請期待",
+  });
 
   // 使用 useRef 暫存目前需要被合併的產品 id
   const mergeProductId = useRef(null);
@@ -601,6 +609,9 @@ export default function CartPage() {
                 singleCheckedState={singleCheckedState}
                 allCheckedState={allCheckedState}
                 handleToggleSelectAllProducts={handleToggleSelectAllProducts}
+                handleCheckOut={() => {
+                  setShowCheckOutMsg(true);
+                }}
               />
             </CartProductsForMobile>
             <CartProductsForPad>
@@ -678,6 +689,9 @@ export default function CartPage() {
                     margin={"0 0 0 auto"}
                     width={"16rem"}
                     isRounded={true}
+                    onClick={() => {
+                      setShowCheckOutMsg(true);
+                    }}
                   >
                     結帳去
                   </CTAPrimaryButton>
@@ -717,6 +731,15 @@ export default function CartPage() {
           modalInfo={mergeProductMsgModalInfo}
           handleSubmitOp={handleMergeSameProduct}
           handleCancelOp={() => setShowMergeProductMsg(false)}
+        />
+      ) : (
+        <></>
+      )}
+      {showCheckOutMsg ? (
+        <Modal
+          modalInfo={checkOutMsgModalInfo}
+          handleSubmitOp={() => setShowCheckOutMsg(false)}
+          handleCancelOp={() => setShowCheckOutMsg(false)}
         />
       ) : (
         <></>
