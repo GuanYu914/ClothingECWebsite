@@ -2,11 +2,7 @@ import styled from "styled-components";
 import { ReactComponent as minusSquare } from "../../imgs/pages/cart-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/cart-page/plus-square.svg";
 import PropTypes from "prop-types";
-import {
-  COLOR_PRIMARY1,
-  BR_SECONDARY2,
-  COLOR_SECONDARY2,
-} from "../../constant";
+import { COLOR_PRIMARY1, COLOR_SECONDARY2, BR_PRIMARY1 } from "../../constant";
 
 const Container = styled.div``;
 
@@ -32,14 +28,14 @@ const PickerColors = styled.div`
 `;
 
 const PickerColor = styled.div`
-  width: 1.6rem;
-  height: 1.6rem;
+  width: 2.2rem;
+  height: 2.2rem;
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
   margin-right: 1.4rem;
   cursor: pointer;
   background-color: ${(props) => props.color};
-  border: ${(props) => props.selected || BR_SECONDARY2};
+  border: ${(props) => props.selected || BR_PRIMARY1};
 
   &:last-child {
     margin-right: 0;
@@ -152,7 +148,7 @@ export default function CartPicker({
               key={color.id}
               color={color.hexcode}
               selected={
-                color.selected === true ? `0.2rem solid ${BR_SECONDARY2}` : ""
+                color.selected === true ? `0.2rem solid ${BR_PRIMARY1}` : ""
               }
               onClick={() => {
                 handleSelectPickerColor(productId, color.id);
