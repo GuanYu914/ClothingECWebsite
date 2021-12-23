@@ -35,7 +35,7 @@ import { useHistory } from "react-router";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
   margin-right: auto;
@@ -76,7 +76,7 @@ const CartSubTitle = styled.h2.attrs(() => ({
   text-align: center;
 `;
 
-const CartProductsForMobile = styled.div`
+const CartProductsForMobile = styled.section`
   display: block;
   margin-bottom: 4rem;
 
@@ -89,7 +89,7 @@ const CartProductsForMobile = styled.div`
   }
 `;
 
-const CartProductsForPad = styled.div`
+const CartProductsForPad = styled.section`
   display: none;
   margin-bottom: 4rem;
 
@@ -103,7 +103,7 @@ const CartProductsForPad = styled.div`
 `;
 
 const fadeInAnimation = keyframes`${fadeIn}`;
-const CartProduct = styled.div`
+const CartProduct = styled.section`
   position: relative;
   margin-bottom: 4rem;
   animation: 1s ${fadeInAnimation};
@@ -114,7 +114,7 @@ const CartProduct = styled.div`
   }
 `;
 
-const ProductHeader = styled.div`
+const ProductHeader = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -186,7 +186,7 @@ const ProductInfo = styled.div`
   margin-left: 0.6rem;
 `;
 
-const CartProductFlexContainer = styled.div`
+const CartProductFlexContainer = styled.section`
   margin-bottom: 4rem;
 `;
 
@@ -200,7 +200,7 @@ const StyledSharedSelectionHeader = styled(SharedSelectionHeader)`
 
 const CheckedAllButtonContainer = styled.div``;
 
-const CartProductsCheckedBlock = styled.div``;
+const CartProductsCheckedBlock = styled.section``;
 
 const ProductButtons = styled.div`
   color: ${COLOR_SECONDARY2};

@@ -16,7 +16,7 @@ import {
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 
-const Container = styled.div``;
+const Container = styled.nav``;
 
 const OffcanvaButton = styled(list)`
   width: 2rem;
@@ -36,7 +36,7 @@ const MaskContainer = styled(animated.div)`
   left: 0;
 `;
 
-const OffcanvaBody = styled(animated.div).attrs(() => ({
+const OffcanvaBody = styled(animated.section).attrs(() => ({
   className: "fs-h3",
 }))`
   height: 100vh;
@@ -85,7 +85,7 @@ const CloseButton = styled(close)`
   }
 `;
 
-const OffcanvaHeader = styled.div`
+const OffcanvaHeader = styled.header`
   display: flex;
   align-items: center;
   margin-top: 2.8rem;

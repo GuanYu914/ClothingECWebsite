@@ -17,7 +17,7 @@ import { useHistory } from "react-router";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -58,7 +58,7 @@ const LogoutContent = styled.h2.attrs(() => ({
   text-align: center;
 `;
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled.section`
   display: flex;
   justify-content: center;
 `;

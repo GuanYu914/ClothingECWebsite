@@ -40,7 +40,7 @@ import { isEmptyObj } from "../../util";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 定義容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -79,7 +79,7 @@ const ProductCategoryPath = styled.h3.attrs(() => ({
   }
 `;
 
-const ProductInfoForMobile = styled.div`
+const ProductInfoForMobile = styled.section`
   display: block;
 
   ${BREAKPOINT_MOBILE} {
@@ -91,7 +91,7 @@ const ProductInfoForMobile = styled.div`
   }
 `;
 
-const ProductInfoContainer = styled.div`
+const ProductInfoContainer = styled.section`
   color: ${COLOR_SECONDARY2};
   margin-top: 2rem;
   display: flex;
@@ -106,7 +106,7 @@ const ProductInfoContainer = styled.div`
   }
 `;
 
-const ProductHeaderContainer = styled.div`
+const ProductHeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -134,7 +134,7 @@ const FavoriteFilledIcon = styled(heartFilled)`
   cursor: pointer;
 `;
 
-const DetailInfoContainer = styled.div`
+const DetailInfoContainer = styled.section`
   margin-top: 3rem;
 `;
 
@@ -144,7 +144,7 @@ const DetailInfoTitle = styled.h1.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
-const DetailInfoDescBlock = styled.div`
+const DetailInfoDescBlock = styled.section`
   margin-top: 1rem;
 `;
 
@@ -161,7 +161,7 @@ const DetailInfoDescBlockBody = styled.h3.attrs(() => ({
   margin-bottom: 2rem;
 `;
 
-const ProductInfoContainerForPad = styled.div`
+const ProductInfoContainerForPad = styled.section`
   display: none;
 
   ${BREAKPOINT_MOBILE} {
@@ -173,7 +173,7 @@ const ProductInfoContainerForPad = styled.div`
   }
 `;
 
-const WatchedItemsContainer = styled.div`
+const WatchedItemsContainer = styled.section`
   margin-top: 2rem;
 `;
 

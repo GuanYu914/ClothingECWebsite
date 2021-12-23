@@ -16,7 +16,7 @@ import {
 import { useState } from "react";
 import { CTAPrimaryButton, CTASecondaryButton } from "../button";
 
-const Container = styled.div``;
+const Container = styled.section``;
 
 const MaskContainer = styled(animated.div)`
   background-color: ${BG_MASK};
@@ -49,7 +49,7 @@ const ModalContainer = styled.div`
   }
 `;
 
-const ModalHeader = styled.div`
+const ModalHeader = styled.header`
   border-radius: 1.4rem 1.4rem 0 0;
   padding: 0.8rem;
   color: ${COLOR_SECONDARY3};
@@ -78,7 +78,7 @@ const ModalBody = styled.h3.attrs(() => ({
   white-space: pre-wrap;
 `;
 
-const ModalButtons = styled.div`
+const ModalButtons = styled.section`
   display: flex;
 `;
 

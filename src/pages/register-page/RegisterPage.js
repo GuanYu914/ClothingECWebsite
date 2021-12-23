@@ -26,7 +26,7 @@ import { useHistory } from "react-router-dom";
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -87,7 +87,7 @@ const FormForPad = styled.div`
   }
 `;
 
-const BrandInfo = styled.div``;
+const BrandInfo = styled.section``;
 const BrandName = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`

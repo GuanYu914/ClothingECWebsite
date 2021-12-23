@@ -4,9 +4,9 @@ import { ReactComponent as plusSquare } from "../../imgs/pages/cart-page/plus-sq
 import PropTypes from "prop-types";
 import { COLOR_PRIMARY1, COLOR_SECONDARY2, BR_PRIMARY1 } from "../../constant";
 
-const Container = styled.div``;
+const Container = styled.section``;
 
-const PickerColorContainer = styled.div`
+const PickerColorContainer = styled.section`
   display: flex;
   align-items: center;
   margin-bottom: 1.4rem;
@@ -42,7 +42,7 @@ const PickerColor = styled.div`
   }
 `;
 
-const PickerSizeContainer = styled.div`
+const PickerSizeContainer = styled.section`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -79,7 +79,7 @@ const PickerSize = styled.h3.attrs(() => ({
   }
 `;
 
-const PickerQuantityContainer = styled.div`
+const PickerQuantityContainer = styled.section`
   display: flex;
   align-items: center;
   margin-bottom: 1.4rem;
@@ -112,7 +112,7 @@ const PickerQuantityNumber = styled.h2.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
-const PickerPriceShower = styled.div`
+const PickerPriceShower = styled.section`
   display: flex;
   align-items: center;
 `;

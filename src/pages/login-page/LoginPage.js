@@ -23,7 +23,7 @@ import { sendUserLoginDataApi } from "../../Webapi";
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -55,7 +55,7 @@ const LoginSubTitle = styled.h3.attrs(() => ({
   margin-bottom: 1rem;
 `;
 
-const FormForMobile = styled.div`
+const FormForMobile = styled.section`
   display: block;
 
   ${BREAKPOINT_MOBILE} {
@@ -66,7 +66,7 @@ const FormForMobile = styled.div`
   }
 `;
 
-const FormForPad = styled.div`
+const FormForPad = styled.section`
   display: none;
 
   ${BREAKPOINT_MOBILE} {
@@ -84,7 +84,7 @@ const FormForPad = styled.div`
   }
 `;
 
-const BrandInfo = styled.div``;
+const BrandInfo = styled.section``;
 const BrandName = styled.h1.attrs(() => ({
   className: "fs-h1",
 }))`

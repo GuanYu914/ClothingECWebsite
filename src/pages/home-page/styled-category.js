@@ -6,7 +6,7 @@ import {
 } from "../../constant";
 import styled from "styled-components";
 
-export const CategoryBlock = styled.div`
+export const CategoryBlock = styled.section`
   margin-top: 5rem;
 
   ${BREAKPOINT_PAD} {
@@ -21,14 +21,14 @@ export const CategoryTitle = styled.h1.attrs(() => ({
   text-align: center;
 `;
 
-export const CategoriesContainer = styled.div`
+export const CategoriesContainer = styled.section`
   margin-top: 2rem;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
 `;
 
-export const Category = styled.div.attrs(() => ({
+export const Category = styled.section.attrs(() => ({
   className: "fs-h1",
 }))`
   color: ${COLOR_SECONDARY3};

@@ -8,7 +8,7 @@ import {
 } from "../../constant";
 import styled from "styled-components";
 
-export const UserCommentBlock = styled.div`
+export const UserCommentBlock = styled.section`
   margin-top: 5rem;
 
   ${BREAKPOINT_PAD} {
@@ -29,7 +29,7 @@ export const UserCommentsContainer = styled.div`
   flex-wrap: wrap;
 `;
 
-export const UserComment = styled.div.attrs(() => ({
+export const UserComment = styled.section.attrs(() => ({
   className: "fs-h3",
 }))`
   color: ${COLOR_SECONDARY2};

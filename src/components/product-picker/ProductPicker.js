@@ -53,7 +53,7 @@ const BackgroundContainer = styled.div`
   }
 `;
 
-const PickerContainerForMobile = styled.div`
+const PickerContainerForMobile = styled.section`
   background-color: ${BG_SECONDARY3};
   width: 100%;
   height: fit-content;
@@ -66,13 +66,13 @@ const PickerContainerForMobile = styled.div`
   animation: 1s ${slideInUpAnimation};
 `;
 
-const PickerContainerForPad = styled.div``;
+const PickerContainerForPad = styled.section``;
 
-const PickerPaddingContainer = styled.div`
+const PickerPaddingContainer = styled.section`
   padding: 1rem;
 `;
 
-const PickerHeader = styled.div`
+const PickerHeader = styled.header`
   color: ${COLOR_SECONDARY2};
   display: flex;
   justify-content: space-between;
@@ -117,7 +117,7 @@ const PickerSpecContainer = styled.div`
   margin-top: 2rem;
 `;
 
-const PickerColorContainer = styled.div`
+const PickerColorContainer = styled.section`
   display: flex;
   align-items: center;
   margin-bottom: 1.4rem;
@@ -153,7 +153,7 @@ const PickerColor = styled.div`
   }
 `;
 
-const PickerSizeContainer = styled.div`
+const PickerSizeContainer = styled.section`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -190,7 +190,7 @@ const PickerSize = styled.h3.attrs(() => ({
   }
 `;
 
-const PickerQuantityContainer = styled.div`
+const PickerQuantityContainer = styled.section`
   display: flex;
   align-items: center;
   margin-bottom: 1.4rem;
@@ -223,7 +223,7 @@ const PickerQuantityNumber = styled.h2.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
-const PickerPriceShower = styled.div`
+const PickerPriceShower = styled.section`
   display: flex;
   align-items: center;
 `;
@@ -241,7 +241,7 @@ const PickerPriceNumber = styled.h3.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
-const PickerOPButtons = styled.div`
+const PickerOPButtons = styled.section`
   margin-top: 2rem;
   display: flex;
 `;

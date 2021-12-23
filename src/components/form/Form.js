@@ -9,7 +9,7 @@ import {
   COLOR_SECONDARY1,
 } from "../../constant";
 
-const Container = styled.div.attrs(() => ({
+const Container = styled.section.attrs(() => ({
   className: "box-shadow-light",
 }))`
   background-color: ${BG_SECONDARY3};
@@ -26,7 +26,7 @@ const FormContainer = styled.form`
   }
 `;
 
-const FieldContainer = styled.div`
+const FieldContainer = styled.section`
   margin-bottom: 2rem;
 `;
 
@@ -62,7 +62,7 @@ const FormHelper = styled.h3.attrs(() => ({
   color: ${(props) => props.color || COLOR_PRIMARY1};
 `;
 
-const ButtonContainer = styled.div``;
+const ButtonContainer = styled.section``;
 
 const RegisterButton = styled.a.attrs(() => ({
   className: "fs-h3",

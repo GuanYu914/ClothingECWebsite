@@ -15,7 +15,7 @@ const DropDownContainer = styled.div`
   position: relative;
   z-index: ${(props) => props.zIndex};
 `;
-const DropDownContent = styled.div.attrs(() => ({
+const DropDownContent = styled.section.attrs(() => ({
   className: "fs-h3 box-shadow-dark",
 }))`
   color: ${COLOR_SECONDARY2};

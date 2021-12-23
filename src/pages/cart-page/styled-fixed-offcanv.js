@@ -5,7 +5,7 @@ import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
 import { BG_SECONDARY3, COLOR_SECONDARY2, Z_INDEX_LV1 } from "../../constant";
 import PropTypes from "prop-types";
 
-const Container = styled.div`
+const Container = styled.section`
   background-color: ${BG_SECONDARY3};
   width: 100%;
   height: 10rem;
@@ -18,7 +18,7 @@ const Container = styled.div`
   box-shadow: rgba(0, 0, 0, 0.04) 0px -3px 5px;
 `;
 
-const SelectionHeader = styled.div.attrs(() => ({
+const SelectionHeader = styled.section.attrs(() => ({
   className: "fs-h2",
 }))`
   color: ${COLOR_SECONDARY2};

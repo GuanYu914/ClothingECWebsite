@@ -9,7 +9,7 @@ import {
   COLOR_SECONDARY3,
 } from "../../constant";
 
-const Container = styled.div`
+const Container = styled.footer`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_SECONDARY1};
   width: 100%;
@@ -22,7 +22,7 @@ const Container = styled.div`
   background-color: ${(props) => props.bgColor || BG_PRIMARY1};
 `;
 
-const IconsContainer = styled.div`
+const IconsContainer = styled.section`
   padding-top: 2rem;
   display: flex;
   justify-content: center;

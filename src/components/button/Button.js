@@ -12,8 +12,8 @@ import {
 } from "../../constant";
 
 // 一般樣式使用
-const DefaultButton = styled.div.attrs(() => ({
-  className: "fs-h2",
+const DefaultButton = styled.button.attrs(() => ({
+  className: "fs-h2 btn-reset",
 }))`
   display: flex;
   justify-content: center;
@@ -73,8 +73,8 @@ export const GhostSecondaryButton = styled(DefaultButton)`
 `;
 
 // 給 styled-product-picker 使用
-const DefaultPickerButton = styled.div.attrs(() => ({
-  className: "fs-h2",
+const DefaultPickerButton = styled.button.attrs(() => ({
+  className: "fs-h2 btn-reset",
 }))`
   width: 50%;
   display: flex;

@@ -15,7 +15,7 @@ import { useContext } from "react";
 import { UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
 
-const ItemsContainer = styled.div`
+const ItemsContainer = styled.section`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
   width: 100%;
   display: flex;
@@ -24,7 +24,7 @@ const ItemsContainer = styled.div`
   align-self: baseline;
 `;
 
-const ItemContainer = styled.div.attrs(() => ({
+const ItemContainer = styled.section.attrs(() => ({
   className: "box-shadow-dark",
 }))`
   background-color: ${BG_SECONDARY1};
@@ -52,7 +52,7 @@ const ItemContainer = styled.div.attrs(() => ({
   }
 `;
 
-const ItemHeader = styled.div`
+const ItemHeader = styled.header`
   color: ${COLOR_SECONDARY2};
   width: 100%;
   height: fit-content;

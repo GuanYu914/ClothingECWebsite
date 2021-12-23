@@ -102,7 +102,7 @@ const ShoppingBag = styled(shopping_bag)`
   }
 `;
 
-const NavForMobile = styled.div`
+const NavForMobile = styled.section`
   display: block;
 
   ${BREAKPOINT_PAD} {
@@ -110,7 +110,7 @@ const NavForMobile = styled.div`
   }
 `;
 
-const NavForPad = styled.div`
+const NavForPad = styled.section`
   display: none;
 
   ${BREAKPOINT_PAD} {

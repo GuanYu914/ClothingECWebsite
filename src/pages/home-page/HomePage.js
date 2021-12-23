@@ -57,7 +57,7 @@ import { isEmptyObj } from "../../util";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -73,7 +73,7 @@ const ContentContainer = styled.div`
   }
 `;
 
-const HotSellingItemBlock = styled.div`
+const HotSellingItemBlock = styled.section`
   margin-top: 5rem;
 
   ${BREAKPOINT_PAD} {
