@@ -35,7 +35,7 @@ import { isEmptyObj } from "../../util";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
   margin-right: auto;
@@ -68,7 +68,7 @@ const ProductsCategoryPath = styled.h3.attrs(() => ({
   }
 `;
 
-const ProductsInfo = styled.div`
+const ProductsInfo = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -102,7 +102,7 @@ const FilterIcon = styled(filterIcon)`
   right: 0;
 `;
 
-const ProductsContainer = styled.div`
+const ProductsContainer = styled.section`
   margin-top: 3rem;
 
   ${BREAKPOINT_PAD} {
@@ -110,7 +110,7 @@ const ProductsContainer = styled.div`
   }
 `;
 
-const ProductsCategoryListContainer = styled.div`
+const ProductsCategoryListContainer = styled.section`
   ${BREAKPOINT_MOBILE} {
     width: 100%;
     margin-bottom: 5rem;
@@ -174,7 +174,7 @@ const CategoryDetailTitle = styled.li.attrs(() => ({
   }
 `;
 
-const CardContainerForMobile = styled.div`
+const CardContainerForMobile = styled.section`
   ${BREAKPOINT_MOBILE} {
     display: block;
   }
@@ -184,7 +184,7 @@ const CardContainerForMobile = styled.div`
   }
 `;
 
-const CardContainerForPad = styled.div`
+const CardContainerForPad = styled.section`
   ${BREAKPOINT_MOBILE} {
     display: none;
   }
@@ -192,10 +192,6 @@ const CardContainerForPad = styled.div`
   ${BREAKPOINT_PAD} {
     display: block;
   }
-`;
-
-const ButtonContainer = styled.div`
-  display: block;
 `;
 
 const FloatingButtonForMobileAndPad = styled.button.attrs(() => ({
@@ -834,7 +830,7 @@ export default function ProductsPage() {
             </>
           )}
         </ProductsContainer>
-        <ButtonContainer>
+        <>
           {!disableProductsListButton && (
             <>
               {isLoadingMoreProducts ? (
@@ -850,7 +846,7 @@ export default function ProductsPage() {
               )}
             </>
           )}
-        </ButtonContainer>
+        </>
         <FloatingButtonForMobileAndPad onClick={handleScrollToTop}>
           <ScrollToTopIcon />
           回到頂端

@@ -17,7 +17,7 @@ import { useHistory } from "react-router";
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
 `;
-const ContentContainer = styled.div`
+const ContentContainer = styled.main`
   // 設定容器最大寬度
   max-width: ${MAX_CONTAINER_WIDTH};
   margin-left: auto;
@@ -58,11 +58,6 @@ const ErrorContent = styled.h2.attrs(() => ({
   text-align: center;
 `;
 
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 export default function ErrorPage() {
   // 使用 react history hook 引導頁面
   const history = useHistory();
@@ -73,17 +68,15 @@ export default function ErrorPage() {
       <ContentContainer>
         <ErrorTitle>發生一點錯誤</ErrorTitle>
         <ErrorContent>目前頁面不可使用或找不到該網址</ErrorContent>
-        <ButtonContainer>
-          <CTAPrimaryButton
-            margin={"1rem 0.5rem"}
-            isRounded={true}
-            onClick={() => {
-              history.push("/");
-            }}
-          >
-            返回首頁
-          </CTAPrimaryButton>
-        </ButtonContainer>
+        <CTAPrimaryButton
+          margin={"1rem auto 0.5rem"}
+          isRounded={true}
+          onClick={() => {
+            history.push("/");
+          }}
+        >
+          返回首頁
+        </CTAPrimaryButton>
       </ContentContainer>
       <Footer bgColor={BG_PRIMARY1} />
     </PageContainer>
