@@ -3,7 +3,8 @@
 :root {
   font-size: 14px;
 }
-body {
+
+* {
   font-family: 'Noto Sans TC' !important; /* 強制套用 Noto Sans TC Web font */
-  box-sizing: border-box;
+  box-sizing: border-box !important;  /* 強制使用 border-box 模型 */
 }
