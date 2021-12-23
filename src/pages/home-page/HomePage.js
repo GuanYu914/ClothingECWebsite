@@ -353,12 +353,9 @@ export default function HomePage() {
       setModalInfoForIntroductionLocally({
         selectionMode: false,
         title: `歡迎光臨, ${isEmptyObj(user) ? "訪客" : user.nickname}`,
-        content: `
-使用網站前須注意事項 🔔
-
-• 目前版本尚不開放結帳金流服務
-• 網站未透過 SSL 加密，請勿輸入敏感資訊
-
+        content: `使用網站前須注意事項 🔔\n
+• 註冊會員就可以有專屬的收藏清單，將喜歡的產品一網打盡\n
+• 目前版本尚不開放結帳金流服務，敬請期待\n
 很開心見到您，祝您購物愉快 😘`,
       });
     }
