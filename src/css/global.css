@@ -4,7 +4,16 @@
   font-size: 14px;
 }
 
-* {
-  font-family: 'Noto Sans TC' !important; /* 強制套用 Noto Sans TC Web font */
-  box-sizing: border-box !important;  /* 強制使用 border-box 模型 */
+body {
+  font-family: 'Noto Sans TC';
+  box-sizing: border-box;
+}
+
+/* 使用 inherit 屬性，讓子物件繼承父層屬性，這樣寫比較有彈性 */
+*,
+*::before,
+*::after
+{
+  font-family: inherit; 
+  box-sizing: inherit;
 }

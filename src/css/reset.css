@@ -9,4 +9,6 @@
 /* reset button appearance setting */
 .btn-reset {
   all: unset;
+  /* 使用 inherit 屬性，讓子物件繼承父層屬性，這樣寫比較有彈性 */
+  box-sizing: inherit;
 }
