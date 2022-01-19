@@ -12,38 +12,14 @@ const DevURL = "http://192.168.0.15/clothing_ec";
 // 將來要發佈到前端網站上的網域
 // const ProdURL = "https://emorychen.com/clothing-ec";
 
-function errorHandling(error) {
-  if (error.response) {
-    console.log(
-      "receive response but status code out falls out the range of 2xx"
-    );
-    // console.log("response data: ", error.response.data);
-    // console.log("response status: ", error.response.status);
-    // console.log("response headers: ", error.response.headers);
-  } else if (error.request) {
-    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-    // http.ClientRequest in node.js
-    console.log("request was made but on response was received");
-    // console.log("request of xhr:", error.request);
-  } else {
-    console.log("setting up the request maybe wrong...");
-    // console.log("error message", error.message);
-  }
-  // config of error
-  // console.log(error.config);
-  throw error;
-}
-
 // 拿 HomePage 的 Banner
 export const getBannersApi = async function () {
-  return await axios(`${DevURL}/handleGetBanners.php`).catch(errorHandling);
+  return await axios(`${DevURL}/handleGetBanners.php`);
 };
 
 // 拿 HomePage 的商品分類
 export const getMainCategoriesApi = async function () {
-  return await axios(`${DevURL}/handleGetCategories.php?type=main`).catch(
-    errorHandling
-  );
+  return await axios(`${DevURL}/handleGetCategories.php?type=main`);
 };
 
 // offset 從第幾筆開始回傳
@@ -59,7 +35,7 @@ export const getHotItemsApi = async function (offset, limit) {
   }
   return await axios(
     `${DevURL}/handleGetHotItems.php?offset=${offset}&&limit=${limit}`
-  ).catch(errorHandling);
+  );
 };
 
 // offset 從第幾筆開始回傳
@@ -75,14 +51,12 @@ export const getUserCommentsApi = async function (offset, limit) {
   }
   return await axios(
     `${DevURL}/handleGetUserComments.php?offset=${offset}&&limit=${limit}`
-  ).catch(errorHandling);
+  );
 };
 
 // 拿 ProductsPage 的所有商品分類列表
 export const getAllCategoriesApi = async function () {
-  return await axios(`${DevURL}/handleGetCategories.php?type=detail`).catch(
-    errorHandling
-  );
+  return await axios(`${DevURL}/handleGetCategories.php?type=detail`);
 };
 
 // 拿 ProductsPage 的當前分類產品
@@ -101,14 +75,12 @@ export const getProductsByCategoryApi = async function (
   }
   return await axios(
     `${DevURL}/handleGetProducts.php?main=${mainCategory}&&sub=${subCategory}&&detailed=${detailedCategory}&&offset=${offset}&&limit=${limit}`
-  ).catch(errorHandling);
+  );
 };
 
 // 拿 SingeProductPage 當前頁面產品
 export const getProductByIDApi = async function (pid) {
-  return await axios(`${DevURL}/handleGetProduct.php?id=${pid}`).catch(
-    errorHandling
-  );
+  return await axios(`${DevURL}/handleGetProduct.php?id=${pid}`);
 };
 
 // 發送用戶註冊資訊
@@ -117,89 +89,83 @@ export const sendUserRegisterDataApi = async function (
   account,
   password
 ) {
-  return await axios
-    .post(
-      `${DevURL}/handleRegister.php`,
-      {
-        nickname,
-        account,
-        password,
-      },
-      { withCredentials: true }
-    )
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleRegister.php`,
+    {
+      nickname,
+      account,
+      password,
+    },
+    { withCredentials: true }
+  );
 };
 
 // 發送用戶登入資訊
 export const sendUserLoginDataApi = async function (account, password) {
-  return await axios
-    .post(
-      `${DevURL}/handleLogin.php`,
-      { account, password },
-      {
-        withCredentials: true,
-      }
-    )
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleLogin.php`,
+    { account, password },
+    {
+      withCredentials: true,
+    }
+  );
 };
 
 // 修改用戶資訊
 export const sendUpdatedUserDataApi = async function (nickname, password) {
-  return await axios
-    .post(
-      `${DevURL}/handleProfileEdit.php`,
-      { nickname, password },
-      { withCredentials: true }
-    )
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleProfileEdit.php`,
+    { nickname, password },
+    { withCredentials: true }
+  );
 };
 
 // 取得 session 資料
 export const getSessionDataApi = async function () {
   return await axios(`${DevURL}/handleGetSession.php`, {
     withCredentials: true,
-  }).catch(errorHandling);
+  });
 };
 
 // 登出 api
 export const LogoutApi = async function () {
   return await axios(`${DevURL}/handleLogout.php`, {
     withCredentials: true,
-  }).catch(errorHandling);
+  });
 };
 
 // 取得用戶收藏清單
 export const getFavoriteItemsApi = async function () {
-  return await axios
-    .post(`${DevURL}/handleGetFavoriteItems.php`, {}, { withCredentials: true })
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleGetFavoriteItems.php`,
+    {},
+    { withCredentials: true }
+  );
 };
 
 // 上傳用戶收藏清單
 export const uploadFavoriteItemsApi = async function (productsInfo) {
-  return await axios
-    .post(
-      `${DevURL}/handleUploadFavoriteItems.php`,
-      { productsInfo },
-      { withCredentials: true }
-    )
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleUploadFavoriteItems.php`,
+    { productsInfo },
+    { withCredentials: true }
+  );
 };
 
 // 取得用戶購物車清單
 export const getCartItemsApi = async function () {
-  return await axios
-    .post(`${DevURL}/handleGetCartItems.php`, {}, { withCredentials: true })
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleGetCartItems.php`,
+    {},
+    { withCredentials: true }
+  );
 };
 
 // 上傳用戶購買
 export const uploadCartItemsApi = async function (productsInfo) {
-  return await axios
-    .post(
-      `${DevURL}/handleUploadCartItems.php`,
-      { productsInfo },
-      { withCredentials: true }
-    )
-    .catch(errorHandling);
+  return await axios.post(
+    `${DevURL}/handleUploadCartItems.php`,
+    { productsInfo },
+    { withCredentials: true }
+  );
 };

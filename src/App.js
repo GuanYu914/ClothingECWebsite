@@ -84,10 +84,18 @@ function App() {
   // 如果是用戶，從 api 拿用戶資訊、收藏清單、購物車資訊
   // 如果非用戶，從 api 拿用戶資訊，從 cookie 的 cart-guest 欄位拿購物車資訊
   function getUserNecessaryInfoFromApis() {
-    return getUserFromApi().then(() => {
-      // 同時發送多個非同步任務
-      return Promise.all([getFavoriteItemsFromApi(), getCartItemsFromApi()]);
-    });
+    return getUserFromApi()
+      .then(() => {
+        // 同時發送多個非同步任務
+        return Promise.all([getFavoriteItemsFromApi(), getCartItemsFromApi()]);
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
+      });
   }
   // 在 react router render 頁面前，會先 call
   // 如果是用戶，從 api 登出用戶，再拿用戶資訊，從 cookie 的 cart-guest 欄位拿購物車資訊
@@ -99,6 +107,13 @@ function App() {
       .then(() => {
         // 同時發送多個非同步任務
         return Promise.all([getFavoriteItemsFromApi(), getCartItemsFromApi()]);
+      })
+      .catch((e) => {
+        console.log(
+          "some errors were happened when setting data from api, error is ",
+          e
+        );
+        setShowModalForApiError(true);
       });
   }
   // 用戶用戶
@@ -117,12 +132,7 @@ function App() {
           }
         })
         .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-          return reject();
+          return reject(e);
         });
     });
   }
@@ -150,12 +160,7 @@ function App() {
           }
         })
         .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-          return reject();
+          return reject(e);
         });
     });
   }
@@ -193,12 +198,7 @@ function App() {
           }
         })
         .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-          return reject();
+          return reject(e);
         });
     });
   }
@@ -240,12 +240,7 @@ function App() {
           }
         })
         .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-          return reject();
+          return reject(e);
         });
     });
   }
