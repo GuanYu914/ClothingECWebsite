@@ -24,7 +24,7 @@ import {
   BG_SECONDARY4,
   COLOR_PRIMARY2,
 } from "../../constant";
-import { CartContext, UserContext, FavoriteItemsContext } from "../../context";
+import { UserContext, FavoriteItemsContext } from "../../context";
 import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
@@ -36,6 +36,7 @@ import {
   addWatchedItem,
   toggleItemLikedState,
 } from "../../redux/reducers/watchedItemsSlice";
+import { addCartItem } from "../../redux/reducers/cartSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -242,6 +243,8 @@ export default function SingleProductPage() {
   const watchedItemsFromStore = useSelector(
     (store) => store.watchedItems.items
   );
+  // 從 redux-store 拿出購物車物品清單
+  const cartItemsFromStore = useSelector((store) => store.cart.items);
   // 透過 React router hook 拿到特定網址資訊
   const { productID } = useParams();
   // 透過此 hook 換頁
@@ -250,8 +253,6 @@ export default function SingleProductPage() {
   const { user } = useContext(UserContext);
   // 透過 FavoriteItemsContext 拿到當前用戶收藏清單跟 setter function
   const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
-  // 透過 CartContext 拿到購物車資訊
-  const { cart, setCart } = useContext(CartContext);
   //  產品資訊讀取狀態
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
@@ -427,28 +428,31 @@ export default function SingleProductPage() {
   function handleAddToCart(selectedPickerColor, selectedPickerSize) {
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
-    for (let i = 0; i < cart.length; i++) {
-      if (cart[i].pid === productInfo.id) {
+    for (let i = 0; i < cartItemsFromStore.length; i++) {
+      if (cartItemsFromStore[i].pid === productInfo.id) {
         if (
-          cart[i].colors.filter((color) => color.selected)[0].hexcode ===
-          selectedPickerColor
+          cartItemsFromStore[i].colors.filter((color) => color.selected)[0]
+            .hexcode === selectedPickerColor
         ) {
           if (
-            cart[i].sizes.filter((size) => size.selected)[0].name ===
-            selectedPickerSize
+            cartItemsFromStore[i].sizes.filter((size) => size.selected)[0]
+              .name === selectedPickerSize
           ) {
             // 找到一樣規格的產品，更新該產品目前數量
-            // 防止 state 被 batch，造成資料不是預期的
-            setCart((prevCartContext) => {
-              return prevCartContext.map((product, index) =>
-                index === i
-                  ? {
-                      ...product,
-                      quantity: product.quantity + productInfo.picker.quantity,
-                    }
-                  : { ...product }
-              );
-            });
+            dispatch(
+              addCartItem(
+                cartItemsFromStore.map((item, index) =>
+                  index === i
+                    ? {
+                        ...item,
+                        quantity: item.quantity + productInfo.picker.quantity,
+                      }
+                    : {
+                        ...item,
+                      }
+                )
+              )
+            );
             flagFind = true;
             break;
           }
@@ -458,9 +462,9 @@ export default function SingleProductPage() {
     // 未找到相同規格的產品，新增到購物車頂端
     if (!flagFind) {
       // 複製 cart 內容，但 ref 不一樣，造成 react 去更新
-      const newCart = [...cart];
-      newCart.unshift({
-        id: cart.length + 1,
+      const newCartItemsFromStore = [...cartItemsFromStore];
+      newCartItemsFromStore.unshift({
+        id: cartItemsFromStore.length + 1,
         pid: productInfo.id,
         name: productInfo.name,
         urls: productInfo.imgs,
@@ -469,7 +473,7 @@ export default function SingleProductPage() {
         quantity: productInfo.picker.quantity,
         unitPrice: productInfo.picker.unitPrice,
       });
-      setCart(newCart);
+      dispatch(addCartItem(newCartItemsFromStore));
     }
     // 顯示加入購物車訊息動畫
     setShowCartReminder(true);

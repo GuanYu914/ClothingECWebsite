@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { fadeIn } from "react-animations";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import BSCarousel from "../../components/bs-carousel";
@@ -28,9 +28,10 @@ import {
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV1,
 } from "../../constant";
-import { CartContext } from "../../context";
 import Modal from "../../components/modal";
 import { useHistory } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { addCartItem } from "../../redux/reducers/cartSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -214,14 +215,16 @@ const LinkButton = styled(linkIcon)`
 `;
 
 export default function CartPage() {
+  // 產生 dispatch
+  const dispatch = useDispatch();
+  // 從 redux-store拿購物車物品資訊
+  const cartItemsFromStore = useSelector((store) => store.cart.items);
   // 透過 react router hook 換頁
   const history = useHistory();
-  // 透過 cart 拿到目前購物車內容
-  const { cart, setCart } = useContext(CartContext);
   // pid 不能當作 id 使用，因為合併產品時需要
   // cartForLocal 為本地的購物車內容
   const [cartForLocal, setCartForLocal] = useState(
-    cart.map((product) => ({
+    cartItemsFromStore.map((product) => ({
       id: product.id,
       pid: product.pid,
       name: product.name,
@@ -528,22 +531,24 @@ export default function CartPage() {
 
   // cartForLocal 更新時，同步更新 cart 內容
   useEffect(() => {
-    setCart(
-      cartForLocal.map((cartProduct) => ({
-        id: cartProduct.id,
-        pid: cartProduct.pid,
-        name: cartProduct.name,
-        // slidesForMobile 跟 slidesForPad 的 slide 都是一樣，則一傳入即可
-        urls: cartProduct.slidesForMobile.slide.map((item) => ({
-          id: item.id,
-          src: item.src,
-          alt: item.alt,
-        })),
-        colors: cartProduct.picker.colors,
-        sizes: cartProduct.picker.sizes,
-        quantity: cartProduct.picker.quantity,
-        unitPrice: cartProduct.picker.unitPrice,
-      }))
+    dispatch(
+      addCartItem(
+        cartForLocal.map((cartProduct) => ({
+          id: cartProduct.id,
+          pid: cartProduct.pid,
+          name: cartProduct.name,
+          // slidesForMobile 跟 slidesForPad 的 slide 都是一樣，則一傳入即可
+          urls: cartProduct.slidesForMobile.slide.map((item) => ({
+            id: item.id,
+            src: item.src,
+            alt: item.alt,
+          })),
+          colors: cartProduct.picker.colors,
+          sizes: cartProduct.picker.sizes,
+          quantity: cartProduct.picker.quantity,
+          unitPrice: cartProduct.picker.unitPrice,
+        }))
+      )
     );
   }, [cartForLocal]);
   // cartForLocal 更新時，更新總金額、商品選取狀態

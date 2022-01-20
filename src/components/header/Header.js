@@ -17,8 +17,9 @@ import {
   COLOR_SECONDARY2,
 } from "../../constant";
 import { useEffect, useState, useContext } from "react";
-import { UserContext, CartContext } from "../../context";
+import { UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
+import { useSelector } from "react-redux";
 
 const NavBarContainer = styled.nav`
   background-color: ${BG_SECONDARY3};
@@ -122,8 +123,8 @@ export default function Header() {
   const history = useHistory();
   // 透過 Context 拿到當前用戶資料
   const { user } = useContext(UserContext);
-  // 透過 cart 拿到當前購物袋資訊
-  const { cart } = useContext(CartContext);
+  // 從 redux-store 拿購物車物品清單
+  const cartItemsFromStore = useSelector((store) => store.cart.items);
   // 用戶選單狀態 (dropdown UI)
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
@@ -141,10 +142,10 @@ export default function Header() {
   });
   // 購物車選單狀態 (dropdown UI)
   const [dropDownForCart, setDropDownForCart] = useState({
-    width: cart.length ? "fit-content" : "20rem",
-    height: cart.length >= 4 ? "24rem" : "fit-content",
+    width: cartItemsFromStore.length ? "fit-content" : "20rem",
+    height: cartItemsFromStore.length >= 4 ? "24rem" : "fit-content",
     useForCart: true,
-    products: cart.map((product) => ({
+    products: cartItemsFromStore.map((product) => ({
       id: product.id,
       pid: product.pid,
       name: product.name,
@@ -214,10 +215,10 @@ export default function Header() {
   // 如果 cart 有更新的話，則更新購物車 dropdown 元件
   useEffect(() => {
     setDropDownForCart({
-      width: cart.length ? "fit-content" : "20rem",
-      height: cart.length >= 4 ? "24rem" : "fit-content",
+      width: cartItemsFromStore.length ? "fit-content" : "20rem",
+      height: cartItemsFromStore.length >= 4 ? "24rem" : "fit-content",
       useForCart: true,
-      products: cart.map((product) => ({
+      products: cartItemsFromStore.map((product) => ({
         id: product.id,
         pid: product.pid,
         name: product.name,
@@ -228,7 +229,7 @@ export default function Header() {
         quantity: product.quantity,
       })),
     });
-  }, [cart]);
+  }, [cartItemsFromStore]);
 
   return (
     <NavBarContainer>

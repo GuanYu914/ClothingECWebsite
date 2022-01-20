@@ -12,7 +12,6 @@ import FavoritePage from "./pages/favorite-page";
 import ErrorPage from "./pages/error-page";
 import {
   UserContext,
-  CartContext,
   FavoriteItemsContext,
   IntroductionModalContext,
 } from "./context";
@@ -20,26 +19,27 @@ import ScrollToTop from "./components/scroll-to-top";
 import { useEffect, useRef } from "react";
 import { getSessionDataApi } from "./Webapi";
 import Modal from "./components/modal";
-import { getCookie, setCookie } from "./util";
+import { setCookie } from "./util";
 import AsyncComponent from "./components/async-component";
 import {
   getFavoriteItemsApi,
-  getCartItemsApi,
   uploadFavoriteItemsApi,
   uploadCartItemsApi,
   LogoutApi,
 } from "./Webapi";
 import { isEmptyObj } from "./util";
+import { getCart } from "./redux/reducers/cartSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 function App() {
+  // 產生 dispatch
+  const dispatch = useDispatch();
+  // 從 redux-store 拿購物車物品
+  const cartItemsFromStore = useSelector((store) => store.cart.items);
   // 用戶資訊
   const [user, setUser] = useState({});
   // 當 user 更新時，才更新此數值
   const memorizedUser = useMemo(() => ({ user, setUser }), [user]);
-  // 購物車
-  const [cart, setCart] = useState([]);
-  // 當 cart 更新，才更新此數值
-  const memorizedCart = useMemo(() => ({ cart, setCart }), [cart]);
   // 收藏清單
   const [favoriteItems, setFavoriteItems] = useState([]);
   // 當 favoriteItems 更新，才更新此數值
@@ -194,47 +194,9 @@ function App() {
         });
     });
   }
-  // 如果為用戶，透過 api 拿到購物車資訊
-  // 如果為訪客，透過 cookie 拿購物車資訊
+  // 呼叫 action 拿到相對應的購物車物品
   function getCartItemsFromApi() {
-    return new Promise((resolve, reject) => {
-      getCartItemsApi()
-        .then((resp) => {
-          const json_data = resp.data;
-          if (json_data.isSuccessful === "failed") {
-            // 如果是訪客，則從 cookie 拿購物車資訊
-            if (json_data.msg === "session variable not set") {
-              if (getCookie("cart-guest") === undefined) {
-                setCookie("cart-guest", JSON.stringify([]), 7);
-              } else {
-                setCart(JSON.parse(getCookie("cart-guest")));
-              }
-              // 如果用戶為訪客，則會觸發 failed 條件，所以加上 resolve() 解決
-              return resolve();
-            }
-            setShowModalForApiError(true);
-            return reject();
-          }
-          if (json_data.isSuccessful === "successful") {
-            setCart(
-              json_data.data.map((item, index) => ({
-                id: index,
-                pid: item.pid,
-                name: item.name,
-                colors: JSON.parse(item.colors),
-                sizes: JSON.parse(item.sizes),
-                unitPrice: item.price,
-                urls: JSON.parse(item.imgs),
-                quantity: item.quantity,
-              }))
-            );
-            return resolve();
-          }
-        })
-        .catch((e) => {
-          return reject(e);
-        });
-    });
+    return dispatch(getCart());
   }
 
   // 收藏清單更新時，如果當前為用戶，透過 api 上傳到 server 同步
@@ -263,12 +225,12 @@ function App() {
   useEffect(() => {
     // 如果有抓到當前用戶資訊，且身分為訪客
     if (isEmptyObj(user) && flagGetUser.current) {
-      setCookie("cart-guest", JSON.stringify(cart), 7);
+      setCookie("cart-guest", JSON.stringify(cartItemsFromStore), 7);
       return;
     }
     // 如果有抓到當前用戶資訊，且身分為用戶
     if (!isEmptyObj(user) && flagGetUser.current) {
-      const upload_data = cart.map((item) => ({
+      const upload_data = cartItemsFromStore.map((item) => ({
         id: item.id,
         pid: item.pid,
         size: item.sizes.filter((size) => size.selected === true)[0].name,
@@ -291,86 +253,82 @@ function App() {
           setShowModalForApiError(true);
         });
     }
-  }, [cart]);
+  }, [cartItemsFromStore]);
 
   return (
     <Router basename="/clothing-ec/demo">
       <ScrollToTop />
       <Switch>
         <UserContext.Provider value={memorizedUser}>
-          <CartContext.Provider value={memorizedCart}>
-            <FavoriteItemsContext.Provider value={memorizedFavoriteItems}>
-              <IntroductionModalContext.Provider
-                value={{
-                  introductionModalIsDisplayed,
-                  setIntroductionModalIsDisplayed,
-                }}
-              >
-                <Route exact path="/">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    <HomePage />
-                  </AsyncComponent>
-                </Route>
-              </IntroductionModalContext.Provider>
-              <Route exact path="/register">
+          <FavoriteItemsContext.Provider value={memorizedFavoriteItems}>
+            <IntroductionModalContext.Provider
+              value={{
+                introductionModalIsDisplayed,
+                setIntroductionModalIsDisplayed,
+              }}
+            >
+              <Route exact path="/">
                 <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  {/* 防止用戶透過 url 存取註冊頁面 */}
-                  {isEmptyObj(user) ? <RegisterPage /> : <ErrorPage />}
+                  <HomePage />
                 </AsyncComponent>
               </Route>
-              <Route exact path="/login">
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  {/* 防止用戶透過 url 存取登入頁面 */}
-                  {isEmptyObj(user) ? <LoginPage /> : <ErrorPage />}
-                </AsyncComponent>
-              </Route>
-              <Route exact path="/logout">
-                <AsyncComponent componentPromise={userLogoutFromApis}>
-                  <LogoutPage />
-                </AsyncComponent>
-              </Route>
-              <Route exact path="/profile-edit">
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
-                  {isEmptyObj(user) ? <ErrorPage /> : <ProfileEditPage />}
-                </AsyncComponent>
-              </Route>
-              <Route exact path="/favorite">
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  {/* 防止訪客透過 url 存取收藏清單頁面 */}
-                  {isEmptyObj(user) ? <ErrorPage /> : <FavoritePage />}
-                </AsyncComponent>
-              </Route>
-              {/* 使用 ? 代表可能沒有的欄位 */}
-              <Route
-                exact
-                path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
-              >
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  <ProductsPage />
-                </AsyncComponent>
-              </Route>
-              <Route exact path="/product/:productID">
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  <SingleProductPage />
-                </AsyncComponent>
-              </Route>
-              <Route exact path="/cart">
-                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
-                  <CartPage />
-                </AsyncComponent>
-              </Route>
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </FavoriteItemsContext.Provider>
-          </CartContext.Provider>
+            </IntroductionModalContext.Provider>
+            <Route exact path="/register">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                {/* 防止用戶透過 url 存取註冊頁面 */}
+                {isEmptyObj(user) ? <RegisterPage /> : <ErrorPage />}
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/login">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                {/* 防止用戶透過 url 存取登入頁面 */}
+                {isEmptyObj(user) ? <LoginPage /> : <ErrorPage />}
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/logout">
+              <AsyncComponent componentPromise={userLogoutFromApis}>
+                <LogoutPage />
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/profile-edit">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
+                {isEmptyObj(user) ? <ErrorPage /> : <ProfileEditPage />}
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/favorite">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                {/* 防止訪客透過 url 存取收藏清單頁面 */}
+                {isEmptyObj(user) ? <ErrorPage /> : <FavoritePage />}
+              </AsyncComponent>
+            </Route>
+            {/* 使用 ? 代表可能沒有的欄位 */}
+            <Route
+              exact
+              path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
+            >
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                <ProductsPage />
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/product/:productID">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                <SingleProductPage />
+              </AsyncComponent>
+            </Route>
+            <Route exact path="/cart">
+              <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                <CartPage />
+              </AsyncComponent>
+            </Route>
+            {showModalForApiError && (
+              <Modal
+                modalInfo={modalInfoForApiError}
+                handleSubmitOp={handleSubmitOpForApiError}
+                handleCancelOp={handleCancelOpForApiError}
+              />
+            )}
+          </FavoriteItemsContext.Provider>
         </UserContext.Provider>
       </Switch>
     </Router>
