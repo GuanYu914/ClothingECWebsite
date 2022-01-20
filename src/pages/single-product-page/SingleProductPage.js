@@ -24,18 +24,18 @@ import {
   BG_SECONDARY4,
   COLOR_PRIMARY2,
 } from "../../constant";
-import {
-  CartContext,
-  UserContext,
-  FavoriteItemsContext,
-  WatchedProductsContext,
-} from "../../context";
+import { CartContext, UserContext, FavoriteItemsContext } from "../../context";
 import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { isEmptyObj } from "../../util";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addWatchedItem,
+  toggleItemLikedState,
+} from "../../redux/reducers/watchedItemsSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -236,6 +236,12 @@ const ReminderMsg = styled.h2.attrs(() => ({
 `;
 
 export default function SingleProductPage() {
+  // 產生 redux-dispatch
+  const dispatch = useDispatch();
+  // 從 redux-store 撈出產品觀看歷史紀錄清單
+  const watchedItemsFromStore = useSelector(
+    (store) => store.watchedItems.items
+  );
   // 透過 React router hook 拿到特定網址資訊
   const { productID } = useParams();
   // 透過此 hook 換頁
@@ -246,10 +252,6 @@ export default function SingleProductPage() {
   const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
   // 透過 CartContext 拿到購物車資訊
   const { cart, setCart } = useContext(CartContext);
-  // 透過 WatchedProductContext 拿到近期瀏覽的商品
-  const { watchedProducts, setWatchedProducts } = useContext(
-    WatchedProductsContext
-  );
   //  產品資訊讀取狀態
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
@@ -341,30 +343,18 @@ export default function SingleProductPage() {
         },
         ...favoriteItems,
       ]);
-      setWatchedProducts(
-        watchedProducts.map((watchedProduct) =>
-          watchedProduct.id === productInfo.id
-            ? {
-                ...watchedProduct,
-                isLiked: true,
-              }
-            : { ...watchedProduct }
-        )
-      );
     } else {
       setFavoriteItems(
         favoriteItems.filter(
           (favoriteItem) => favoriteItem.id !== productInfo.id
         )
       );
-      setWatchedProducts(
-        watchedProducts.map((watchedProduct) =>
-          watchedProduct.id === productInfo.id
-            ? { ...watchedProduct, isLiked: false }
-            : { ...watchedProduct }
-        )
-      );
     }
+    dispatch(
+      toggleItemLikedState({
+        pid: productInfo.id,
+      })
+    );
   }
   // 選擇商品顏色
   function handleSelectPickerColor(id) {
@@ -493,13 +483,13 @@ export default function SingleProductPage() {
   // 更新 watchedItems 裡面物件的 isLiked 屬性
   function handleUpdateItemLikedState(id) {
     // 更新 watchedItems 裡面物件的 isLiked 屬性
-    setWatchedProducts(
-      watchedProducts.map((item) =>
-        item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
-      )
+    dispatch(
+      toggleItemLikedState({
+        pid: id,
+      })
     );
     // 根據 watchedItems 裡面的 isLiked 屬性，同步更新用戶收藏清單跟產品觀看歷史紀錄清單的愛心狀態
-    watchedProducts.forEach((el) => {
+    watchedItemsFromStore.forEach((el) => {
       if (el.id === id) {
         if (!el.isLiked) {
           setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
@@ -560,23 +550,21 @@ export default function SingleProductPage() {
             ...slidesForPad,
             slide: JSON.parse(json_data_for_product.imgs),
           });
-          // 加到 watchedProducts
-          const newWatchedProducts = filteredWatchedProducts(
-            watchedProducts,
-            json_data_for_product.pid
-          );
-          setWatchedProducts([
-            {
-              id: json_data_for_product.pid,
-              product: {
-                name: json_data_for_product.name,
-                price: `${json_data_for_product.price}`,
-                img: JSON.parse(json_data_for_product.imgs)[0].src,
+          // dispatch action to watchedItemsReducer
+          dispatch(
+            addWatchedItem({
+              pid: json_data_for_product.pid,
+              item: {
+                id: json_data_for_product.pid,
+                product: {
+                  name: json_data_for_product.name,
+                  price: `${json_data_for_product.price}`,
+                  img: JSON.parse(json_data_for_product.imgs)[0].src,
+                },
+                isLiked: checkIfUserLikeTheProduct(json_data_for_product.pid),
               },
-              isLiked: checkIfUserLikeTheProduct(json_data_for_product.pid),
-            },
-            ...newWatchedProducts,
-          ]);
+            })
+          );
           setIsLoadingProduct(false);
           setIsLoadingWatchedProducts(false);
         }
@@ -605,10 +593,6 @@ export default function SingleProductPage() {
       categoryPath += " > " + productInfo.category.detailed;
     }
     return categoryPath;
-  }
-  // 移除已經在清單裡的產品
-  function filteredWatchedProducts(context, pid) {
-    return context.filter((el) => el.id !== pid);
   }
   // 導引到相對應的產品頁面
   function handleRedirectToProductPage(e) {
@@ -773,7 +757,7 @@ export default function SingleProductPage() {
           <WatchedItemsContainer>
             <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>
             <CardContainer
-              items={watchedProducts}
+              items={watchedItemsFromStore}
               handleLiked={handleUpdateItemLikedState}
               handleOnClick={handleRedirectToProductPage}
               marginLeft={"0"}

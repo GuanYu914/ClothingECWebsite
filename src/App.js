@@ -13,7 +13,6 @@ import ErrorPage from "./pages/error-page";
 import {
   UserContext,
   CartContext,
-  WatchedProductsContext,
   FavoriteItemsContext,
   IntroductionModalContext,
 } from "./context";
@@ -41,13 +40,6 @@ function App() {
   const [cart, setCart] = useState([]);
   // 當 cart 更新，才更新此數值
   const memorizedCart = useMemo(() => ({ cart, setCart }), [cart]);
-  // 以前看過的產品
-  const [watchedProducts, setWatchedProducts] = useState([]);
-  // 當 watchedProducts 更新，才更新此數值
-  const memorizeWatchedProducts = useMemo(
-    () => ({ watchedProducts, setWatchedProducts }),
-    [watchedProducts]
-  );
   // 收藏清單
   const [favoriteItems, setFavoriteItems] = useState([]);
   // 當 favoriteItems 更新，才更新此數值
@@ -308,91 +300,75 @@ function App() {
         <UserContext.Provider value={memorizedUser}>
           <CartContext.Provider value={memorizedCart}>
             <FavoriteItemsContext.Provider value={memorizedFavoriteItems}>
-              <WatchedProductsContext.Provider value={memorizeWatchedProducts}>
-                <IntroductionModalContext.Provider
-                  value={{
-                    introductionModalIsDisplayed,
-                    setIntroductionModalIsDisplayed,
-                  }}
-                >
-                  <Route exact path="/">
-                    <AsyncComponent
-                      componentPromise={getUserNecessaryInfoFromApis}
-                    >
-                      <HomePage />
-                    </AsyncComponent>
-                  </Route>
-                </IntroductionModalContext.Provider>
-                <Route exact path="/register">
+              <IntroductionModalContext.Provider
+                value={{
+                  introductionModalIsDisplayed,
+                  setIntroductionModalIsDisplayed,
+                }}
+              >
+                <Route exact path="/">
                   <AsyncComponent
                     componentPromise={getUserNecessaryInfoFromApis}
                   >
-                    {/* 防止用戶透過 url 存取註冊頁面 */}
-                    {isEmptyObj(user) ? <RegisterPage /> : <ErrorPage />}
+                    <HomePage />
                   </AsyncComponent>
                 </Route>
-                <Route exact path="/login">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    {/* 防止用戶透過 url 存取登入頁面 */}
-                    {isEmptyObj(user) ? <LoginPage /> : <ErrorPage />}
-                  </AsyncComponent>
-                </Route>
-                <Route exact path="/logout">
-                  <AsyncComponent componentPromise={userLogoutFromApis}>
-                    <LogoutPage />
-                  </AsyncComponent>
-                </Route>
-                <Route exact path="/profile-edit">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
-                    {isEmptyObj(user) ? <ErrorPage /> : <ProfileEditPage />}
-                  </AsyncComponent>
-                </Route>
-                <Route exact path="/favorite">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    {/* 防止訪客透過 url 存取收藏清單頁面 */}
-                    {isEmptyObj(user) ? <ErrorPage /> : <FavoritePage />}
-                  </AsyncComponent>
-                </Route>
-                {/* 使用 ? 代表可能沒有的欄位 */}
-                <Route
-                  exact
-                  path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
-                >
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    <ProductsPage />
-                  </AsyncComponent>
-                </Route>
-                <Route exact path="/product/:productID">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    <SingleProductPage />
-                  </AsyncComponent>
-                </Route>
-                <Route exact path="/cart">
-                  <AsyncComponent
-                    componentPromise={getUserNecessaryInfoFromApis}
-                  >
-                    <CartPage />
-                  </AsyncComponent>
-                </Route>
-                {showModalForApiError && (
-                  <Modal
-                    modalInfo={modalInfoForApiError}
-                    handleSubmitOp={handleSubmitOpForApiError}
-                    handleCancelOp={handleCancelOpForApiError}
-                  />
-                )}
-              </WatchedProductsContext.Provider>
+              </IntroductionModalContext.Provider>
+              <Route exact path="/register">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  {/* 防止用戶透過 url 存取註冊頁面 */}
+                  {isEmptyObj(user) ? <RegisterPage /> : <ErrorPage />}
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/login">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  {/* 防止用戶透過 url 存取登入頁面 */}
+                  {isEmptyObj(user) ? <LoginPage /> : <ErrorPage />}
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/logout">
+                <AsyncComponent componentPromise={userLogoutFromApis}>
+                  <LogoutPage />
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/profile-edit">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
+                  {isEmptyObj(user) ? <ErrorPage /> : <ProfileEditPage />}
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/favorite">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  {/* 防止訪客透過 url 存取收藏清單頁面 */}
+                  {isEmptyObj(user) ? <ErrorPage /> : <FavoritePage />}
+                </AsyncComponent>
+              </Route>
+              {/* 使用 ? 代表可能沒有的欄位 */}
+              <Route
+                exact
+                path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
+              >
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  <ProductsPage />
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/product/:productID">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  <SingleProductPage />
+                </AsyncComponent>
+              </Route>
+              <Route exact path="/cart">
+                <AsyncComponent componentPromise={getUserNecessaryInfoFromApis}>
+                  <CartPage />
+                </AsyncComponent>
+              </Route>
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
             </FavoriteItemsContext.Provider>
           </CartContext.Provider>
         </UserContext.Provider>
