@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getCartItemsApi } from "../../Webapi";
+import { getCartItemsApi, uploadCartItemsApi } from "../../Webapi";
 import { getCookie, setCookie } from "../../util";
 
 // state structure
@@ -42,6 +42,14 @@ export const getCart = createAsyncThunk("cart/getCart", async () => {
   const resp = await getCartItemsApi();
   return JSON.stringify(resp); // avoid 'non-serializable-data' warning
 });
+
+export const uploadCart = createAsyncThunk(
+  "cart/uploadCart",
+  async (upload_data) => {
+    const resp = await uploadCartItemsApi(upload_data);
+    return JSON.stringify(resp);
+  }
+);
 
 const cartSlice = createSlice({
   name: "cart",
@@ -86,6 +94,24 @@ const cartSlice = createSlice({
       }
     });
     builder.addCase(getCart.rejected, (state) => {
+      // console.log("rejected: ", action.error);
+      state.err.isShow = true;
+      state.err.msg = "send request failed";
+    });
+    builder.addCase(uploadCart.fulfilled, (state, action) => {
+      let parsed_json = null;
+      try {
+        parsed_json = JSON.parse(action.payload);
+      } catch {
+        state.err.isShow = true;
+        state.err.msg = "get response but parse JSON failed";
+      }
+      if (parsed_json.data.isSuccessful === "failed") {
+        state.err.isShow = true;
+        state.err.msg = "server side reject this operation";
+      }
+    });
+    builder.addCase(uploadCart.rejected, (state) => {
       // console.log("rejected: ", action.error);
       state.err.isShow = true;
       state.err.msg = "send request failed";

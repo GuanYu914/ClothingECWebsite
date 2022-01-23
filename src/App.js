@@ -17,9 +17,9 @@ import { getSessionDataApi } from "./Webapi";
 import Modal from "./components/modal";
 import { setCookie } from "./util";
 import AsyncComponent from "./components/async-component";
-import { uploadCartItemsApi, LogoutApi } from "./Webapi";
+import { LogoutApi } from "./Webapi";
 import { isEmptyObj } from "./util";
-import { getCart } from "./redux/reducers/cartSlice";
+import { getCart, uploadCart } from "./redux/reducers/cartSlice";
 import {
   getFavoriteItems,
   uploadFavoriteItems,
@@ -192,20 +192,8 @@ function App() {
           .hexcode,
         quantity: item.quantity,
       }));
-      uploadCartItemsApi(upload_data)
-        .then((resp) => {
-          const json_data = resp.data;
-          if (json_data.isSuccessful === "failed") {
-            setShowModalForApiError(true);
-          }
-        })
-        .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
-          setShowModalForApiError(true);
-        });
+      dispatch(uploadCart(upload_data));
+      // 要加錯誤處理
     }
   }, [cartItemsFromStore]);
 
