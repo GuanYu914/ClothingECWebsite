@@ -13,11 +13,12 @@ import {
 } from "../../constant";
 import CardContainer from "../../components/card-container";
 import { useState } from "react";
-import { useEffect, useContext, useRef } from "react";
-import { FavoriteItemsContext } from "../../context";
+import { useEffect, useRef } from "react";
 import Modal from "../../components/modal";
 import { CTAPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
+import { addFavoriteItem } from "../../redux/reducers/FavoriteItemsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -66,12 +67,16 @@ const ContentTitle = styled.h2.attrs(() => ({
 export default function FavoritePage() {
   // 透過 history hook 換頁
   const history = useHistory();
-  // 透過 FavoriteItemsContext 拿到 favoriteItems 跟 setter function
-  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
+  // 產生 dispatch
+  const dispatch = useDispatch();
+  // 從 redux-store 拿喜好清單
+  const favoriteItemsFromStore = useSelector(
+    (store) => store.favoriteItems.items
+  );
   // 用來暫存要被刪除的收藏產品
   const tmpRemovingItem = useRef(null);
   // 頁面的產品收藏清單
-  const [items, setItems] = useState(favoriteItems);
+  const [items, setItems] = useState(favoriteItemsFromStore);
   // 是否顯示移除收藏產品的 modal 提示
   const [
     showModalForRemovingFavoriteItem,
@@ -107,9 +112,9 @@ export default function FavoritePage() {
     history.push(`/product/${id}`);
   }
 
-  // 當本地的收藏清單更新時，同步更新 favoriteItems
+  // 當本地的收藏清單更新時，同步更新 redux-store 的喜好清單
   useEffect(() => {
-    setFavoriteItems(items);
+    dispatch(addFavoriteItem(items));
   }, [items]);
 
   return (

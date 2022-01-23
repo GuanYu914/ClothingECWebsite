@@ -24,7 +24,7 @@ import {
   BG_SECONDARY4,
   COLOR_PRIMARY2,
 } from "../../constant";
-import { UserContext, FavoriteItemsContext } from "../../context";
+import { UserContext } from "../../context";
 import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
@@ -37,6 +37,10 @@ import {
   toggleItemLikedState,
 } from "../../redux/reducers/watchedItemsSlice";
 import { addCartItem } from "../../redux/reducers/cartSlice";
+import {
+  addFavoriteItem,
+  removeFavoriteItem,
+} from "../../redux/reducers/FavoriteItemsSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -245,14 +249,16 @@ export default function SingleProductPage() {
   );
   // 從 redux-store 拿出購物車物品清單
   const cartItemsFromStore = useSelector((store) => store.cart.items);
+  // 從 redux-store 拿喜好清單
+  const favoriteItemsFromStore = useSelector(
+    (store) => store.favoriteItems.items
+  );
   // 透過 React router hook 拿到特定網址資訊
   const { productID } = useParams();
   // 透過此 hook 換頁
   const history = useHistory();
   // 透過 UserContext 拿到用戶資訊
   const { user } = useContext(UserContext);
-  // 透過 FavoriteItemsContext 拿到當前用戶收藏清單跟 setter function
-  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
   //  產品資訊讀取狀態
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
@@ -332,24 +338,22 @@ export default function SingleProductPage() {
     setProductInfo({ ...productInfo, isLiked: !productInfo.isLiked });
     // 透過當前頁面愛心狀態，更新用戶收藏清單跟產品觀看歷史紀錄清單的愛心狀態
     if (!productInfo.isLiked) {
-      setFavoriteItems([
-        {
-          ...productInfo,
-          product: {
-            name: productInfo.name,
-            price: productInfo.picker.unitPrice,
-            img: productInfo.imgs[0].src,
+      dispatch(
+        addFavoriteItem([
+          {
+            ...productInfo,
+            product: {
+              name: productInfo.name,
+              price: productInfo.picker.unitPrice,
+              img: productInfo.imgs[0].src,
+            },
+            isLiked: true,
           },
-          isLiked: true,
-        },
-        ...favoriteItems,
-      ]);
-    } else {
-      setFavoriteItems(
-        favoriteItems.filter(
-          (favoriteItem) => favoriteItem.id !== productInfo.id
-        )
+          ...favoriteItemsFromStore,
+        ])
       );
+    } else {
+      dispatch(removeFavoriteItem({ pid: productInfo.id }));
     }
     dispatch(
       toggleItemLikedState({
@@ -496,15 +500,18 @@ export default function SingleProductPage() {
     watchedItemsFromStore.forEach((el) => {
       if (el.id === id) {
         if (!el.isLiked) {
-          setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
+          dispatch(
+            addFavoriteItem([
+              { ...el, isLiked: true },
+              ...favoriteItemsFromStore,
+            ])
+          );
           setProductInfo({
             ...productInfo,
             isLiked: true,
           });
         } else {
-          setFavoriteItems(
-            favoriteItems.filter((favoriteItem) => favoriteItem.id !== id)
-          );
+          dispatch(removeFavoriteItem({ pid: id }));
           setProductInfo({
             ...productInfo,
             isLiked: false,
@@ -616,8 +623,8 @@ export default function SingleProductPage() {
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
     if (isEmptyObj(user)) return false;
-    for (let i = 0; i < favoriteItems.length; i++) {
-      if (favoriteItems[i].id === id) return true;
+    for (let i = 0; i < favoriteItemsFromStore.length; i++) {
+      if (favoriteItemsFromStore[i].id === id) return true;
     }
     return false;
   }

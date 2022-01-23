@@ -29,8 +29,13 @@ import Loader from "../../components/loader";
 import { useParams, useHistory } from "react-router";
 import Modal from "../../components/modal";
 import { useContext } from "react";
-import { FavoriteItemsContext, UserContext } from "../../context";
+import { UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
+import {
+  addFavoriteItem,
+  removeFavoriteItem,
+} from "../../redux/reducers/FavoriteItemsSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -234,8 +239,12 @@ export default function ProductsPage() {
   let history = useHistory();
   // 透過 UserContext 拿到當前用戶資訊
   const { user } = useContext(UserContext);
-  // 透過 FavoriteItemsContext 拿到用戶收藏清單跟 setter function
-  const { favoriteItems, setFavoriteItems } = useContext(FavoriteItemsContext);
+  // 產生 dispatch
+  const dispatch = useDispatch();
+  // 從 redux-store 拿喜好清單
+  const favoriteItemsFromStore = useSelector(
+    (store) => store.favoriteItems.items
+  );
   // 放分類路徑資訊、所有分類列表、該分類底下的所有產品清單
   const [productsInfo, setProductsInfo] = useState({
     categoryPath: {
@@ -457,11 +466,14 @@ export default function ProductsPage() {
     productsInfo.productsList.forEach((el) => {
       if (el.id === id) {
         if (!el.isLiked) {
-          setFavoriteItems([{ ...el, isLiked: true }, ...favoriteItems]);
-        } else {
-          setFavoriteItems(
-            favoriteItems.filter((favoriteItem) => favoriteItem.id !== id)
+          dispatch(
+            addFavoriteItem([
+              { ...el, isLiked: true },
+              ...favoriteItemsFromStore,
+            ])
           );
+        } else {
+          dispatch(removeFavoriteItem({ pid: id }));
         }
       }
     });
@@ -656,8 +668,8 @@ export default function ProductsPage() {
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
     if (isEmptyObj(user)) return false;
-    for (let i = 0; i < favoriteItems.length; i++) {
-      if (favoriteItems[i].id === id) return true;
+    for (let i = 0; i < favoriteItemsFromStore.length; i++) {
+      if (favoriteItemsFromStore[i].id === id) return true;
     }
     return false;
   }
