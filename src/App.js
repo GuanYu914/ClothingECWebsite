@@ -196,7 +196,11 @@ function App() {
   }
   // 呼叫 action 拿到相對應的購物車物品
   function getCartItemsFromApi() {
-    return dispatch(getCart());
+    dispatch(getCart());
+    // 先產生假的 resolve 狀態...
+    return new Promise((resolve) => {
+      resolve();
+    });
   }
 
   // 收藏清單更新時，如果當前為用戶，透過 api 上傳到 server 同步
