@@ -19,8 +19,6 @@ import {
 } from "../../constant";
 import Modal from "../../components/modal";
 import { sendUserRegisterDataApi, getSessionDataApi } from "../../Webapi";
-import { useContext } from "react";
-import { UserContext } from "../../context";
 import { useHistory } from "react-router-dom";
 
 const PageContainer = styled.div`
@@ -104,8 +102,6 @@ const BrandSlogan = styled.h2.attrs(() => ({
 export default function RegisterPage() {
   // 透過 history hook 換頁
   const history = useHistory();
-  // 從 context 拿到設定用戶的 setter function
-  const { setUser } = useContext(UserContext);
   // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
@@ -372,29 +368,8 @@ export default function RegisterPage() {
   // 處理點選按鈕以外的事件
   function handleCancelOpForRegisterSuccessfully() {
     setShowModalForRegisterSuccessfully(false);
-    getSessionDataApi()
-      .then((resp) => {
-        const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          setShowModalForApiError(true);
-        }
-        if (json_data.isSuccessful === "successful") {
-          // 自動跳轉到首頁
-          setUser({
-            userId: json_data.data.id,
-            nickname: json_data.data.nickname,
-            account: json_data.data.account,
-            pass: json_data.data.password,
-          });
-        }
-      })
-      .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
-        setShowModalForApiError(true);
-      });
+    history.push("/");
+    // 要做錯誤處理
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕的事件

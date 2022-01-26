@@ -28,8 +28,6 @@ import DropDown from "../../components/dropdown";
 import Loader from "../../components/loader";
 import { useParams, useHistory } from "react-router";
 import Modal from "../../components/modal";
-import { useContext } from "react";
-import { UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
 import {
   addFavoriteItem,
@@ -237,10 +235,10 @@ export default function ProductsPage() {
   // 拿到當前頁面的分類路徑
   // 透過 history 改變網址列內容
   let history = useHistory();
-  // 透過 UserContext 拿到當前用戶資訊
-  const { user } = useContext(UserContext);
   // 產生 dispatch
   const dispatch = useDispatch();
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   // 從 redux-store 拿喜好清單
   const favoriteItemsFromStore = useSelector(
     (store) => store.favoriteItems.items
@@ -667,7 +665,7 @@ export default function ProductsPage() {
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
-    if (isEmptyObj(user)) return false;
+    if (isEmptyObj(userFromStore)) return false;
     for (let i = 0; i < favoriteItemsFromStore.length; i++) {
       if (favoriteItemsFromStore[i].id === id) return true;
     }

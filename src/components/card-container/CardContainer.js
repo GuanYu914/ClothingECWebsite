@@ -11,9 +11,8 @@ import {
   COLOR_SECONDARY2,
   COLOR_PRIMARY2,
 } from "../../constant";
-import { useContext } from "react";
-import { UserContext } from "../../context";
 import { isEmptyObj } from "../../util";
+import { useSelector } from "react-redux";
 
 const ItemsContainer = styled.section`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
@@ -105,8 +104,8 @@ export default function CardContainer({
   marginTop,
   marginLeft,
 }) {
-  // 透過 UserContext 拿到用戶資訊
-  const { user } = useContext(UserContext);
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
@@ -122,7 +121,7 @@ export default function CardContainer({
               <ItemName data-id={item.id}>{item.product.name}</ItemName>
               <ItemPrice data-id={item.id}>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {!isEmptyObj(user) && (
+            {!isEmptyObj(userFromStore) && (
               <>
                 {item.isLiked && (
                   <FavoriteFilledIcon

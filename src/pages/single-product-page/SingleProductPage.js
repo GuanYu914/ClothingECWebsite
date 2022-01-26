@@ -4,7 +4,7 @@ import styled from "styled-components";
 import BSCarousel from "../../components/bs-carousel/BSCarousel";
 import CardContainer from "../../components/card-container";
 import ProductPicker from "../../components/product-picker";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
 import { ReactComponent as cart } from "../../imgs/pages/single-product-page/cart.svg";
@@ -24,7 +24,6 @@ import {
   BG_SECONDARY4,
   COLOR_PRIMARY2,
 } from "../../constant";
-import { UserContext } from "../../context";
 import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
@@ -257,8 +256,8 @@ export default function SingleProductPage() {
   const { productID } = useParams();
   // 透過此 hook 換頁
   const history = useHistory();
-  // 透過 UserContext 拿到用戶資訊
-  const { user } = useContext(UserContext);
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   //  產品資訊讀取狀態
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
@@ -622,7 +621,7 @@ export default function SingleProductPage() {
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
-    if (isEmptyObj(user)) return false;
+    if (isEmptyObj(userFromStore)) return false;
     for (let i = 0; i < favoriteItemsFromStore.length; i++) {
       if (favoriteItemsFromStore[i].id === id) return true;
     }
@@ -672,7 +671,7 @@ export default function SingleProductPage() {
               <BSCarousel slides={slidesForMobile} />
               <ProductInfoContainer>
                 <ProductName>{productInfo.name}</ProductName>
-                {!isEmptyObj(user) && (
+                {!isEmptyObj(userFromStore) && (
                   <>
                     {productInfo.isLiked ? (
                       <FavoriteFilledIcon onClick={handleAddToLikedItems} />
@@ -711,7 +710,7 @@ export default function SingleProductPage() {
               <ProductInfoContainer>
                 <ProductHeaderContainer>
                   <ProductName>{productInfo.name}</ProductName>
-                  {!isEmptyObj(user) && (
+                  {!isEmptyObj(userFromStore) && (
                     <>
                       {productInfo.isLiked ? (
                         <FavoriteFilledIcon onClick={handleAddToLikedItems} />

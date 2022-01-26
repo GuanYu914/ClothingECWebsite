@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import styled from "styled-components";
 import Form from "../../components/form";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {
   BG_SECONDARY3,
   MAX_CONTAINER_WIDTH,
@@ -17,10 +17,10 @@ import {
   BG_PRIMARY1,
   COLOR_SECONDARY3,
 } from "../../constant";
-import { UserContext } from "../../context";
 import Modal from "../../components/modal";
 import { sendUpdatedUserDataApi } from "../../Webapi";
 import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -97,8 +97,8 @@ const BrandSlogan = styled.h2.attrs(() => ({
 `;
 
 export default function ProfileEditPage() {
-  // 透過 UserContext 拿到用戶資訊
-  const { user } = useContext(UserContext);
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   // 透過 useHistory 換頁
   const history = useHistory();
   // 表單欄位狀態資訊
@@ -108,7 +108,7 @@ export default function ProfileEditPage() {
       type: "text",
       maxLength: 10,
       field: "暱稱",
-      inputValue: user.nickname,
+      inputValue: userFromStore.nickname,
       helperColor: COLOR_SECONDARY1,
       helperMsg: "最多 10 個字",
       isValid: true,
@@ -119,7 +119,7 @@ export default function ProfileEditPage() {
       maxLength: 12,
       readOnly: true,
       field: "帳號",
-      inputValue: user.account,
+      inputValue: userFromStore.account,
       helperColor: COLOR_PRIMARY2,
       helperMsg: "您不可更改帳號名稱",
       isValid: true,
@@ -179,7 +179,7 @@ export default function ProfileEditPage() {
     let postData = {
       nickname: form.filter((formData) => formData.field === "暱稱")[0]
         .inputValue,
-      account: user.account,
+      account: userFromStore.account,
       currentPassword: form.filter(
         (formData) => formData.field === "目前密碼"
       )[0].inputValue,
@@ -231,7 +231,7 @@ export default function ProfileEditPage() {
       if (fieldValue === "") {
         setFieldState("暱稱", "暱稱不能為空", COLOR_PRIMARY2, false);
       } else if (fieldValue.length > 0 && fieldValue.length <= 10) {
-        if (fieldValue === user.nickname) {
+        if (fieldValue === userFromStore.nickname) {
           setFieldState(
             "暱稱",
             "此暱稱並未修改，如果您不想變更，則忽略此訊息",
@@ -256,7 +256,7 @@ export default function ProfileEditPage() {
         setFieldState("目前密碼", "密碼不得為空", COLOR_PRIMARY2, false);
       }
       // 解碼從 server 來的 Base64 編碼資料
-      else if (fieldValue === window.atob(user.pass)) {
+      else if (fieldValue === window.atob(userFromStore.pass)) {
         setFieldState("目前密碼", "密碼輸入正確", COLOR_PRIMARY3, true);
       } else {
         setFieldState(
@@ -272,7 +272,7 @@ export default function ProfileEditPage() {
         setFieldState("新的密碼", "密碼不得為空", COLOR_PRIMARY2, false);
       }
       // 解碼從 server 來的 Base64 編碼資料
-      else if (fieldValue === window.atob(user.pass)) {
+      else if (fieldValue === window.atob(userFromStore.pass)) {
         setFieldState(
           "新的密碼",
           "目前新設的密碼與原本密碼相同，如果您不想變更，則忽略此訊息",

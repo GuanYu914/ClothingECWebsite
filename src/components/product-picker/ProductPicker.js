@@ -28,9 +28,8 @@ import {
 } from "../../components/button";
 import { slideInUp } from "react-animations";
 import PropTypes from "prop-types";
-import { UserContext } from "../../context";
-import { useContext } from "react";
 import { isEmptyObj } from "../../util";
+import { useSelector } from "react-redux";
 
 const slideInUpAnimation = keyframes`${slideInUp}`;
 
@@ -261,7 +260,8 @@ export default function ProductPicker({
   handleAddToCart,
   handleCheckout,
 }) {
-  const { user } = useContext(UserContext);
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   return (
     <Switcher>
       {usedOnMobile && (
@@ -271,7 +271,7 @@ export default function ProductPicker({
               <PickerHeader>
                 <PickerProductName>女版襯衫</PickerProductName>
                 <PickerHeaderButton>
-                  {!isEmptyObj(user) ? (
+                  {!isEmptyObj(userFromStore) ? (
                     <>
                       {isLiked && (
                         <FavoriteFilledIcon

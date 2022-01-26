@@ -47,7 +47,7 @@ import Loader from "../../components/loader";
 import { useHistory } from "react-router";
 import Modal from "../../components/modal";
 import { useContext } from "react";
-import { UserContext, IntroductionModalContext } from "../../context";
+import { IntroductionModalContext } from "../../context";
 import { isEmptyObj } from "../../util";
 import {
   addFavoriteItem,
@@ -98,10 +98,10 @@ const HotSellingItemsContainer = styled.div`
 
 export default function HomePage() {
   let history = useHistory();
-  // 透過 UserContext 拿到 setter function
-  const { user } = useContext(UserContext);
   // 產生 dispatch
   const dispatch = useDispatch();
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   // 從 redux-store 拿喜好清單
   const favoriteItemsFromStore = useSelector(
     (store) => store.favoriteItems.items
@@ -348,7 +348,7 @@ export default function HomePage() {
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
   function checkIfUserLikeTheProduct(id) {
-    if (isEmptyObj(user)) return false;
+    if (isEmptyObj(userFromStore)) return false;
     for (let i = 0; i < favoriteItemsFromStore.length; i++) {
       if (favoriteItemsFromStore[i].id === id) return true;
     }
@@ -364,7 +364,9 @@ export default function HomePage() {
     if (!introductionModalIsDisplayed) {
       setModalInfoForIntroductionLocally({
         selectionMode: false,
-        title: `歡迎光臨, ${isEmptyObj(user) ? "訪客" : user.nickname}`,
+        title: `歡迎光臨, ${
+          isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname
+        }`,
         content: `使用網站前須注意事項 🔔\n
 • 註冊會員就可以有專屬的收藏清單，將喜歡的產品一網打盡\n
 • 目前版本尚不開放結帳金流服務，敬請期待\n

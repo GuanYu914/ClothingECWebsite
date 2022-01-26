@@ -16,8 +16,7 @@ import {
   BG_SECONDARY3,
   COLOR_SECONDARY2,
 } from "../../constant";
-import { useEffect, useState, useContext } from "react";
-import { UserContext } from "../../context";
+import { useEffect, useState } from "react";
 import { isEmptyObj } from "../../util";
 import { useSelector } from "react-redux";
 
@@ -121,15 +120,15 @@ const NavForPad = styled.section`
 
 export default function Header() {
   const history = useHistory();
-  // 透過 Context 拿到當前用戶資料
-  const { user } = useContext(UserContext);
+  // 從 redux-store 拿用戶資訊
+  const userFromStore = useSelector((store) => store.user.info);
   // 從 redux-store 拿購物車物品清單
   const cartItemsFromStore = useSelector((store) => store.cart.items);
   // 用戶選單狀態 (dropdown UI)
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
     useForLinks: true,
-    options: isEmptyObj(user)
+    options: isEmptyObj(userFromStore)
       ? [
           { id: 1, name: "登入", url: "/login" },
           { id: 2, name: "註冊", url: "/register" },
@@ -157,7 +156,7 @@ export default function Header() {
   });
   // 用戶選單狀態 (offcanva UI)
   const [offcanvaInfo, setOffcanvaInfo] = useState({
-    links: isEmptyObj(user)
+    links: isEmptyObj(userFromStore)
       ? [
           { id: 1, name: "登入", url: "/login" },
           { id: 2, name: "註冊", url: "/register" },
@@ -171,8 +170,8 @@ export default function Header() {
         ],
     displayUserInfo: true,
     user: {
-      isLogin: isEmptyObj(user) ? false : true,
-      name: isEmptyObj(user) ? "訪客" : user.nickname,
+      isLogin: isEmptyObj(userFromStore) ? false : true,
+      name: isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname,
     },
   });
 
@@ -181,7 +180,7 @@ export default function Header() {
     setDropDownForProfile({
       width: "12rem",
       useForLinks: true,
-      options: isEmptyObj(user)
+      options: isEmptyObj(userFromStore)
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -193,7 +192,7 @@ export default function Header() {
           ],
     });
     setOffcanvaInfo({
-      links: isEmptyObj(user)
+      links: isEmptyObj(userFromStore)
         ? [
             { id: 1, name: "登入", url: "/login" },
             { id: 2, name: "註冊", url: "/register" },
@@ -207,11 +206,11 @@ export default function Header() {
           ],
       displayUserInfo: true,
       user: {
-        isLogin: isEmptyObj(user) ? false : true,
-        name: isEmptyObj(user) ? "訪客" : user.nickname,
+        isLogin: isEmptyObj(userFromStore) ? false : true,
+        name: isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname,
       },
     });
-  }, [user]);
+  }, [userFromStore]);
   // 如果 cart 有更新的話，則更新購物車 dropdown 元件
   useEffect(() => {
     setDropDownForCart({
@@ -247,7 +246,7 @@ export default function Header() {
             <ProfileContainer>
               <ProfileIcon />
               <UserNickname>
-                {isEmptyObj(user) ? "訪客" : user.nickname}
+                {isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname}
               </UserNickname>
             </ProfileContainer>
           </DropDown>
