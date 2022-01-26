@@ -628,10 +628,6 @@ export default function SingleProductPage() {
     return false;
   }
 
-  // 第一次 Render 結束
-  useEffect(() => {
-    getProductInfoFromApi(productID);
-  }, []);
   // 若重複點擊，則暫緩顯示購物車訊息
   useEffect(() => {
     if (showCartReminder) {
