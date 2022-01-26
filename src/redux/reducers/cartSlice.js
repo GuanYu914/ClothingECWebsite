@@ -22,6 +22,9 @@ import { getCookie, setCookie } from "../../util";
       unitPrice : number,
       quantity  : number
     ],
+    req: {
+      isProcessing: boolean
+    },
     err: {
       isShow: boolean,
       msg   : string
@@ -31,6 +34,9 @@ import { getCookie, setCookie } from "../../util";
 
 const initialState = {
   items: [],
+  req: {
+    isProcessing: null,
+  },
   err: {
     isShow: false,
     msg: "",
@@ -60,22 +66,30 @@ const cartSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getCart.pending, (state) => {
+      state.req.isProcessing = true;
+    });
     builder.addCase(getCart.fulfilled, (state, action) => {
       let parsed_json = null;
       try {
         parsed_json = JSON.parse(action.payload);
       } catch {
+        state.isProcessing = false;
         state.err.isShow = true;
         state.err.msg = "get response but parsed JSON failed";
+        return;
       }
       if (parsed_json.data.isSuccessful === "failed") {
         if (parsed_json.data.msg === "session variable not set") {
-          if (getCookie("cart-guest") === undefined) {
-            state.items = [];
+          const localCart = getCookie("cart-guest");
+          if (localCart === undefined) {
             setCookie("cart-guest", JSON.stringify([]), 7);
+            state.req.isProcessing = false;
           } else {
-            state.items = JSON.parse(getCookie("cart-guest"));
+            state.items = JSON.parse(localCart);
+            state.req.isProcessing = false;
           }
+          return;
         }
         state.err.isShow = true;
         state.err.msg = "server side reject this operation";
@@ -92,17 +106,23 @@ const cartSlice = createSlice({
           quantity: item.quantity,
         }));
       }
+      state.req.isProcessing = false;
     });
     builder.addCase(getCart.rejected, (state) => {
+      state.req.isProcessing = false;
       // console.log("rejected: ", action.error);
       state.err.isShow = true;
       state.err.msg = "send request failed";
+    });
+    builder.addCase(uploadCart.pending, (state) => {
+      state.req.isProcessing = true;
     });
     builder.addCase(uploadCart.fulfilled, (state, action) => {
       let parsed_json = null;
       try {
         parsed_json = JSON.parse(action.payload);
       } catch {
+        state.isProcessing = false;
         state.err.isShow = true;
         state.err.msg = "get response but parse JSON failed";
       }
@@ -110,8 +130,10 @@ const cartSlice = createSlice({
         state.err.isShow = true;
         state.err.msg = "server side reject this operation";
       }
+      state.req.isProcessing = false;
     });
     builder.addCase(uploadCart.rejected, (state) => {
+      state.req.isProcessing = false;
       // console.log("rejected: ", action.error);
       state.err.isShow = true;
       state.err.msg = "send request failed";

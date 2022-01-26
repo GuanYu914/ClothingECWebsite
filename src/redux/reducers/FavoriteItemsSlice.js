@@ -15,6 +15,9 @@ import { getFavoriteItemsApi, uploadFavoriteItemsApi } from "../../Webapi";
         isLiked: boolean
       }
     ],
+    req: {
+      isProcessing: false
+    },
     err: {
       isShow: boolean,
       msg: string
@@ -24,6 +27,9 @@ import { getFavoriteItemsApi, uploadFavoriteItemsApi } from "../../Webapi";
 
 const initialState = {
   items: [],
+  req: {
+    isProcessing: null,
+  },
   err: {
     isShow: false,
     msg: "",
@@ -61,18 +67,23 @@ const favoriteItemsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getFavoriteItems.pending, (state) => {
+      state.req.isProcessing = true;
+    });
     builder.addCase(getFavoriteItems.fulfilled, (state, action) => {
       let parsed_json = null;
       try {
         parsed_json = JSON.parse(action.payload);
       } catch {
+        state.isProcessing = false;
         state.err.isShow = true;
         state.err.msg = "get response but parse JSON failed";
+        return;
       }
       if (parsed_json.data.isSuccessful === "failed") {
-        console.log("d");
         if (parsed_json.data.msg === "session variable not set") {
           // 用戶為訪客，不做任何事
+          state.req.isProcessing = false;
           return;
         }
         state.err.isShow = true;
@@ -89,8 +100,10 @@ const favoriteItemsSlice = createSlice({
           isLiked: true,
         }));
       }
+      state.req.isProcessing = false;
     });
     builder.addCase(getFavoriteItems.rejected, (state) => {
+      state.req.isProcessing = false;
       // console.log("rejected: ", action.error);
       state.err.isShow = true;
       state.err.msg = "send request failed";
@@ -100,15 +113,19 @@ const favoriteItemsSlice = createSlice({
       try {
         parsed_json = JSON.parse(action.payload);
       } catch {
+        state.isProcessing = false;
         state.err.isShow = true;
         state.err.msg = "get response but parse JSON failed";
+        return;
       }
       if (parsed_json.data.isSuccessful === "failed") {
         state.err.isShow = true;
         state.err.msg = "server side reject this operation";
       }
+      state.req.isProcessing = false;
     });
     builder.addCase(uploadFavoriteItems.rejected, (state) => {
+      state.req.isProcessing = false;
       // console.log("rejected: ", action.error);
       state.err.isShow = true;
       state.err.msg = "send request failed";
