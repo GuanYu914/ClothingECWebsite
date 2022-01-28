@@ -88,6 +88,8 @@ function App() {
 
   useEffect(() => {
     // 重置相關紀錄
+    setIsLoadingPage(true);
+    setShowModalForApiError(false);
     flagSendUserReq.current = false;
     flagSendUserReq.current = false;
     if (location.pathname === "/logout") {
@@ -101,21 +103,30 @@ function App() {
     // 用來解決 unmount 的時候，可以透過 store 的狀態更改 isLoading state
     let isCancelled = false;
     // 獲取用戶資訊後再拿喜好清單跟購物車
-    if (!userReqProcessingState && !flagSendUserReq.current) {
+    if (
+      userReqProcessingState === false &&
+      userReqErrState.isShow === false &&
+      flagSendUserReq.current === false
+    ) {
       dispatch(getFavoriteItems());
       dispatch(getCart());
       flagSendUserReq.current = true;
     }
     // 做錯誤處裡...
     if (
-      userReqErrState.isShow ||
-      cartReqErrState.isShow ||
-      favoriteItemsReqErrState.isShow
+      userReqErrState.isShow === true ||
+      cartReqErrState.isShow === true ||
+      favoriteItemsReqErrState.isShow === true
     ) {
-      console.log("error...");
+      if (!isCancelled) {
+        setShowModalForApiError(true);
+      }
     }
     // 可以載入畫面了...
     if (
+      userReqErrState.isShow === false &&
+      cartReqErrState.isShow === false &&
+      favoriteItemsReqErrState.isShow === false &&
       userReqProcessingState === false &&
       cartReqProcessingState === false &&
       favoriteItemsReqProcessingState === false
@@ -178,9 +189,21 @@ function App() {
       <ScrollToTop />
       <Switch>
         <Route exact path="/">
-          {isLoadingPage ? (
-            <Loader />
-          ) : (
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <>
+                  <Modal
+                    modalInfo={modalInfoForApiError}
+                    handleSubmitOp={handleSubmitOpForApiError}
+                    handleCancelOp={handleCancelOpForApiError}
+                  />
+                </>
+              )}
+            </>
+          )}
+          {!isLoadingPage && (
             <IntroductionModalContext.Provider
               value={{
                 introductionModalIsDisplayed,
@@ -192,9 +215,21 @@ function App() {
           )}
         </Route>
         <Route exact path="/register">
-          {isLoadingPage ? (
-            <Loader />
-          ) : (
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <>
+                  <Modal
+                    modalInfo={modalInfoForApiError}
+                    handleSubmitOp={handleSubmitOpForApiError}
+                    handleCancelOp={handleCancelOpForApiError}
+                  />
+                </>
+              )}
+            </>
+          )}
+          {!isLoadingPage && (
             <>
               {/* 防止用戶透過 url 存取註冊頁面 */}
               {isEmptyObj(userFromStore) ? <RegisterPage /> : <ErrorPage />}
@@ -202,9 +237,19 @@ function App() {
           )}
         </Route>
         <Route exact path="/login">
-          {isLoadingPage ? (
-            <Loader />
-          ) : (
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && (
             <>
               {/* 防止用戶透過 url 存取登入頁面 */}
               {isEmptyObj(userFromStore) ? <LoginPage /> : <ErrorPage />}
@@ -212,12 +257,34 @@ function App() {
           )}
         </Route>
         <Route exact path="/logout">
-          {isLoadingPage ? <Loader /> : <LogoutPage />}
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && <LogoutPage />}
         </Route>
         <Route exact path="/profile-edit">
-          {isLoadingPage ? (
-            <Loader />
-          ) : (
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && (
             <>
               {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
               {isEmptyObj(userFromStore) ? <ErrorPage /> : <ProfileEditPage />}
@@ -225,9 +292,19 @@ function App() {
           )}
         </Route>
         <Route exact path="/favorite">
-          {isLoadingPage ? (
-            <Loader />
-          ) : (
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && (
             <>
               {/* 防止訪客透過 url 存取收藏清單頁面 */}
               {isEmptyObj(userFromStore) ? <ErrorPage /> : <FavoritePage />}
@@ -239,21 +316,47 @@ function App() {
           exact
           path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
         >
-          {isLoadingPage ? <Loader /> : <ProductsPage />}
+          <ProductsPage />
+          {showModalForApiError && (
+            <>
+              <Modal
+                modalInfo={modalInfoForApiError}
+                handleSubmitOp={handleSubmitOpForApiError}
+                handleCancelOp={handleCancelOpForApiError}
+              />
+            </>
+          )}
         </Route>
         <Route exact path="/product/:productID">
-          {isLoadingPage ? <Loader /> : <SingleProductPage />}
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && <SingleProductPage />}
         </Route>
         <Route exact path="/cart">
-          {isLoadingPage ? <Loader /> : <CartPage />}
+          {isLoadingPage && (
+            <>
+              <Loader />
+              {showModalForApiError && (
+                <Modal
+                  modalInfo={modalInfoForApiError}
+                  handleSubmitOp={handleSubmitOpForApiError}
+                  handleCancelOp={handleCancelOpForApiError}
+                />
+              )}
+            </>
+          )}
+          {!isLoadingPage && <CartPage />}
         </Route>
-        {showModalForApiError && (
-          <Modal
-            modalInfo={modalInfoForApiError}
-            handleSubmitOp={handleSubmitOpForApiError}
-            handleCancelOp={handleCancelOpForApiError}
-          />
-        )}
       </Switch>
     </>
   );
