@@ -136,11 +136,9 @@ export const LogoutApi = async function () {
 
 // 取得用戶收藏清單
 export const getFavoriteItemsApi = async function () {
-  return await axios.post(
-    `${DevURL}/handleGetFavoriteItems.php`,
-    {},
-    { withCredentials: true }
-  );
+  return await axios(`${DevURL}/handleGetFavoriteItems.php`, {
+    withCredentials: true,
+  });
 };
 
 // 上傳用戶收藏清單
@@ -154,11 +152,9 @@ export const uploadFavoriteItemsApi = async function (productsInfo) {
 
 // 取得用戶購物車清單
 export const getCartItemsApi = async function () {
-  return await axios.post(
-    `${DevURL}/handleGetCartItems.php`,
-    {},
-    { withCredentials: true }
-  );
+  return await axios(`${DevURL}/handleGetCartItems.php`, {
+    withCredentials: true,
+  });
 };
 
 // 上傳用戶購買
