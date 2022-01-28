@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { CTAPrimaryButton } from "../../components/button";
+import { useHistory } from "react-router-dom";
 import {
   BG_SECONDARY3,
   BR_PRIMARY1,
@@ -66,8 +67,6 @@ const ButtonContainer = styled.section``;
 
 const RegisterButton = styled.a.attrs(() => ({
   className: "fs-h3",
-  href: "/clothing-ec/demo/register",
-  target: "_blank",
 }))`
   color: ${COLOR_SECONDARY1};
   display: block;
@@ -83,8 +82,6 @@ const RegisterButton = styled.a.attrs(() => ({
 
 const LoginButton = styled.a.attrs(() => ({
   className: "fs-h3",
-  href: "/clothing-ec/demo/login",
-  target: "_blank",
 }))`
   color: ${COLOR_SECONDARY1};
   text-decoration: none;
@@ -108,6 +105,7 @@ export default function Form({
   useForRegister,
   useForProfileEditing,
 }) {
+  const history = useHistory();
   return (
     <Container width={width}>
       <FormContainer>
@@ -134,7 +132,13 @@ export default function Form({
       </FormContainer>
       {useForLogin && (
         <ButtonContainer>
-          <RegisterButton>還沒成為會員嗎？點此註冊</RegisterButton>
+          <RegisterButton
+            onClick={() => {
+              history.push("/register");
+            }}
+          >
+            還沒成為會員嗎？點此註冊
+          </RegisterButton>
           <CTAPrimaryButton
             width={"100%"}
             margin={"1.4rem auto 0"}
@@ -149,7 +153,13 @@ export default function Form({
       )}
       {useForRegister && (
         <ButtonContainer>
-          <LoginButton>已經是會員了嗎？點此登入</LoginButton>
+          <LoginButton
+            onClick={() => {
+              history.push("/login");
+            }}
+          >
+            已經是會員了嗎？點此登入
+          </LoginButton>
           <CTAPrimaryButton
             width={"100%"}
             margin={"1.4rem auto 0"}
