@@ -12,7 +12,7 @@ import FavoritePage from "./pages/favorite-page";
 import ErrorPage from "./pages/error-page";
 import { IntroductionModalContext } from "./context";
 import ScrollToTop from "./components/scroll-to-top";
-import AsyncComponent from "./components/async-component/AsyncComponent";
+import AsyncComponent from "./components/async-component";
 import { useEffect } from "react";
 import Modal from "./components/modal";
 import { setCookie } from "./util";
