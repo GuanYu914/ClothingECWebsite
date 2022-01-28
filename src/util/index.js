@@ -6,7 +6,7 @@ export const getCookie = function (name) {
   const value = `;${document.cookie}`;
   // 透過 '; <名稱>=' 特定字符切分
   // 如果存在不只一個 cookie，則應該會輸出 2 個字串的 array
-  const parts = value.split(`;${name}=`);
+  const parts = value.split(`; ${name}=`);
   // 如果要找的名稱後面還有其他 cookie 名稱，則把不相干的刪掉
   if (parts.length === 2)
     // 如果遇到中文，使用此編碼解決 Safari 上無法在 cookie 上儲存的問題
