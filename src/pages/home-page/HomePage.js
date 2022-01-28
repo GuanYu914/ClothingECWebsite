@@ -7,6 +7,10 @@ import {
   HEADER_HEIGHT_PAD,
   BG_SECONDARY4,
   BG_PRIMARY1,
+  API_RESP_FAILED_MSG,
+  API_RESP_SERVER_REJECT_OP_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -188,11 +192,11 @@ export default function HomePage() {
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setBanners({
             ...banners,
             slide: json_data.data,
@@ -201,10 +205,7 @@ export default function HomePage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }
@@ -214,11 +215,11 @@ export default function HomePage() {
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
         const json_data = resp.data;
-        if (resp.data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (resp.data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setCategories(
             json_data.data.map((el) => ({
               id: el.id,
@@ -230,10 +231,7 @@ export default function HomePage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }
@@ -243,11 +241,11 @@ export default function HomePage() {
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           SetHotItems(
             json_data.data.map((el) => ({
               id: el.id,
@@ -272,10 +270,7 @@ export default function HomePage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }
@@ -285,11 +280,11 @@ export default function HomePage() {
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setComments(
             json_data.data.map((el) => ({
               id: el.id,
@@ -309,10 +304,7 @@ export default function HomePage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }

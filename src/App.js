@@ -24,6 +24,7 @@ import {
 } from "./redux/reducers/FavoriteItemsSlice";
 import { getUser, logoutUser } from "./redux/reducers/userSlice";
 import { useSelector, useDispatch } from "react-redux";
+import { COOKIE_GUEST_CART_NAME } from "./constant";
 
 function App() {
   // 從 react-router 拿 URL 資訊
@@ -166,7 +167,7 @@ function App() {
       !cartReqProcessingState &&
       !cartReqErrState.isShow
     ) {
-      setCookie("cart-guest", JSON.stringify(cartItemsFromStore), 7);
+      setCookie(COOKIE_GUEST_CART_NAME, JSON.stringify(cartItemsFromStore), 7);
       return;
     }
     // 如果有抓到當前用戶資訊，且身分為用戶

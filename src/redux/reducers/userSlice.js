@@ -1,4 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  API_RESP_FAILED_MSG,
+  API_RESP_PARSE_JSON_ERROR_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
+  API_RESP_SERVER_REJECT_OP_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+} from "../../constant";
 import { getSessionDataApi, LogoutApi } from "../../Webapi";
 
 // state structure
@@ -62,13 +69,13 @@ const userSlice = createSlice({
       } catch {
         state.req.isProcessing = false;
         state.err.isShow = true;
-        state.err.msg = "get response but parse JSON failed";
+        state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
         return;
       }
-      if (parsed_json.data.isSuccessful === "failed") {
+      if (parsed_json.data.isSuccessful === API_RESP_FAILED_MSG) {
         state.info = {};
       }
-      if (parsed_json.data.isSuccessful === "successful") {
+      if (parsed_json.data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
         state.info = {
           userId: parsed_json.data.data.id,
           nickname: parsed_json.data.data.nickname,
@@ -81,7 +88,7 @@ const userSlice = createSlice({
     builder.addCase(getUser.rejected, (state, action) => {
       state.req.isProcessing = false;
       state.err.isShow = true;
-      state.err.msg = `send request failed. type is: ${action.error.message}`;
+      state.err.msg = `${API_RESP_REQ_REJECT_ERR_MSG} ${action.error.message}`;
     });
     builder.addCase(logoutUser.pending, (state) => {
       state.req.isProcessing = true;
@@ -95,14 +102,14 @@ const userSlice = createSlice({
       } catch {
         state.isProcessing = false;
         state.err.isShow = true;
-        state.err.msg = "get response but parse JSON failed";
+        state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
         return;
       }
-      if (parsed_json.data.isSuccessful === "failed") {
+      if (parsed_json.data.isSuccessful === API_RESP_FAILED_MSG) {
         state.err.isShow = true;
-        state.err.msg = "server side reject this operation";
+        state.err.msg = API_RESP_SERVER_REJECT_OP_MSG;
       }
-      if (parsed_json.data.isSuccessful === "successful") {
+      if (parsed_json.data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
         state.info = {};
       }
       state.req.isProcessing = false;
@@ -110,7 +117,7 @@ const userSlice = createSlice({
     builder.addCase(logoutUser.rejected, (state, action) => {
       state.req.isProcessing = false;
       state.err.isShow = true;
-      state.err.msg = `send request failed. type is: ${action.error.message}`;
+      state.err.msg = `${API_RESP_REQ_REJECT_ERR_MSG} ${action.error.message}`;
     });
   },
 });

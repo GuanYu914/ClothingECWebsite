@@ -15,6 +15,10 @@ import {
   MAX_CONTAINER_WIDTH,
   COLOR_SECONDARY3,
   BG_PRIMARY1,
+  API_RESP_FAILED_MSG,
+  API_RESP_USER_NOT_FOUND_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
@@ -243,22 +247,19 @@ export default function LoginPage() {
     sendUserLoginDataApi(account, password)
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          if (json_data.msg === "not founded in database") {
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          if (json_data.msg === API_RESP_USER_NOT_FOUND_MSG) {
             setShowModalForLoginFailed(true);
             return;
           }
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setShowModalForLoginSuccessfully(true);
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }

@@ -4,6 +4,10 @@ import styled from "styled-components";
 import { useState } from "react";
 import Form from "../../components/form";
 import {
+  API_RESP_FAILED_MSG,
+  API_RESP_NOT_ALLOW_TO_REGISTER_SAME_ACCOUNT,
+  API_RESP_REQ_REJECT_ERR_MSG,
+  API_RESP_SUCCESSFUL_MSG,
   BG_PRIMARY1,
   BG_SECONDARY3,
   BREAKPOINT_LAPTOP,
@@ -312,22 +316,19 @@ export default function RegisterPage() {
     sendUserRegisterDataApi(nickname, account, password)
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          if (json_data.msg === "detect same account") {
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          if (json_data.msg === API_RESP_NOT_ALLOW_TO_REGISTER_SAME_ACCOUNT) {
             setShowModalForSameAccount(true);
             return;
           }
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setShowModalForRegisterSuccessfully(true);
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }
@@ -348,19 +349,16 @@ export default function RegisterPage() {
     getSessionDataApi()
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           // 自動跳轉到首頁
           history.push("/");
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }

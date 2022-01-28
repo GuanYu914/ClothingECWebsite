@@ -77,5 +77,21 @@ export const PRODUCTS_QUERY_INIT_OFFSET = 0;
 export const PRODUCTS_QUERY_INIT_LIMIT = 12;
 export const PRODUCTS_QUERY_LIMIT = 3;
 
+// 定義錯誤訊息
+export const API_RESP_FAILED_MSG = "failed";
+export const API_RESP_SUCCESSFUL_MSG = "successful";
+export const API_RESP_PARSE_JSON_ERROR_MSG =
+  "get response but parse JSON failed";
+export const API_RESP_SERVER_REJECT_OP_MSG =
+  "server side reject this operation";
+export const API_RESP_REQ_REJECT_ERR_MSG = "send request failed. type is:";
+export const API_RESP_SESSION_NOT_SET_MSG = "session variable not set";
+export const API_RESP_USER_NOT_FOUND_MSG = "not founded in database";
+export const API_RESP_NOT_ALLOW_TO_REGISTER_SAME_ACCOUNT =
+  "detect same account";
+
+// 定義相關 Cookie 變數
+export const COOKIE_GUEST_CART_NAME = "cart-guest";
+
 // 定義根目錄
 export const ROOT_DIR = "/";

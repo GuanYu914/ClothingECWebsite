@@ -19,6 +19,10 @@ import {
   COLOR_SECONDARY3,
   BG_PRIMARY1,
   BG_SECONDARY4,
+  API_RESP_FAILED_MSG,
+  API_RESP_SERVER_REJECT_OP_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
 import { ReactComponent as scrollUpIcon } from "../../imgs/pages/products-page/caret-up-fill.svg";
@@ -305,11 +309,11 @@ export default function ProductsPage() {
     getAllCategoriesApi()
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           // 傳入 function 拿到最新的 state
           setProductsInfo((prevProductsInfo) => {
             return {
@@ -327,10 +331,7 @@ export default function ProductsPage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }
@@ -354,11 +355,11 @@ export default function ProductsPage() {
     )
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           // 儲存未被 filter 套用的產品清單，便於 reset 時套用
           setNoneFilteredProducts(
             json_data.data.map((el) => ({
@@ -405,10 +406,7 @@ export default function ProductsPage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }

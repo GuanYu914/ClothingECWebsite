@@ -1,6 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getCartItemsApi, uploadCartItemsApi } from "../../Webapi";
 import { getCookie, setCookie } from "../../util";
+import {
+  API_RESP_FAILED_MSG,
+  API_RESP_PARSE_JSON_ERROR_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
+  API_RESP_SERVER_REJECT_OP_MSG,
+  API_RESP_SESSION_NOT_SET_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  COOKIE_GUEST_CART_NAME,
+} from "../../constant";
 
 // state structure
 /* 
@@ -78,14 +87,14 @@ const cartSlice = createSlice({
       } catch {
         state.isProcessing = false;
         state.err.isShow = true;
-        state.err.msg = "get response but parsed JSON failed";
+        state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
         return;
       }
-      if (parsed_json.data.isSuccessful === "failed") {
-        if (parsed_json.data.msg === "session variable not set") {
-          const localCart = getCookie("cart-guest");
+      if (parsed_json.data.isSuccessful === API_RESP_FAILED_MSG) {
+        if (parsed_json.data.msg === API_RESP_SESSION_NOT_SET_MSG) {
+          const localCart = getCookie(COOKIE_GUEST_CART_NAME);
           if (localCart === undefined) {
-            setCookie("cart-guest", JSON.stringify([]), 7);
+            setCookie(COOKIE_GUEST_CART_NAME, JSON.stringify([]), 7);
             state.req.isProcessing = false;
           } else {
             state.items = JSON.parse(localCart);
@@ -94,9 +103,9 @@ const cartSlice = createSlice({
           return;
         }
         state.err.isShow = true;
-        state.err.msg = "server side reject this operation";
+        state.err.msg = API_RESP_SERVER_REJECT_OP_MSG;
       }
-      if (parsed_json.data.isSuccessful === "successful") {
+      if (parsed_json.data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
         state.items = parsed_json.data.data.map((item, index) => ({
           id: index,
           pid: item.pid,
@@ -113,7 +122,7 @@ const cartSlice = createSlice({
     builder.addCase(getCart.rejected, (state, action) => {
       state.req.isProcessing = false;
       state.err.isShow = true;
-      state.err.msg = `send request failed. type is: ${action.error.message}`;
+      state.err.msg = `${API_RESP_REQ_REJECT_ERR_MSG} ${action.error.message}`;
     });
     builder.addCase(uploadCart.pending, (state) => {
       state.req.isProcessing = true;
@@ -127,18 +136,18 @@ const cartSlice = createSlice({
       } catch {
         state.isProcessing = false;
         state.err.isShow = true;
-        state.err.msg = "get response but parse JSON failed";
+        state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
       }
-      if (parsed_json.data.isSuccessful === "failed") {
+      if (parsed_json.data.isSuccessful === API_RESP_FAILED_MSG) {
         state.err.isShow = true;
-        state.err.msg = "server side reject this operation";
+        state.err.msg = API_RESP_SERVER_REJECT_OP_MSG;
       }
       state.req.isProcessing = false;
     });
     builder.addCase(uploadCart.rejected, (state, action) => {
       state.req.isProcessing = false;
       state.err.isShow = true;
-      state.err.msg = `send request failed. type is: ${action.error.message}`;
+      state.err.msg = `${API_RESP_REQ_REJECT_ERR_MSG} ${action.error.message}`;
     });
   },
 });

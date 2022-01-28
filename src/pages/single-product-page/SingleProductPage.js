@@ -23,6 +23,10 @@ import {
   BG_PRIMARY1,
   BG_SECONDARY4,
   COLOR_PRIMARY2,
+  API_RESP_FAILED_MSG,
+  API_RESP_SERVER_REJECT_OP_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
@@ -526,11 +530,11 @@ export default function SingleProductPage() {
     getProductByIDApi(id)
       .then((resp) => {
         const json_data = resp.data;
-        if (json_data.isSuccessful === "failed") {
-          console.log("server side error, check response...", json_data);
+        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
+          console.log(API_RESP_SERVER_REJECT_OP_MSG, json_data);
           setShowModalForApiError(true);
         }
-        if (json_data.isSuccessful === "successful") {
+        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           const json_data_for_product = resp.data.data[0];
           setProductInfo({
             id: json_data_for_product.pid, // 將 pid 當作 productInfo.id
@@ -580,10 +584,7 @@ export default function SingleProductPage() {
         }
       })
       .catch((e) => {
-        console.log(
-          "some errors were happened when setting data from api, error is ",
-          e
-        );
+        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
   }

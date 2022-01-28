@@ -16,6 +16,9 @@ import {
   COLOR_PRIMARY3,
   BG_PRIMARY1,
   COLOR_SECONDARY3,
+  API_RESP_FAILED_MSG,
+  API_RESP_SUCCESSFUL_MSG,
+  API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import Modal from "../../components/modal";
 import { sendUpdatedUserDataApi } from "../../Webapi";
@@ -205,18 +208,15 @@ export default function ProfileEditPage() {
       sendUpdatedUserDataApi(postData.nickname, postData.newPassword)
         .then((resp) => {
           const json_data = resp.data;
-          if (json_data.isSuccessful === "failed") {
+          if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
             setShowModalForApiError(true);
           }
-          if (json_data.isSuccessful === "successful") {
+          if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
             setShowModalForUpdatedSuccessfully(true);
           }
         })
         .catch((e) => {
-          console.log(
-            "some errors were happened when setting data from api, error is ",
-            e
-          );
+          console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
           setShowModalForApiError(true);
         });
     }
