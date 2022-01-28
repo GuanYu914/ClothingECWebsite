@@ -12,7 +12,7 @@ import FavoritePage from "./pages/favorite-page";
 import ErrorPage from "./pages/error-page";
 import { IntroductionModalContext } from "./context";
 import ScrollToTop from "./components/scroll-to-top";
-import Loader from "./components/loader";
+import AsyncComponent from "./components/async-component/AsyncComponent";
 import { useEffect } from "react";
 import Modal from "./components/modal";
 import { setCookie } from "./util";
@@ -189,21 +189,13 @@ function App() {
       <ScrollToTop />
       <Switch>
         <Route exact path="/">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <>
-                  <Modal
-                    modalInfo={modalInfoForApiError}
-                    handleSubmitOp={handleSubmitOpForApiError}
-                    handleCancelOp={handleCancelOpForApiError}
-                  />
-                </>
-              )}
-            </>
-          )}
-          {!isLoadingPage && (
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
             <IntroductionModalContext.Provider
               value={{
                 introductionModalIsDisplayed,
@@ -212,104 +204,66 @@ function App() {
             >
               <HomePage />
             </IntroductionModalContext.Provider>
-          )}
+          </AsyncComponent>
         </Route>
         <Route exact path="/register">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <>
-                  <Modal
-                    modalInfo={modalInfoForApiError}
-                    handleSubmitOp={handleSubmitOpForApiError}
-                    handleCancelOp={handleCancelOpForApiError}
-                  />
-                </>
-              )}
-            </>
-          )}
-          {!isLoadingPage && (
-            <>
-              {/* 防止用戶透過 url 存取註冊頁面 */}
-              {isEmptyObj(userFromStore) ? <RegisterPage /> : <ErrorPage />}
-            </>
-          )}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            {/* 防止用戶透過 url 存取註冊頁面 */}
+            {isEmptyObj(userFromStore) ? <RegisterPage /> : <ErrorPage />}
+          </AsyncComponent>
         </Route>
         <Route exact path="/login">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && (
-            <>
-              {/* 防止用戶透過 url 存取登入頁面 */}
-              {isEmptyObj(userFromStore) ? <LoginPage /> : <ErrorPage />}
-            </>
-          )}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            {/* 防止用戶透過 url 存取登入頁面 */}
+            {isEmptyObj(userFromStore) ? <LoginPage /> : <ErrorPage />}
+          </AsyncComponent>
         </Route>
         <Route exact path="/logout">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && <LogoutPage />}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            <LogoutPage />
+          </AsyncComponent>
         </Route>
         <Route exact path="/profile-edit">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && (
-            <>
-              {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
-              {isEmptyObj(userFromStore) ? <ErrorPage /> : <ProfileEditPage />}
-            </>
-          )}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            {/* 防止訪客透過 url 存取編輯個人資訊頁面 */}
+            {isEmptyObj(userFromStore) ? <ErrorPage /> : <ProfileEditPage />}
+          </AsyncComponent>
         </Route>
         <Route exact path="/favorite">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && (
-            <>
-              {/* 防止訪客透過 url 存取收藏清單頁面 */}
-              {isEmptyObj(userFromStore) ? <ErrorPage /> : <FavoritePage />}
-            </>
-          )}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            {/* 防止訪客透過 url 存取收藏清單頁面 */}
+            {isEmptyObj(userFromStore) ? <ErrorPage /> : <FavoritePage />}
+          </AsyncComponent>
         </Route>
         {/* 使用 ? 代表可能沒有的欄位 */}
         <Route
@@ -328,34 +282,26 @@ function App() {
           )}
         </Route>
         <Route exact path="/product/:productID">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && <SingleProductPage />}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            <SingleProductPage />
+          </AsyncComponent>
         </Route>
         <Route exact path="/cart">
-          {isLoadingPage && (
-            <>
-              <Loader />
-              {showModalForApiError && (
-                <Modal
-                  modalInfo={modalInfoForApiError}
-                  handleSubmitOp={handleSubmitOpForApiError}
-                  handleCancelOp={handleCancelOpForApiError}
-                />
-              )}
-            </>
-          )}
-          {!isLoadingPage && <CartPage />}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            modalInfoFromProps={modalInfoForApiError}
+            isShowModal={showModalForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            <CartPage />
+          </AsyncComponent>
         </Route>
       </Switch>
     </>
