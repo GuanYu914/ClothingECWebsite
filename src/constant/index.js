@@ -76,3 +76,6 @@ export const COMMENTS_QUERY_LIMIT = 3;
 export const PRODUCTS_QUERY_INIT_OFFSET = 0;
 export const PRODUCTS_QUERY_INIT_LIMIT = 12;
 export const PRODUCTS_QUERY_LIMIT = 3;
+
+// 定義根目錄
+export const ROOT_DIR = "/";

@@ -1,3 +1,4 @@
+import { ROOT_DIR } from "../constant";
 // 根據 name 拿到相對應的 cookie 內容
 // 如果找不到則回傳 undefined
 export const getCookie = function (name) {
@@ -13,13 +14,18 @@ export const getCookie = function (name) {
 };
 
 // 根據傳入參數，設定相對應的 cookie
-export const setCookie = function (name, value, expireDays = 1) {
+export const setCookie = function (
+  name,
+  value,
+  expireDays = 1,
+  path = ROOT_DIR
+) {
   const now = new Date();
   now.setDate(now.getDate() + expireDays);
   // 如果遇到中文，使用此編碼解決 Safari 上無法在 cookie 上儲存的問題
   document.cookie = `${name}=${encodeURIComponent(
     value
-  )};expires=${now.toUTCString()}`;
+  )};expires=${now.toUTCString()};path=${path}`;
 };
 
 // 空物件，回傳 true，否則回傳 false

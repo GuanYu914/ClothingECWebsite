@@ -11,11 +11,12 @@ import App from "./App";
 import store from "./redux/store";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
+import { ROOT_DIR } from "./constant";
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <Router basename="/clothing-ec/demo">
+      <Router basename={ROOT_DIR}>
         <App />
       </Router>
     </Provider>
