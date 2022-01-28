@@ -68,6 +68,8 @@ const cartSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getCart.pending, (state) => {
       state.req.isProcessing = true;
+      state.err.isShow = false;
+      state.err.msg = "";
     });
     builder.addCase(getCart.fulfilled, (state, action) => {
       let parsed_json = null;
@@ -108,14 +110,15 @@ const cartSlice = createSlice({
       }
       state.req.isProcessing = false;
     });
-    builder.addCase(getCart.rejected, (state) => {
+    builder.addCase(getCart.rejected, (state, action) => {
       state.req.isProcessing = false;
-      // console.log("rejected: ", action.error);
       state.err.isShow = true;
-      state.err.msg = "send request failed";
+      state.err.msg = `send request failed. type is: ${action.error.message}`;
     });
     builder.addCase(uploadCart.pending, (state) => {
       state.req.isProcessing = true;
+      state.err.isShow = false;
+      state.err.msg = "";
     });
     builder.addCase(uploadCart.fulfilled, (state, action) => {
       let parsed_json = null;
@@ -132,11 +135,10 @@ const cartSlice = createSlice({
       }
       state.req.isProcessing = false;
     });
-    builder.addCase(uploadCart.rejected, (state) => {
+    builder.addCase(uploadCart.rejected, (state, action) => {
       state.req.isProcessing = false;
-      // console.log("rejected: ", action.error);
       state.err.isShow = true;
-      state.err.msg = "send request failed";
+      state.err.msg = `send request failed. type is: ${action.error.message}`;
     });
   },
 });

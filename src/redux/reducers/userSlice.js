@@ -52,6 +52,8 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getUser.pending, (state) => {
       state.req.isProcessing = true;
+      state.err.isShow = false;
+      state.err.msg = "";
     });
     builder.addCase(getUser.fulfilled, (state, action) => {
       let parsed_json = null;
@@ -76,14 +78,15 @@ const userSlice = createSlice({
       }
       state.req.isProcessing = false;
     });
-    builder.addCase(getUser.rejected, (state) => {
+    builder.addCase(getUser.rejected, (state, action) => {
       state.req.isProcessing = false;
-      // console.log("rejected: ", action.error);
       state.err.isShow = true;
-      state.err.msg = "send request failed";
+      state.err.msg = `send request failed. type is: ${action.error.message}`;
     });
     builder.addCase(logoutUser.pending, (state) => {
       state.req.isProcessing = true;
+      state.err.isShow = false;
+      state.err.msg = "";
     });
     builder.addCase(logoutUser.fulfilled, (state, action) => {
       let parsed_json = null;
@@ -104,11 +107,10 @@ const userSlice = createSlice({
       }
       state.req.isProcessing = false;
     });
-    builder.addCase(logoutUser.rejected, (state) => {
+    builder.addCase(logoutUser.rejected, (state, action) => {
       state.req.isProcessing = false;
-      // console.log("rejected: ", action.error);
       state.err.isShow = true;
-      state.err.msg = "send request failed";
+      state.err.msg = `send request failed. type is: ${action.error.message}`;
     });
   },
 });
