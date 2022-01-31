@@ -347,7 +347,7 @@ export default function SingleProductPage() {
             ...productInfo,
             product: {
               name: productInfo.name,
-              price: productInfo.picker.unitPrice,
+              price: `${productInfo.picker.unitPrice}`,
               img: productInfo.imgs[0].src,
             },
             isLiked: true,
@@ -631,17 +631,29 @@ export default function SingleProductPage() {
 
   // 若重複點擊，則暫緩顯示購物車訊息
   useEffect(() => {
-    if (showCartReminder) {
-      setTimeout(() => {
-        setShowCartReminder(false);
-      }, showCartReminderDuration * 3);
+    let isCancelled = false;
+    if (!isCancelled) {
+      if (showCartReminder) {
+        setTimeout(() => {
+          setShowCartReminder(false);
+        }, showCartReminderDuration * 3);
+      }
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [showCartReminder]);
   // 如果 picker 有被點選，且不是正在讀取中，則更新目前購物操作狀態
   useEffect(() => {
-    if (!isLoadingProduct) {
-      setActiveOpState(checkActiveState());
+    let isCancelled = false;
+    if (!isCancelled) {
+      if (!isLoadingProduct) {
+        setActiveOpState(checkActiveState());
+      }
     }
+    return () => {
+      isCancelled = true;
+    };
   }, [productInfo.picker]);
   // 若產品狀態讀取完畢，則更新分類路徑名稱
   useEffect(() => {
