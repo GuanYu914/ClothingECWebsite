@@ -55,6 +55,7 @@
     "eslint-plugin-react": "^7.26.1",
     "prettier": "^2.4.1",
     "react-app-rewire-styled-components": "^3.0.2",
+    "react-app-rewire-webpack-bundle-analyzer": "^1.1.0",
     "react-app-rewired": "^2.1.8"
   },
   "resolutions": {
