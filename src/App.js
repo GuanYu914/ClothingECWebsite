@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Switch, Route, useLocation } from "react-router-dom";
 import HomePage from "./pages/home-page";
 import ProductsPage from "./pages/products-page";
@@ -14,7 +14,6 @@ import { IntroductionModalContext } from "./context";
 import ScrollToTop from "./components/scroll-to-top";
 import AsyncComponent from "./components/async-component";
 import { useEffect } from "react";
-import Modal from "./components/modal";
 import { setCookie } from "./util";
 import { isEmptyObj } from "./util";
 import { getCart, uploadCart } from "./redux/reducers/cartSlice";
@@ -65,8 +64,6 @@ function App() {
   // 紀錄 Home Page 的 introduction modal 是否有被看過
   const [introductionModalIsDisplayed, setIntroductionModalIsDisplayed] =
     useState(false);
-  // 用來儲存當前是否有送出用戶資訊請求
-  const flagSendUserReq = useRef(false);
   // 是否要顯示 api 發送錯誤的 modal
   const [showModalForApiError, setShowModalForApiError] = useState(false);
   // api 發送錯誤的 modal 資訊
@@ -87,67 +84,6 @@ function App() {
     setShowModalForApiError(false);
   }
 
-  useEffect(() => {
-    // 重置相關紀錄
-    setIsLoadingPage(true);
-    setShowModalForApiError(false);
-    flagSendUserReq.current = false;
-    flagSendUserReq.current = false;
-    if (location.pathname === "/logout") {
-      dispatch(logoutUser());
-      return;
-    }
-    dispatch(getUser());
-  }, [location.pathname]);
-  // 在 dispatch user 相關的 action 後，一些後續的流程
-  useEffect(() => {
-    // 用來解決 unmount 的時候，可以透過 store 的狀態更改 isLoading state
-    let isCancelled = false;
-    // 獲取用戶資訊後再拿喜好清單跟購物車
-    if (
-      userReqProcessingState === false &&
-      userReqErrState.isShow === false &&
-      flagSendUserReq.current === false
-    ) {
-      dispatch(getFavoriteItems());
-      dispatch(getCart());
-      flagSendUserReq.current = true;
-    }
-    // 做錯誤處裡...
-    if (
-      userReqErrState.isShow === true ||
-      cartReqErrState.isShow === true ||
-      favoriteItemsReqErrState.isShow === true
-    ) {
-      if (!isCancelled) {
-        setShowModalForApiError(true);
-      }
-    }
-    // 可以載入畫面了...
-    if (
-      userReqErrState.isShow === false &&
-      cartReqErrState.isShow === false &&
-      favoriteItemsReqErrState.isShow === false &&
-      userReqProcessingState === false &&
-      cartReqProcessingState === false &&
-      favoriteItemsReqProcessingState === false
-    ) {
-      if (!isCancelled) {
-        setIsLoadingPage(false);
-      }
-    }
-    // unmount 的時候將 isCancelled 設為 true，防止非同步操作改動 state
-    return () => {
-      isCancelled = true;
-    };
-  }, [
-    userReqProcessingState,
-    cartReqProcessingState,
-    favoriteItemsReqProcessingState,
-    userReqErrState.isShow,
-    cartReqErrState.isShow,
-    favoriteItemsReqErrState.isShow,
-  ]);
   // 收藏清單更新時，如果當前為用戶，透過 api 上傳到 server 同步
   useEffect(() => {
     if (isEmptyObj(userFromStore)) return;
@@ -184,6 +120,46 @@ function App() {
       // 要加錯誤處理
     }
   }, [cartItemsFromStore]);
+  // 第一次 render 後執行
+  useEffect(() => {
+    if (location.pathname === "/logout") {
+      dispatch(logoutUser());
+      dispatch(getFavoriteItems());
+      dispatch(getCart());
+      return;
+    }
+    dispatch(getUser());
+    dispatch(getFavoriteItems());
+    dispatch(getCart());
+  }, []);
+  // 根據 store api call 相關狀態，決定是否要顯示畫面或錯誤視窗
+  useEffect(() => {
+    if (
+      userReqErrState.isShow === true ||
+      cartReqErrState.isShow === true ||
+      favoriteItemsReqErrState.isShow === true
+    ) {
+      setIsLoadingPage(true);
+      setShowModalForApiError(true);
+    }
+    if (
+      userReqErrState.isShow === false &&
+      cartReqErrState.isShow === false &&
+      favoriteItemsReqErrState.isShow === false &&
+      userReqProcessingState === false &&
+      cartReqProcessingState === false &&
+      favoriteItemsReqProcessingState === false
+    ) {
+      setIsLoadingPage(false);
+    }
+  }, [
+    userReqProcessingState,
+    cartReqProcessingState,
+    favoriteItemsReqProcessingState,
+    userReqErrState.isShow,
+    cartReqErrState.isShow,
+    favoriteItemsReqErrState.isShow,
+  ]);
 
   return (
     <>
@@ -192,8 +168,8 @@ function App() {
         <Route exact path="/">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -210,8 +186,8 @@ function App() {
         <Route exact path="/register">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -222,8 +198,8 @@ function App() {
         <Route exact path="/login">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -234,8 +210,8 @@ function App() {
         <Route exact path="/logout">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -245,8 +221,8 @@ function App() {
         <Route exact path="/profile-edit">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -257,8 +233,8 @@ function App() {
         <Route exact path="/favorite">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -271,22 +247,21 @@ function App() {
           exact
           path="/products/:mainCategoryFromRouter/:subCategoryFromRouter?/:detailedCategoryFromRouter?"
         >
-          <ProductsPage />
-          {showModalForApiError && (
-            <>
-              <Modal
-                modalInfo={modalInfoForApiError}
-                handleSubmitOp={handleSubmitOpForApiError}
-                handleCancelOp={handleCancelOpForApiError}
-              />
-            </>
-          )}
+          <AsyncComponent
+            isLoading={isLoadingPage}
+            isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
+            handleSubmitOp={handleSubmitOpForApiError}
+            handleCancelOp={handleCancelOpForApiError}
+          >
+            <ProductsPage />
+          </AsyncComponent>
         </Route>
         <Route exact path="/product/:productID">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >
@@ -296,8 +271,8 @@ function App() {
         <Route exact path="/cart">
           <AsyncComponent
             isLoading={isLoadingPage}
-            modalInfoFromProps={modalInfoForApiError}
             isShowModal={showModalForApiError}
+            modalInfoFromProps={modalInfoForApiError}
             handleSubmitOp={handleSubmitOpForApiError}
             handleCancelOp={handleCancelOpForApiError}
           >

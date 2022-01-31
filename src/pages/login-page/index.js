@@ -23,6 +23,10 @@ import {
 import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
 import { sendUserLoginDataApi } from "../../Webapi";
+import { getUser } from "../../redux/reducers/userSlice";
+import { useDispatch } from "react-redux";
+import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
+import { getCart } from "../../redux/reducers/cartSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -104,6 +108,8 @@ const BrandSlogan = styled.h2.attrs(() => ({
 
 export default function LoginPage() {
   const history = useHistory();
+  // 產生 dispatch
+  const dispatch = useDispatch();
   // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
@@ -277,12 +283,18 @@ export default function LoginPage() {
   // 處理點選按鈕事件
   function handleSubmitOpForLoginSuccessfully() {
     setShowModalForLoginSuccessfully(false);
+    dispatch(getUser());
+    dispatch(getFavoriteItems());
+    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情漸: 登入成功
   // 處理點選按鈕以外事件
   function handleCancelOpForLoginSuccessfully() {
     setShowModalForLoginSuccessfully(false);
+    dispatch(getUser());
+    dispatch(getFavoriteItems());
+    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情境: 發送 API 過程有異常

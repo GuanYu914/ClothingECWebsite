@@ -22,8 +22,12 @@ import {
   MAX_CONTAINER_WIDTH,
 } from "../../constant";
 import Modal from "../../components/modal";
-import { sendUserRegisterDataApi, getSessionDataApi } from "../../Webapi";
+import { sendUserRegisterDataApi } from "../../Webapi";
 import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getUser } from "../../redux/reducers/userSlice";
+import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
+import { getCart } from "../../redux/reducers/cartSlice";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -106,6 +110,8 @@ const BrandSlogan = styled.h2.attrs(() => ({
 export default function RegisterPage() {
   // 透過 history hook 換頁
   const history = useHistory();
+  // 產生 dispatch
+  const dispatch = useDispatch();
   // 表單欄位狀態資訊
   const [form, setForm] = useState([
     {
@@ -346,28 +352,19 @@ export default function RegisterPage() {
   // 處理點選按鈕的事件
   function handleSubmitOpForRegisterSuccessfully() {
     setShowModalForRegisterSuccessfully(false);
-    getSessionDataApi()
-      .then((resp) => {
-        const json_data = resp.data;
-        if (json_data.isSuccessful === API_RESP_FAILED_MSG) {
-          setShowModalForApiError(true);
-        }
-        if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
-          // 自動跳轉到首頁
-          history.push("/");
-        }
-      })
-      .catch((e) => {
-        console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
-        setShowModalForApiError(true);
-      });
+    dispatch(getUser());
+    dispatch(getFavoriteItems());
+    dispatch(getCart());
+    history.push("/");
   }
   // modal 顯示情境: 註冊成功
   // 處理點選按鈕以外的事件
   function handleCancelOpForRegisterSuccessfully() {
     setShowModalForRegisterSuccessfully(false);
+    dispatch(getUser());
+    dispatch(getFavoriteItems());
+    dispatch(getCart());
     history.push("/");
-    // 要做錯誤處理
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕的事件

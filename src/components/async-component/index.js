@@ -1,33 +1,28 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
 import Loader from "../loader";
 import Modal from "../modal";
 
 export default function AsyncComponent({
   isLoading,
-  modalInfoFromProps,
   isShowModal,
+  modalInfoFromProps,
   handleSubmitOp,
   handleCancelOp,
   children,
 }) {
-  const [modalInfo] = useState(modalInfoFromProps);
-
-  return isLoading ? (
+  return (
     <>
-      <Loader />
+      {isLoading ? <Loader /> : children};
       {isShowModal && (
         <>
           <Modal
-            modalInfo={modalInfo}
+            modalInfo={modalInfoFromProps}
             handleSubmitOp={handleSubmitOp}
             handleCancelOp={handleCancelOp}
           />
         </>
       )}
     </>
-  ) : (
-    children
   );
 }
 
