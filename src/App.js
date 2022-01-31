@@ -92,7 +92,7 @@ function App() {
     }));
     dispatch(uploadFavoriteItems(upload_data));
     // 這邊要做錯誤處理...
-  }, [favoriteItemsFromStore]);
+  }, [favoriteItemsFromStore, dispatch]);
   // 購物車資訊更新時，如果當前為用戶，透過 api 上傳到 server 同步
   // 購物車資訊更新時，如果當前為訪客，透過 cookie 儲存
   useEffect(() => {
@@ -119,7 +119,7 @@ function App() {
       dispatch(uploadCart(upload_data));
       // 要加錯誤處理
     }
-  }, [cartItemsFromStore]);
+  }, [cartItemsFromStore, dispatch]);
   // 第一次 render 後執行
   useEffect(() => {
     if (location.pathname === "/logout") {

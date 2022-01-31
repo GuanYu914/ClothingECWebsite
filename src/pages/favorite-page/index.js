@@ -115,7 +115,7 @@ export default function FavoritePage() {
   // 當本地的收藏清單更新時，同步更新 redux-store 的喜好清單
   useEffect(() => {
     dispatch(addFavoriteItem(items));
-  }, [items]);
+  }, [items, dispatch]);
 
   return (
     <PageContainer>
