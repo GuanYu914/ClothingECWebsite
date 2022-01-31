@@ -1,6 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { fadeIn } from "react-animations";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Footer from "../../components/footer";
 import Header from "../../components/header";
 import BSCarousel from "../../components/bs-carousel";
@@ -395,7 +395,7 @@ export default function CartPage() {
     );
   }
   // 檢查所有產品的選取狀態
-  function handleCheckAllSelectedState() {
+  const handleCheckAllSelectedState = useCallback(() => {
     let selectedCounter = 0;
     let allChecked = false;
     let singleChecked = false;
@@ -422,9 +422,9 @@ export default function CartPage() {
       singleChecked,
       allChecked,
     };
-  }
+  }, [cartForLocal]);
   // 計算所有選取產品的總價格
-  function handleCalcAllSelectedProductPrice() {
+  const handleCalcAllSelectedProductPrice = useCallback(() => {
     let checkedPrice = 0;
     cartForLocal.forEach((cartProduct) => {
       if (cartProduct.selected) {
@@ -433,7 +433,7 @@ export default function CartPage() {
       }
     });
     return checkedPrice;
-  }
+  }, [cartForLocal]);
   // 點選 "全選" 按鈕事件
   function handleToggleSelectAllProducts() {
     const flagCheckedAll = handleCheckAllSelectedState().allChecked;
@@ -550,13 +550,18 @@ export default function CartPage() {
         }))
       )
     );
-  }, [cartForLocal]);
+  }, [cartForLocal, dispatch]);
   // cartForLocal 更新時，更新總金額、商品選取狀態
   useEffect(() => {
     setCheckedPrice(handleCalcAllSelectedProductPrice());
     setSingleCheckedState(handleCheckAllSelectedState().singleChecked);
     setAllCheckedState(handleCheckAllSelectedState().allChecked);
-  }, [cartForLocal]);
+  }, [
+    cartForLocal,
+    dispatch,
+    handleCalcAllSelectedProductPrice,
+    handleCheckAllSelectedState,
+  ]);
 
   return (
     <PageContainer>
