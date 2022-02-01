@@ -3,7 +3,7 @@ import { ROOT_DIR } from "../constant";
 // 如果找不到則回傳 undefined
 export const getCookie = function (name) {
   // 將開頭加上;，以便於 call split 分割
-  const value = `;${document.cookie}`;
+  const value = `; ${document.cookie}`;
   // 透過 '; <名稱>=' 特定字符切分
   // 如果存在不只一個 cookie，則應該會輸出 2 個字串的 array
   const parts = value.split(`; ${name}=`);
@@ -25,7 +25,7 @@ export const setCookie = function (
   // 如果遇到中文，使用此編碼解決 Safari 上無法在 cookie 上儲存的問題
   document.cookie = `${name}=${encodeURIComponent(
     value
-  )};expires=${now.toUTCString()};path=${path}`;
+  )}; expires=${now.toUTCString()}; path=${path}`;
 };
 
 // 空物件，回傳 true，否則回傳 false
