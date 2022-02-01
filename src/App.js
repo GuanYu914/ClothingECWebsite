@@ -86,6 +86,8 @@ function App() {
 
   // 收藏清單更新時，如果當前為用戶，透過 api 上傳到 server 同步
   useEffect(() => {
+    // 如果目前在登出頁面，則不要上傳
+    if (location.pathname === "/logout") return;
     if (isEmptyObj(userFromStore)) return;
     const upload_data = favoriteItemsFromStore.map((item) => ({
       pid: item.id,
@@ -96,6 +98,8 @@ function App() {
   // 購物車資訊更新時，如果當前為用戶，透過 api 上傳到 server 同步
   // 購物車資訊更新時，如果當前為訪客，透過 cookie 儲存
   useEffect(() => {
+    // 如果目前在登出頁面，則不要上傳
+    if (location.pathname === "/logout") return;
     // 如果有抓到當前用戶資訊，且身分為訪客
     if (
       isEmptyObj(userFromStore) &&
