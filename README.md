@@ -9,13 +9,17 @@
 - 自動同步用戶的收藏清單跟購物車  
 
 ## 採用架構
-專案使用 Facebook 提供的 Create-React-App 建置，加速開發效率  
-前端部分透過 React.js 搭配 React Router 渲染，並串接後端提供的 APIs，跟 server 要求網站的資源或同步後端資料庫資料  
-頁面主要為 styled-component 組成，並透過一些第三方 libs，實作對應的動畫跟組件  
-後端透過自身架設的 LAMP server，並透過 php 實作相對應 APIs  
+專案使用 facebook 提供的 create-react-app 建置 
+前端使用 react 框架，並使用相關生態系 libraries  
+導入 redux 管理 state，並使用 thunk 完成非同步 actions  
+樣式主要為 styled-components 組成，並透過 react-spring 完成動畫  
+後端為 lamp server，並使用 php 實作相對應 api  
 
 ## 主要涵式庫
 - styled-components
+- reactjs
+- react-redux
+- redux-toolkit
 - react-router
 - react-router-dom
 - react-spring
@@ -25,3 +29,7 @@
 
 ## 後端相關 APIs
 可以參考此 repo，[點我傳送](https://github.com/GuanYu914/clothing-ec-website-backend)
+
+## 功能許願池
+- [ ] 用戶留言功能
+- [ ] 後台上架商品系統
