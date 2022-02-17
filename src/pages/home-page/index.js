@@ -51,7 +51,7 @@ import Loader from "../../components/loader";
 import { useHistory } from "react-router";
 import Modal from "../../components/modal";
 import { useContext } from "react";
-import { IntroductionModalContext } from "../../context";
+import { IntroductionModalContext } from "../../context/introductionModal";
 import { isEmptyObj } from "../../util";
 import {
   addFavoriteItem,

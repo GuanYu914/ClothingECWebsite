@@ -10,7 +10,7 @@ import RegisterPage from "./pages/register-page";
 import ProfileEditPage from "./pages/profile-edit-page";
 import FavoritePage from "./pages/favorite-page";
 import ErrorPage from "./pages/error-page";
-import { IntroductionModalContext } from "./context";
+import { IntroductionModalContext } from "./context/introductionModal";
 import ScrollToTop from "./components/scroll-to-top";
 import AsyncComponent from "./components/async-component";
 import { useEffect } from "react";
@@ -22,40 +22,40 @@ import {
   uploadFavoriteItems,
 } from "./redux/reducers/FavoriteItemsSlice";
 import { getUser, logoutUser } from "./redux/reducers/userSlice";
-import { useSelector, useDispatch } from "react-redux";
 import { COOKIE_GUEST_CART_NAME } from "./constant";
+import { useReduxDispatch, useReduxSelector } from "./redux/store";
 
-function App() {
+function App(): React.ReactElement {
   // 從 react-router 拿 URL 資訊
   const location = useLocation();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   // 從 redux-store 拿用戶請求處理狀態
-  const userReqProcessingState = useSelector(
+  const userReqProcessingState = useReduxSelector(
     (store) => store.user.req.isProcessing
   );
   // 從 redux-store 拿用戶請求錯誤狀態
-  const userReqErrState = useSelector((store) => store.user.err);
+  const userReqErrState = useReduxSelector((store) => store.user.err);
   // 從 redux-store 拿購物車物品
-  const cartItemsFromStore = useSelector((store) => store.cart.items);
+  const cartItemsFromStore = useReduxSelector((store) => store.cart.items);
   // 從 redux-store 拿購物車資訊請求狀態
-  const cartReqProcessingState = useSelector(
+  const cartReqProcessingState = useReduxSelector(
     (store) => store.cart.req.isProcessing
   );
   // 從 redux-store 拿購物車資訊請求錯誤狀態
-  const cartReqErrState = useSelector((store) => store.cart.err);
+  const cartReqErrState = useReduxSelector((store) => store.cart.err);
   // 從 redux-store 拿喜好清單
-  const favoriteItemsFromStore = useSelector(
+  const favoriteItemsFromStore = useReduxSelector(
     (store) => store.favoriteItems.items
   );
   // 從 redux-store 拿喜好清單請求狀態
-  const favoriteItemsReqProcessingState = useSelector(
+  const favoriteItemsReqProcessingState = useReduxSelector(
     (store) => store.favoriteItems.req.isProcessing
   );
   // 從 redux-store 拿喜好清單請求錯誤狀態
-  const favoriteItemsReqErrState = useSelector(
+  const favoriteItemsReqErrState = useReduxSelector(
     (store) => store.favoriteItems.err
   );
   // 紀錄頁面是否讀取完畢
@@ -75,12 +75,12 @@ function App() {
 
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕之外事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
 
@@ -93,7 +93,6 @@ function App() {
       pid: item.id,
     }));
     dispatch(uploadFavoriteItems(upload_data));
-    // 這邊要做錯誤處理...
   }, [favoriteItemsFromStore, dispatch]);
   // 購物車資訊更新時，如果當前為用戶，透過 api 上傳到 server 同步
   // 購物車資訊更新時，如果當前為訪客，透過 cookie 儲存
@@ -121,7 +120,6 @@ function App() {
         quantity: item.quantity,
       }));
       dispatch(uploadCart(upload_data));
-      // 要加錯誤處理
     }
   }, [cartItemsFromStore, dispatch]);
   // 第一次 render 後執行
