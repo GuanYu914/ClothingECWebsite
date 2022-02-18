@@ -78,6 +78,7 @@ export default function LogoutPage() {
     dispatch(logoutUser());
     dispatch(getFavoriteItems());
     dispatch(getCart());
+    // eslint-disable-next-line
   }, []);
 
   return (

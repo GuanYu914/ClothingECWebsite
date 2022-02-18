@@ -348,7 +348,7 @@ export default function ProductsPage() {
     setShowFilter(false);
     getProductsByCategoryApi(
       mainCategory,
-      subCategory == "所有分類" ? undefined : subCategory,
+      subCategory === "所有分類" ? undefined : subCategory,
       detailedCategory,
       offset,
       limit
@@ -676,16 +676,19 @@ export default function ProductsPage() {
     getAllCategoriesFromApi();
     // 顯示整個產品清單讀取動畫
     setIsLoadingProductsBlock(true);
+    // eslint-disable-next-line
   }, []);
   // 如果分類路徑有變，則更新顯示路徑
   useEffect(() => {
     updateDisplayedCategoryPath();
+    // eslint-disable-next-line
   }, [productsInfo.categoryPath]);
   // 顯示 filter 時，同時套用之前的篩選條件
   useEffect(() => {
     if (showFilter) {
       applyExistFilterCondition();
     }
+    //  eslint-disable-next-line
   }, [showFilter]);
   // 根據 indicator 讀取更多產品
   // 因為 indicator 會被初始化導致開始抓取相對應的產品清單
@@ -712,6 +715,7 @@ export default function ProductsPage() {
         false
       );
     }
+    // eslint-disable-next-line
   }, [productsListIndicator]);
 
   return (

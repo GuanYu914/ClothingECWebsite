@@ -93,6 +93,7 @@ function App(): React.ReactElement {
       pid: item.id,
     }));
     dispatch(uploadFavoriteItems(upload_data));
+    // eslint-disable-next-line
   }, [favoriteItemsFromStore, dispatch]);
   // 購物車資訊更新時，如果當前為用戶，透過 api 上傳到 server 同步
   // 購物車資訊更新時，如果當前為訪客，透過 cookie 儲存
@@ -121,6 +122,7 @@ function App(): React.ReactElement {
       }));
       dispatch(uploadCart(upload_data));
     }
+    // eslint-disable-next-line
   }, [cartItemsFromStore, dispatch]);
   // 第一次 render 後執行
   useEffect(() => {
@@ -133,6 +135,7 @@ function App(): React.ReactElement {
     dispatch(getUser());
     dispatch(getFavoriteItems());
     dispatch(getCart());
+    // eslint-disable-next-line
   }, []);
   // 根據 store api call 相關狀態，決定是否要顯示畫面或錯誤視窗
   useEffect(() => {

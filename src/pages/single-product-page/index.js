@@ -404,7 +404,7 @@ export default function SingleProductPage() {
   }
   // 減少購買數量
   function handleDecreaseQuantity() {
-    if (productInfo.picker.quantity == 1) return;
+    if (productInfo.picker.quantity === 1) return;
     setProductInfo({
       ...productInfo,
       picker: {
@@ -648,17 +648,20 @@ export default function SingleProductPage() {
     if (!isLoadingProduct) {
       setActiveOpState(checkActiveState());
     }
+    // eslint-disable-next-line
   }, [productInfo.picker]);
   // 若產品狀態讀取完畢，則更新分類路徑名稱
   useEffect(() => {
     if (!isLoadingProduct) {
       setDisplayedCategoryPath(getCategoryPathOfProduct());
     }
+    // eslint-disable-next-line
   }, [isLoadingProduct]);
   // URL 格式 : /product/:productID
   // 如果頁面的 productID 變動時，則抓取相對應的產品資訊
   useEffect(() => {
     getProductInfoFromApi(productID);
+    // eslint-disable-next-line
   }, [productID]);
 
   return (

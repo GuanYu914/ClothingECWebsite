@@ -365,14 +365,17 @@ export default function HomePage() {
 很開心見到您，祝您購物愉快 😘`,
       });
     }
+    // eslint-disable-next-line
   }, []);
   // hotItemsIndicator 改變時執行
   useEffect(() => {
     getHotItemsFromApi(hotItemsIndicator.offset, hotItemsIndicator.limit);
+    // eslint-disable-next-line
   }, [hotItemsIndicator]);
   // commentsIndicator 改變時執行
   useEffect(() => {
     getUserCommentsFromApi(commentsIndicator.offset, commentsIndicator.limit);
+    // eslint-disable-next-line
   }, [commentsIndicator]);
   // 當 introduction modal 內容被設置時執行
   useEffect(() => {
@@ -384,6 +387,7 @@ export default function HomePage() {
       return;
     setShowModalForIntroductionLocally(true);
     setIntroductionModalIsDisplayed(true);
+    // eslint-disable-next-line
   }, [modalInfoForIntroductionLocally]);
 
   return (
