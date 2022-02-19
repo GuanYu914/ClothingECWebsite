@@ -25,11 +25,10 @@ import {
   PickerCTAPrimaryButton,
   PickerGhostSecondaryButton,
   PickerCTASecondaryButton,
-} from "../../components/button";
+} from "../button";
 import { slideInUp } from "react-animations";
-import PropTypes from "prop-types";
 import { isEmptyObj } from "../../util";
-import { useSelector } from "react-redux";
+import { useReduxSelector } from "../../redux/store";
 
 const slideInUpAnimation = keyframes`${slideInUp}`;
 
@@ -137,7 +136,10 @@ const PickerColors = styled.div`
   margin-top: -0.8rem;
 `;
 
-const PickerColor = styled.div`
+const PickerColor = styled.div<{
+  color: string;
+  selected: string;
+}>`
   width: 2.2rem;
   height: 2.2rem;
   // 只有 flex wrapped item 才會套用 margin-top
@@ -176,7 +178,7 @@ const PickerSizes = styled.div`
 
 const PickerSize = styled.h3.attrs(() => ({
   className: "fs-h2",
-}))`
+}))<{ selected: string }>`
   color: ${COLOR_SECONDARY2};
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
@@ -245,6 +247,41 @@ const PickerOPButtons = styled.section`
   display: flex;
 `;
 
+interface ProductPickerProps {
+  picker: {
+    colors: {
+      id: number;
+      hexcode: string;
+      selected: boolean;
+    }[];
+    sizes: {
+      id: number;
+      name: string;
+      selected: boolean;
+    }[];
+    quantity: number;
+    unitPrice: number;
+  };
+  usedOnMobile?: boolean;
+  usedOnPad?: boolean;
+  activeOpState: boolean;
+  isLiked: boolean;
+  handleSelectPickerColor: (colorID: number) => void;
+  handleSelectPickerSize: (sizeID: number) => void;
+  handleIncreaseQuantity: () => void;
+  handleDecreaseQuantity: () => void;
+  setMobilePickerState: (boolValue: boolean) => void;
+  handleAddToLikedItems: () => void;
+  handleAddToCart: (
+    selectedColorHexcode: string,
+    selectedSizeName: string
+  ) => void;
+  handleCheckout: (
+    selectedColorHexcode: string,
+    selectedSizeName: string
+  ) => void;
+}
+
 export default function ProductPicker({
   picker,
   usedOnMobile,
@@ -259,9 +296,9 @@ export default function ProductPicker({
   handleAddToLikedItems,
   handleAddToCart,
   handleCheckout,
-}) {
+}: ProductPickerProps) {
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   return (
     <Switcher>
       {usedOnMobile && (
@@ -497,46 +534,3 @@ export default function ProductPicker({
     </Switcher>
   );
 }
-
-/**
- *  props 屬性
- *  picker: {
- *   color: object array (required)
- *   sizes: object array (required)
- *   quantity: number    (required)
- *   unitPrice: number   (required)
- *  }
- *  usedOnMobile: boolean  (跟下一個 props 屬性則一傳入)
- *  usedOnPad: boolean     (跟上一個 props 屬性則一傳入)
- *  handleSelectPickerColor:  function (required)
- *  handleSelectPickerSize:   function (required)
- *  handleIncreaseQuantity:   function (required)
- *  handleDecreaseQuantity:   function (required)
- *  activeOpState:        boolean (required)
- *  setMobilePickerState: boolean (required)
- *  isLiked:              boolean (required)
- *  handleAddToLikedItems: function (required)
- *  handleAddToCart: function (required)
- *  handleCheckout: function (required)
- */
-
-ProductPicker.propTypes = {
-  picker: PropTypes.shape({
-    colors: PropTypes.arrayOf(PropTypes.object).isRequired,
-    sizes: PropTypes.arrayOf(PropTypes.object).isRequired,
-    quantity: PropTypes.number.isRequired,
-    unitPrice: PropTypes.number.isRequired,
-  }),
-  usedOnMobile: PropTypes.bool,
-  usedOnPad: PropTypes.bool,
-  handleSelectPickerColor: PropTypes.func.isRequired,
-  handleSelectPickerSize: PropTypes.func.isRequired,
-  handleIncreaseQuantity: PropTypes.func.isRequired,
-  handleDecreaseQuantity: PropTypes.func.isRequired,
-  activeOpState: PropTypes.bool.isRequired,
-  setMobilePickerState: PropTypes.func.isRequired,
-  isLiked: PropTypes.bool.isRequired,
-  handleAddToLikedItems: PropTypes.func.isRequired,
-  handleAddToCart: PropTypes.func.isRequired,
-  handleCheckout: PropTypes.func.isRequired,
-};

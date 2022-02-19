@@ -1,7 +1,7 @@
 import { ReactComponent as logo } from "../../imgs/components/header/brand-logo.svg";
 import { ReactComponent as profile } from "../../imgs/components/header/person-circle.svg";
 import { ReactComponent as shopping_bag } from "../../imgs/components/header/bag.svg";
-import DropDown from "../../components/dropdown";
+import DropDown from "../dropdown";
 import Offcanva from "../offcanva";
 import { useHistory } from "react-router";
 import styled from "styled-components";
@@ -15,10 +15,11 @@ import {
   BOX_SHADOW_LIGHT,
   BG_SECONDARY3,
   COLOR_SECONDARY2,
+  Z_INDEX_LV1,
 } from "../../constant";
 import { useEffect, useState } from "react";
 import { isEmptyObj } from "../../util";
-import { useSelector } from "react-redux";
+import { useReduxSelector } from "../../redux/store";
 
 const NavBarContainer = styled.nav`
   background-color: ${BG_SECONDARY3};
@@ -121,13 +122,14 @@ const NavForPad = styled.section`
 export default function Header() {
   const history = useHistory();
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   // 從 redux-store 拿購物車物品清單
-  const cartItemsFromStore = useSelector((store) => store.cart.items);
+  const cartItemsFromStore = useReduxSelector((store) => store.cart.items);
   // 用戶選單狀態 (dropdown UI)
   const [dropDownForProfile, setDropDownForProfile] = useState({
     width: "12rem",
     useForLinks: true,
+    zIndex: Z_INDEX_LV1,
     options: isEmptyObj(userFromStore)
       ? [
           { id: 1, name: "登入", url: "/login" },
@@ -144,6 +146,7 @@ export default function Header() {
     width: cartItemsFromStore.length ? "fit-content" : "20rem",
     height: cartItemsFromStore.length >= 4 ? "24rem" : "fit-content",
     useForCart: true,
+    zIndex: Z_INDEX_LV1,
     products: cartItemsFromStore.map((product) => ({
       id: product.id,
       pid: product.pid,
@@ -156,6 +159,13 @@ export default function Header() {
   });
   // 用戶選單狀態 (offcanva UI)
   const [offcanvaInfo, setOffcanvaInfo] = useState({
+    displayUserInfo: true,
+    user: {
+      isLogin: isEmptyObj(userFromStore) ? false : true,
+      name: isEmptyObj(userFromStore)
+        ? "訪客"
+        : (userFromStore.nickname as string), // 使用型別斷言，保證一定是 string
+    },
     links: isEmptyObj(userFromStore)
       ? [
           { id: 1, name: "登入", url: "/login" },
@@ -168,11 +178,6 @@ export default function Header() {
           { id: 3, name: "購物車", url: "/cart" },
           { id: 4, name: "登出", url: "/logout" },
         ],
-    displayUserInfo: true,
-    user: {
-      isLogin: isEmptyObj(userFromStore) ? false : true,
-      name: isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname,
-    },
   });
 
   // 如果 user 有更新的話，則更新用戶選單 (dropdown & offcanva)
@@ -180,6 +185,7 @@ export default function Header() {
     setDropDownForProfile({
       width: "12rem",
       useForLinks: true,
+      zIndex: Z_INDEX_LV1,
       options: isEmptyObj(userFromStore)
         ? [
             { id: 1, name: "登入", url: "/login" },
@@ -192,6 +198,13 @@ export default function Header() {
           ],
     });
     setOffcanvaInfo({
+      displayUserInfo: true,
+      user: {
+        isLogin: isEmptyObj(userFromStore) ? false : true,
+        name: isEmptyObj(userFromStore)
+          ? "訪客"
+          : (userFromStore.nickname as string), // 使用型別斷言，保證一定是 string
+      },
       links: isEmptyObj(userFromStore)
         ? [
             { id: 1, name: "登入", url: "/login" },
@@ -204,11 +217,6 @@ export default function Header() {
             { id: 3, name: "購物車", url: "/cart" },
             { id: 4, name: "登出", url: "/logout" },
           ],
-      displayUserInfo: true,
-      user: {
-        isLogin: isEmptyObj(userFromStore) ? false : true,
-        name: isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname,
-      },
     });
   }, [userFromStore]);
   // 如果 cart 有更新的話，則更新購物車 dropdown 元件
@@ -217,6 +225,7 @@ export default function Header() {
       width: cartItemsFromStore.length ? "fit-content" : "20rem",
       height: cartItemsFromStore.length >= 4 ? "24rem" : "fit-content",
       useForCart: true,
+      zIndex: Z_INDEX_LV1,
       products: cartItemsFromStore.map((product) => ({
         id: product.id,
         pid: product.pid,

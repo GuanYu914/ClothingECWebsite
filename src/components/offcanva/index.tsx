@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import { useTransition, useChain, useSpringRef, animated } from "react-spring";
 import { ReactComponent as close } from "../../imgs/components/offcanva/x-lg.svg";
 import { ReactComponent as list } from "../../imgs/components/offcanva/list.svg";
@@ -105,7 +104,22 @@ const ProfileIcon = styled(profile)`
   margin-right: 1rem;
 `;
 
-export default function Offcanva({ offcanvaInfo }) {
+interface OffcanvaProps {
+  offcanvaInfo: {
+    displayUserInfo: boolean;
+    user: {
+      isLogin: boolean;
+      name: string;
+    };
+    links: {
+      id: number;
+      name: string;
+      url: string;
+    }[];
+  };
+}
+
+export default function Offcanva({ offcanvaInfo }: OffcanvaProps) {
   const history = useHistory();
   const [active, setActive] = useState(false);
   const maskContainerTransitionRef = useSpringRef();
@@ -138,7 +152,8 @@ export default function Offcanva({ offcanvaInfo }) {
 
   useEffect(() => {
     // render 完後，將 body 內容變更為不可滑動
-    const bodyEl = document.querySelector("body");
+    // 使用型別斷言告知 ts, bodyEl 一定為 HTMLElement
+    const bodyEl = document.querySelector("body") as HTMLElement;
     if (active) {
       bodyEl.classList.add("body-frozen");
     } else {
@@ -204,36 +219,3 @@ export default function Offcanva({ offcanvaInfo }) {
     </Container>
   );
 }
-
-/**
- *  Offcanva PropTypes 屬性
- *  offcanvaInfo: {
- *    links: [{
- *      id: number,       (required)
- *      name: string,     (required)
- *      url: string,      (required)
- *    }]
- *  },
- *  displayUserInfo: boolean,
- *  user: {               (如果 displayUserInfo 為 true，則必須傳入)
- *    isLogin: boolean    (required)
- *    name: string        (required)
- *  }
- */
-
-Offcanva.propTypes = {
-  offcanvaInfo: PropTypes.shape({
-    links: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        name: PropTypes.string.isRequired,
-        url: PropTypes.string.isRequired,
-      })
-    ),
-    displayUserInfo: PropTypes.bool,
-    user: PropTypes.shape({
-      isLogin: PropTypes.bool.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  }),
-};

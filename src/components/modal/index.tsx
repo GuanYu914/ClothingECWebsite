@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import { useTransition, animated } from "react-spring";
 import { ReactComponent as closeIcon } from "../../imgs/components/modal/x-lg.svg";
 import {
@@ -82,7 +81,21 @@ const ModalButtons = styled.section`
   display: flex;
 `;
 
-export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
+interface ModalProps {
+  modalInfo: {
+    selectionMode: boolean;
+    title: string;
+    content: string;
+  };
+  handleSubmitOp: () => void;
+  handleCancelOp: () => void;
+}
+
+export default function Modal({
+  modalInfo,
+  handleSubmitOp,
+  handleCancelOp,
+}: ModalProps) {
   const [showModalMsg, setShowModalMsg] = useState(true);
   const showModalMsgAnimation = useTransition(showModalMsg, {
     from: { opacity: 0 },
@@ -168,23 +181,3 @@ export default function Modal({ modalInfo, handleSubmitOp, handleCancelOp }) {
     </Container>
   );
 }
-
-/*  props 參數
-    modalInfo: {
-      selectionMode:  boolean (required) 啟用多個按鈕樣式
-      title:          string  (required)
-      content:        string  (required)
-    },
-    handleSubmitOp: function (required)
-    handleCancelOp: function (required)
-*/
-
-Modal.propTypes = {
-  modalInfo: PropTypes.shape({
-    selectionMode: PropTypes.bool.isRequired,
-    title: PropTypes.string.isRequired,
-    content: PropTypes.string.isRequired,
-  }),
-  handleSubmitOp: PropTypes.func.isRequired,
-  handleCancelOp: PropTypes.func.isRequired,
-};

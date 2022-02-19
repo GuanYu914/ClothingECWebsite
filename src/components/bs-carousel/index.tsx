@@ -1,14 +1,14 @@
 import { Carousel } from "react-bootstrap";
 import styled from "styled-components";
 import { useState } from "react";
-import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
-import { propTypes } from "react-bootstrap/esm/Image";
 
-const CarouselImage = styled.img.attrs((props) => ({
-  src: props.src,
-  alt: props.alt || "slide",
-}))`
+const CarouselImage = styled.img.attrs<{ src: string; alt?: string }>(
+  (props) => ({
+    src: props.src,
+    alt: props.alt || "slide",
+  })
+)<{ maxHeight?: string; borderRadius?: string }>`
   width: 100%;
   height: auto;
   max-height: ${(props) => props.maxHeight || "50rem"};
@@ -16,16 +16,33 @@ const CarouselImage = styled.img.attrs((props) => ({
   cursor: pointer;
 `;
 
-const StyledCarousel = styled(Carousel)`
+const StyledCarousel = styled(Carousel)<{ width?: string }>`
   width: ${(props) => props.width || "100%"};
   height: fit-content;
 `;
 
-export default function BSCarousel({ slides }) {
+interface BSCarouselProps {
+  slides: {
+    useForBanner: boolean;
+    frame: {
+      width?: boolean;
+      maxHeight?: string;
+      borderRadius?: string;
+    };
+    slide: {
+      id: number;
+      src: string;
+      alt?: string;
+      link: string;
+    }[];
+  };
+}
+
+export default function BSCarousel({ slides }: BSCarouselProps) {
   const history = useHistory();
   const [index, setIndex] = useState(0);
 
-  const handleSelect = (selectedIndex) => {
+  const handleSelect = (selectedIndex: number) => {
     setIndex(selectedIndex);
   };
 
@@ -44,7 +61,11 @@ export default function BSCarousel({ slides }) {
                 alt={slide.alt}
                 onClick={(e) => {
                   e.stopPropagation();
-                  history.push(slide.link);
+                  if (typeof slide.link === "string") {
+                    history.push(slide.link);
+                  } else {
+                    throw new Error("BSCarousel Component: Pass wrong type");
+                  }
                 }}
                 maxHeight={slides.frame.maxHeight}
                 borderRadius={slides.frame.borderRadius}
@@ -73,42 +94,3 @@ export default function BSCarousel({ slides }) {
     </>
   );
 }
-
-// 使用 react-bootstrap5 Carousel 原生組件
-// Prop 參數
-/**
- * slides (required) {
- *  useForBanner:   boolean
- *  frame: {
- *    width:        string (optional)
- *    maxHeight:    string (optional)
- *    borderRadius: string (optional)
- *  }
- *  slide: [
- *    {
- *      id  : number (required)
- *      src : string (required)
- *      alt : string (required)
- *      link: string (當 useForBanner 為 true 才傳入)
- *    }
- *  ]
- * }
- */
-
-BSCarousel.propTypes = {
-  slides: PropTypes.shape({
-    useForBanner: propTypes.bool,
-    frame: PropTypes.shape({
-      width: PropTypes.string,
-      maxHeight: PropTypes.string,
-      borderRadius: PropTypes.string,
-    }),
-    slide: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        src: PropTypes.string.isRequired,
-        alt: PropTypes.string.isRequired,
-      })
-    ),
-  }),
-};

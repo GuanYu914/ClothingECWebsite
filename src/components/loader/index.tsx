@@ -1,8 +1,11 @@
 import { useSpring, animated } from "react-spring";
-import PropTypes from "prop-types";
 import styled from "styled-components";
 
-const Container = styled.div`
+const Container = styled.div<{
+  width?: string;
+  height?: string;
+  marginTop: string;
+}>`
   position: relative;
   margin: 0 auto 0;
   width: ${(props) => props.width || "6rem"};
@@ -10,7 +13,13 @@ const Container = styled.div`
   margin-top: ${(props) => props.marginTop};
 `;
 
-export default function Loader({ width, height, marginTop }) {
+interface LoaderProps {
+  width?: string;
+  height?: string;
+  marginTop: string;
+}
+
+export default function Loader({ width, height, marginTop }: LoaderProps) {
   const styles = useSpring({
     loop: true,
     delay: 150,
@@ -42,9 +51,3 @@ export default function Loader({ width, height, marginTop }) {
     </Container>
   );
 }
-
-Loader.propTypes = {
-  width: PropTypes.string,
-  height: PropTypes.string,
-  marginTop: PropTypes.string,
-};

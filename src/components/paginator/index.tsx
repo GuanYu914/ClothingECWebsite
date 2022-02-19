@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { ReactComponent as arrowLeft } from "../../imgs/components/paginator/arrow-left.svg";
 import { ReactComponent as arrowRight } from "../../imgs/components/paginator/arrow-right.svg";
-import PropTypes from "prop-types";
 import { COLOR_PRIMARY1, COLOR_SECONDARY2 } from "../../constant";
 
 const Container = styled.div`
@@ -10,18 +9,18 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const PrevIcon = styled(arrowLeft)`
+const PrevIcon = styled(arrowLeft)<{ hidden?: boolean }>`
   width: 2rem;
   height: 2rem;
   cursor: pointer;
-  visibility: ${(props) => props.hidden && "hidden"};
+  visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
 `;
 
-const NextIcon = styled(arrowRight)`
+const NextIcon = styled(arrowRight)<{ hidden?: boolean }>`
   width: 2rem;
   height: 2rem;
   cursor: pointer;
-  visibility: ${(props) => props.hidden && "hidden"};
+  visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
 `;
 
 const PageIndicator = styled.div`
@@ -32,11 +31,13 @@ const PageIndicator = styled.div`
 
 const PageButton = styled.button.attrs(() => ({
   className: "fs-h2 btn-reset",
-}))`
+}))<{
+  isSelected?: boolean;
+}>`
   color: ${COLOR_SECONDARY2};
   margin-right: 1.2rem;
   user-select: none;
-  color: ${(props) => props.isSelected && COLOR_PRIMARY1}};
+  color: ${(props) => (props.isSelected ? COLOR_PRIMARY1 : COLOR_SECONDARY2)}};
 
   &:last-child {
     margin-right: 0;
@@ -48,12 +49,23 @@ const PageButton = styled.button.attrs(() => ({
   }
 `;
 
+interface PaginatorProps {
+  pagesInfo: {
+    totalsItems: number;
+    itemsPerPage: number;
+    currentPage: number;
+  };
+  handleJumpToPrevPage: () => void;
+  handleJumpToNextPage: () => void;
+  handleUpdateCurrentPage: (page: number) => void;
+}
+
 export default function Paginator({
   pagesInfo,
   handleJumpToPrevPage,
   handleJumpToNextPage,
   handleUpdateCurrentPage,
-}) {
+}: PaginatorProps) {
   // 使用預設值
   if (pagesInfo.totalsItems === undefined) {
     pagesInfo.totalsItems = 1;
@@ -84,7 +96,8 @@ export default function Paginator({
             key={index}
             isSelected={pagesInfo.currentPage === page ? true : false}
             onClick={(e) => {
-              handleUpdateCurrentPage(Number(e.target.innerText.trim()));
+              const domInfo = e.target as HTMLElement;
+              handleUpdateCurrentPage(Number(domInfo.innerText.trim()));
             }}
           >
             {page + " "}
@@ -100,27 +113,3 @@ export default function Paginator({
     </Container>
   );
 }
-
-/**
- *  pagesInfo: {
- *    totalsItems: number,
- *    itemsPerPage: number,
- *    currentPage: number
- *  }
- *
- *  handleJumpToPrevPage: function
- *  handleJumpToNextPage: function
- *  handleUpdateCurrentPage: function
- *
- */
-
-Paginator.propTypes = {
-  pagesInfo: PropTypes.shape({
-    totalsItems: PropTypes.number,
-    itemsPerPage: PropTypes.number,
-    currentPage: PropTypes.number,
-  }),
-  handleJumpToPrevPage: PropTypes.func,
-  handleJumpToNextPage: PropTypes.func,
-  handleUpdateCurrentPage: PropTypes.func,
-};

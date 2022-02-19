@@ -21,6 +21,7 @@ const DefaultButton = styled.button.attrs(() => ({
   width: 8.6rem;
   height: 3.2rem;
   cursor: pointer;
+  border-radius: unset;
 
   ${BREAKPOINT_PAD} {
     width: 10.6rem;
@@ -28,30 +29,46 @@ const DefaultButton = styled.button.attrs(() => ({
   }
 `;
 
-export const CTAPrimaryButton = styled(DefaultButton)`
+export const CTAPrimaryButton = styled(DefaultButton)<{
+  isRounded?: boolean;
+  borderRadius?: string;
+  width?: string;
+  margin?: string;
+}>`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_PRIMARY1};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
-  border-radius: ${(props) => props.borderRadius};
+  border-radius: ${(props) => props.borderRadius || "unset"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
 
-export const CTASecondaryButton = styled(DefaultButton)`
+export const CTASecondaryButton = styled(DefaultButton)<{
+  isRounded?: boolean;
+  borderRadius?: string;
+  width?: string;
+  margin?: string;
+}>`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_SECONDARY1};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
-  border-radius: ${(props) => props.borderRadius};
+  border-radius: ${(props) => props.borderRadius || "unset"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
 `;
 
-export const GhostPrimaryButton = styled(DefaultButton)`
+export const GhostPrimaryButton = styled(DefaultButton)<{
+  isRounded?: boolean;
+  borderRadius?: string;
+  width?: string;
+  margin?: string;
+  border?: string;
+}>`
   color: ${COLOR_PRIMARY1};
   border-color: ${BR_PRIMARY1};
   background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
-  border-radius: ${(props) => props.borderRadius};
+  border-radius: ${(props) => props.borderRadius || "unset"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;
@@ -60,12 +77,18 @@ export const GhostPrimaryButton = styled(DefaultButton)`
   border-width: ${(props) => props.border || "0.2rem"};
 `;
 
-export const GhostSecondaryButton = styled(DefaultButton)`
+export const GhostSecondaryButton = styled(DefaultButton)<{
+  isRounded?: boolean;
+  borderRadius?: string;
+  width?: string;
+  margin?: string;
+  border?: string;
+}>`
   color: ${COLOR_SECONDARY1};
   border-color: ${BR_SECONDARY1};
   background-color: ${BG_SECONDARY3};
   border-radius: ${(props) => props.isRounded && "1.4rem"};
-  border-radius: ${(props) => props.borderRadius};
+  border-radius: ${(props) => props.borderRadius || "unset"};
   width: ${(props) => props.width};
   margin: ${(props) => props.margin || "0"};
   border-style: solid;

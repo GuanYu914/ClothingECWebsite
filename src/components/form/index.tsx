@@ -1,6 +1,6 @@
+import React from "react";
 import styled from "styled-components";
-import PropTypes from "prop-types";
-import { CTAPrimaryButton } from "../../components/button";
+import { CTAPrimaryButton } from "../button";
 import { useHistory } from "react-router-dom";
 import {
   BG_SECONDARY3,
@@ -12,7 +12,7 @@ import {
 
 const Container = styled.section.attrs(() => ({
   className: "box-shadow-light",
-}))`
+}))<{ width?: string }>`
   background-color: ${BG_SECONDARY3};
   width: ${(props) => props.width || "24rem"};
   height: fit-content;
@@ -38,7 +38,10 @@ const FormField = styled.h2.attrs(() => ({
   margin-bottom: 0.5rem;
 `;
 
-const InputArea = styled.input.attrs((props) => ({
+const InputArea = styled.input.attrs<{
+  type?: string;
+  maxLength: string;
+}>((props) => ({
   type: props.type || "text",
   maxLength: props.maxLength,
 }))`
@@ -59,7 +62,7 @@ const InputArea = styled.input.attrs((props) => ({
 
 const FormHelper = styled.h3.attrs(() => ({
   className: "fs-h3",
-}))`
+}))<{ color?: string }>`
   color: ${(props) => props.color || COLOR_PRIMARY1};
 `;
 
@@ -95,6 +98,29 @@ const LoginButton = styled.a.attrs(() => ({
   }
 `;
 
+interface FormProps {
+  width?: string;
+  formState: {
+    id: number;
+    field: string;
+    type?: string;
+    readOnly?: boolean;
+    inputValue: string;
+    maxLength: number;
+    helperColor?: string;
+    helperMsg: string;
+  }[];
+  useForLogin?: boolean;
+  useForRegister?: boolean;
+  useForProfileEditing?: boolean;
+  handleInputChange: (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+  handleFocusOut: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSubmit: () => void;
+}
+
 export default function Form({
   width,
   formState,
@@ -104,7 +130,7 @@ export default function Form({
   useForLogin,
   useForRegister,
   useForProfileEditing,
-}) {
+}: FormProps) {
   const history = useHistory();
   return (
     <Container width={width}>
@@ -189,44 +215,3 @@ export default function Form({
     </Container>
   );
 }
-
-/**
- *  Form PropTypes 屬性
- *  Form: {
- *    width: string,
- *    formState: [
- *      {
- *        id: number,         (required)
- *        type: string,       (required)
- *        maxLength: number,  (required)
- *        field: string,      (required)
- *        inputValue: string, (required)
- *      }
- *    ],
- *    handleInputChange: function,  (required)
- *    handleSubmit: function,       (required)
- *    handleFocusOut: function,     (required)
- *    useForLogin: function,        (根據使用頁面決定，跟下列三個擇一即可)
- *    useForRegister: function,
- *    useForProfileEditing: function,
- *  }
- */
-
-Form.propTypes = {
-  width: PropTypes.string,
-  formState: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      type: PropTypes.string.isRequired,
-      maxLength: PropTypes.number.isRequired,
-      field: PropTypes.string.isRequired,
-      inputValue: PropTypes.string.isRequired,
-    })
-  ),
-  handleInputChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  handleFocusOut: PropTypes.func.isRequired,
-  useForLogin: PropTypes.bool,
-  useForRegister: PropTypes.bool,
-  useForProfileEditing: PropTypes.bool,
-};

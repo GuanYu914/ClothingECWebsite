@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
 import {
@@ -12,9 +11,12 @@ import {
   COLOR_PRIMARY2,
 } from "../../constant";
 import { isEmptyObj } from "../../util";
-import { useSelector } from "react-redux";
+import { useReduxSelector } from "../../redux/store";
 
-const ItemsContainer = styled.section`
+const ItemsContainer = styled.section<{
+  marginTop?: string;
+  horizontalAlign?: string;
+}>`
   margin-top: ${(props) => props.marginTop || "1.5rem"};
   width: 100%;
   display: flex;
@@ -25,7 +27,10 @@ const ItemsContainer = styled.section`
 
 const ItemContainer = styled.section.attrs(() => ({
   className: "box-shadow-dark",
-}))`
+}))<{
+  marginLeft?: string;
+  img: string;
+}>`
   background-color: ${BG_SECONDARY1};
   width: 18rem;
   height: 14rem;
@@ -96,6 +101,23 @@ const FavoriteFilledIcon = styled(heartFilled)`
   flex-shrink: 0;
 `;
 
+interface CardContainerProps {
+  items: {
+    id: number;
+    product: {
+      name: string;
+      price: string;
+      img: string;
+    };
+    isLiked: boolean;
+  }[];
+  horizontalAlign?: string;
+  marginTop?: string;
+  marginLeft?: string;
+  handleLiked: (id: number) => void;
+  handleOnClick: () => void;
+}
+
 export default function CardContainer({
   items,
   handleLiked,
@@ -103,9 +125,9 @@ export default function CardContainer({
   horizontalAlign,
   marginTop,
   marginLeft,
-}) {
+}: CardContainerProps) {
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
       {items.map((item) => (
@@ -147,45 +169,3 @@ export default function CardContainer({
     </ItemsContainer>
   );
 }
-
-/*  props 參數
-    items (required) {
-      id: number      (required)
-      product: {
-        name: string  (required)
-        price: string (required)
-        img: string   (required)
-      },
-      isLiked: boolean(required)
-    }
-
-    handleLiked: function (required)
-    ps. toggle item 物件的 isLiked 屬性
-
-    handleOnClick: function (required)
-
-    horizontalAlign: string (optional)
-    ps. 決定 ItemsContainer 是否 justify-content: center
-
-    marginLeft: string (optional) 
-    ps. 設置 ItemContainer 的 margin-left，預設為 1rem
-*/
-
-CardContainer.propTypes = {
-  items: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      product: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        price: PropTypes.string.isRequired,
-        img: PropTypes.string.isRequired,
-      }),
-      isLiked: PropTypes.bool.isRequired,
-    })
-  ),
-  horizontalAlign: PropTypes.string,
-  marginTop: PropTypes.string,
-  marginLeft: PropTypes.string,
-  handleLiked: PropTypes.func.isRequired,
-  handleOnClick: PropTypes.func.isRequired,
-};

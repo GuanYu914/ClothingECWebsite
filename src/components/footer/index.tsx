@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import { ReactComponent as github } from "../../imgs/components/footer/github.svg";
 import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.svg";
 import {
@@ -7,9 +6,15 @@ import {
   BG_SECONDARY1,
   COLOR_PRIMARY1,
   COLOR_SECONDARY3,
+  FOOTER_GITHUB_LINK,
+  FOOTER_MAIL_LINK,
 } from "../../constant";
 
-const Container = styled.footer`
+const Container = styled.footer<{
+  marginTop?: string;
+  marginBottom?: string;
+  bgColor?: string;
+}>`
   color: ${COLOR_SECONDARY3};
   background-color: ${BG_SECONDARY1};
   width: 100%;
@@ -29,24 +34,22 @@ const IconsContainer = styled.section`
   align-items: center;
 `;
 
-const GithubLink = styled(github)`
+const GithubLink = styled(github)<{ color?: string }>`
   width: 2.4rem;
   height: 2.4rem;
   margin: 0 0.4rem;
-  color: ${(props) =>
-    props.color === COLOR_PRIMARY1 ? COLOR_SECONDARY3 : COLOR_PRIMARY1};
+  color: ${(props) => props.color || COLOR_PRIMARY1};
 
   &:hover {
     cursor: pointer;
   }
 `;
 
-const MailLink = styled(mail)`
+const MailLink = styled(mail)<{ color?: string }>`
   width: 2.4rem;
   height: 2.4rem;
   margin: 0 0.4rem;
-  color: ${(props) =>
-    props.color === COLOR_PRIMARY1 ? COLOR_SECONDARY3 : COLOR_PRIMARY1};
+  color: ${(props) => props.color || COLOR_PRIMARY1};
 
   &:hover {
     cursor: pointer;
@@ -55,14 +58,24 @@ const MailLink = styled(mail)`
 
 const ProjectDescription = styled.h3.attrs(() => ({
   className: "fs-h3",
-}))`
-  color: ${(props) =>
-    props.color === COLOR_PRIMARY1 ? COLOR_SECONDARY3 : COLOR_PRIMARY1};
+}))<{ color?: string }>`
+  color: ${(props) => props.color || COLOR_PRIMARY1};
   padding-top: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
 `;
-export default function Footer({ marginTop, marginBottom, bgColor }) {
+
+interface FooterProps {
+  marginTop?: string;
+  marginBottom?: string;
+  bgColor?: string;
+}
+
+export default function Footer({
+  marginTop,
+  marginBottom,
+  bgColor,
+}: FooterProps) {
   return (
     <Container
       marginTop={marginTop}
@@ -73,13 +86,13 @@ export default function Footer({ marginTop, marginBottom, bgColor }) {
         <GithubLink
           color={bgColor}
           onClick={() => {
-            window.open("https://github.com/GuanYu914/clothing-ec-website");
+            window.open(FOOTER_GITHUB_LINK);
           }}
         />
         <MailLink
           color={bgColor}
           onClick={() => {
-            window.open("mailto:yu.uiux.designer@gmail.com");
+            window.open(FOOTER_MAIL_LINK);
           }}
         />
       </IconsContainer>
@@ -92,9 +105,3 @@ export default function Footer({ marginTop, marginBottom, bgColor }) {
     </Container>
   );
 }
-
-Footer.propTypes = {
-  marginTop: PropTypes.string,
-  marginBottom: PropTypes.string,
-  bgColor: PropTypes.string.isRequired,
-};

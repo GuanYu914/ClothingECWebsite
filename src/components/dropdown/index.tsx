@@ -1,5 +1,5 @@
+import React from "react";
 import styled from "styled-components";
-import PropTypes from "prop-types";
 import {
   BG_PRIMARY1,
   BG_SECONDARY4,
@@ -10,14 +10,17 @@ import {
 import { CTAPrimaryButton } from "../button";
 import { useHistory } from "react-router-dom";
 
-const DropDownContainer = styled.div`
+const DropDownContainer = styled.div<{ zIndex: string }>`
   display: inline-block;
   position: relative;
   z-index: ${(props) => props.zIndex};
 `;
 const DropDownContent = styled.section.attrs(() => ({
   className: "fs-h3 box-shadow-dark",
-}))`
+}))<{
+  height?: string;
+  width?: string;
+}>`
   color: ${COLOR_SECONDARY2};
   background-color: ${BG_SECONDARY4};
   visibility: hidden;
@@ -86,7 +89,7 @@ const CartProductsContainer = styled.div`
   }
 `;
 
-const ProductThumbnail = styled.div`
+const ProductThumbnail = styled.div<{ url: string }>`
   width: 4rem;
   height: 4rem;
   background: url(${(props) => props.url});
@@ -114,7 +117,7 @@ const ProductInfo = styled.div`
   margin-top: 0.5rem;
 `;
 
-const ProductColor = styled.div`
+const ProductColor = styled.div<{ color: string }>`
   width: 1.4rem;
   height: 1.4rem;
   background-color: ${(props) => props.color};
@@ -133,18 +136,45 @@ const ProductQuantity = styled.h3.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
+interface DropDownProps {
+  dropDownInfo: {
+    width?: string;
+    height?: string;
+    zIndex: string;
+    useForLinks?: boolean;
+    useForCart?: boolean;
+    useForOption?: boolean;
+    options?: {
+      id: number;
+      name: string;
+      url: string;
+    }[];
+    products?: {
+      id: number;
+      pid: number;
+      url: string;
+      name: string;
+      color: string;
+      size: string;
+      quantity: number;
+    }[];
+  };
+  handleOptionSelection?: () => void;
+  children: React.ReactChild;
+}
+
 export default function DropDown({
   dropDownInfo,
   children,
   handleOptionSelection,
-}) {
+}: DropDownProps) {
   const history = useHistory();
   return (
     <DropDownContainer zIndex={dropDownInfo.zIndex}>
       {children}
       {dropDownInfo.useForLinks && (
         <DropDownContent width={dropDownInfo.width}>
-          {dropDownInfo.options.map((option) => (
+          {dropDownInfo.options?.map((option) => (
             <LinkName
               key={option.id}
               onClick={() => {
@@ -158,7 +188,7 @@ export default function DropDown({
       )}
       {dropDownInfo.useForOption && (
         <DropDownContent width={dropDownInfo.width}>
-          {dropDownInfo.options.map((option) => (
+          {dropDownInfo.options?.map((option) => (
             <OptionName
               key={option.id}
               data-option-name={option.name}
@@ -170,7 +200,7 @@ export default function DropDown({
         </DropDownContent>
       )}
       {dropDownInfo.useForCart &&
-        (dropDownInfo.products.length ? (
+        (dropDownInfo.products?.length ? (
           <DropDownContent
             width={dropDownInfo.width}
             height={dropDownInfo.height}
@@ -224,58 +254,3 @@ export default function DropDown({
     </DropDownContainer>
   );
 }
-
-/**
- *  DropDown PropTypes 屬性
- *  children: react component
- *  dropDownInfo: {
- *    width: string,
- *    height: string,
- *    zIndex: string,
- *    useForLinks, useForCart, useForOption: boolean, ( 擇一 )
- *    options: [{           ( useForLinks, useForOption 為 true 時必須傳入 )
- *      id: number,
- *      name: string,
- *      url: string         ( useForOption 為 true 時不須傳入 )
- *    }],
- *    products: [{          ( useForBag 為 true 時必須傳入 )
- *      id: number,
- *      url: string,
- *      name: string,
- *      color: string,
- *      size: string,
- *      quantity: number,
- *    }],
- *    handleOptionSelection: function ( useForOption 為 true 時必須傳入 )
- *  }
- */
-
-DropDown.propTypes = {
-  children: PropTypes.element.isRequired,
-  dropDownInfo: PropTypes.shape({
-    width: PropTypes.string,
-    height: PropTypes.string,
-    zIndex: PropTypes.string,
-    useForLinks: PropTypes.bool,
-    useForCart: PropTypes.bool,
-    useForOption: PropTypes.bool,
-    options: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number,
-        name: PropTypes.string,
-        url: PropTypes.string,
-      })
-    ),
-    products: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        url: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        color: PropTypes.string.isRequired,
-        size: PropTypes.string.isRequired,
-        quantity: PropTypes.number.isRequired,
-      })
-    ),
-  }),
-  handleOptionSelection: PropTypes.func,
-};
