@@ -4,12 +4,12 @@ export const HEADER_HEIGHT_PAD = "5.6rem";
 
 // Z-Index 相關常數
 // 利用等級區分，方便之後管理
-export const Z_INDEX_LV1 = "9";
-export const Z_INDEX_LV2 = "99";
-export const Z_INDEX_LV3 = "999";
-export const Z_INDEX_LV4 = "9999";
-export const Z_INDEX_LV5 = "99999";
-export const Z_INDEX_LV6 = "999999";
+export const Z_INDEX_LV1 = "1";
+export const Z_INDEX_LV2 = "2";
+export const Z_INDEX_LV3 = "3";
+export const Z_INDEX_LV4 = "4";
+export const Z_INDEX_LV5 = "5";
+export const Z_INDEX_LV6 = "6";
 
 // 定義斷點，如果要修改數值，也請修改 src/css/fonts.css 檔案
 export const BREAKPOINT_MOBILE = "@media (min-width: 320px)";
@@ -95,3 +95,8 @@ export const COOKIE_GUEST_CART_NAME = "cart-guest";
 
 // 定義根目錄
 export const ROOT_DIR = "/";
+
+// 定義 Footer 元件的相關連結
+export const FOOTER_GITHUB_LINK =
+  "https://github.com/GuanYu914/clothing-ec-website";
+export const FOOTER_MAIL_LINK = "mailto:yu.uiux.designer@gmail.com";
