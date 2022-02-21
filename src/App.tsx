@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Location } from "history";
 import { Switch, Route, useLocation } from "react-router-dom";
 import HomePage from "./pages/home-page";
 import ProductsPage from "./pages/products-page";
@@ -27,7 +28,7 @@ import { useReduxDispatch, useReduxSelector } from "./redux/store";
 
 function App(): React.ReactElement {
   // 從 react-router 拿 URL 資訊
-  const location = useLocation();
+  const location = useLocation<Location>();
   // 產生 dispatch
   const dispatch = useReduxDispatch();
   // 從 redux-store 拿用戶資訊
