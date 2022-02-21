@@ -129,16 +129,36 @@ function App(): React.ReactElement {
   useEffect(() => {
     if (location.pathname === "/logout") {
       dispatch(logoutUser());
-      dispatch(getFavoriteItems());
-      dispatch(getCart());
       return;
     }
     dispatch(getUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     // eslint-disable-next-line
   }, []);
-  // 根據 store api call 相關狀態，決定是否要顯示畫面或錯誤視窗
+  // 如果成功拿到用戶資訊，則發送購物車跟喜好清單 API
+  useEffect(() => {
+    if (userReqProcessingState === false && userReqErrState.isShow === false) {
+      dispatch(getFavoriteItems());
+      dispatch(getCart());
+    }
+    // eslint-disable-next-line
+  }, [userReqProcessingState, userReqErrState.isShow]);
+  // 如果購物車跟喜好清單都有成功拿到回應，則關閉 loading 動畫
+  useEffect(() => {
+    if (
+      cartReqProcessingState === false &&
+      favoriteItemsReqProcessingState === false &&
+      cartReqErrState.isShow === false &&
+      favoriteItemsReqErrState.isShow === false
+    ) {
+      setIsLoadingPage(false);
+    }
+  }, [
+    cartReqProcessingState,
+    favoriteItemsReqProcessingState,
+    cartReqErrState.isShow,
+    favoriteItemsReqErrState.isShow,
+  ]);
+  // 如果 api 發送狀態有誤，顯示 loading 動畫跟秀出錯誤訊息
   useEffect(() => {
     if (
       userReqErrState.isShow === true ||
@@ -148,20 +168,7 @@ function App(): React.ReactElement {
       setIsLoadingPage(true);
       setShowModalForApiError(true);
     }
-    if (
-      userReqErrState.isShow === false &&
-      cartReqErrState.isShow === false &&
-      favoriteItemsReqErrState.isShow === false &&
-      userReqProcessingState === false &&
-      cartReqProcessingState === false &&
-      favoriteItemsReqProcessingState === false
-    ) {
-      setIsLoadingPage(false);
-    }
   }, [
-    userReqProcessingState,
-    cartReqProcessingState,
-    favoriteItemsReqProcessingState,
     userReqErrState.isShow,
     cartReqErrState.isShow,
     favoriteItemsReqErrState.isShow,

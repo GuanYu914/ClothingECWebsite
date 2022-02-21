@@ -24,8 +24,6 @@ import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
 import { sendUserLoginDataApi } from "../../Webapi";
 import { getUser } from "../../redux/reducers/userSlice";
-import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
-import { getCart } from "../../redux/reducers/cartSlice";
 import { useReduxDispatch } from "../../redux/store";
 import { FormStatePayload } from "./types";
 
@@ -298,8 +296,6 @@ export default function LoginPage() {
   function handleSubmitOpForLoginSuccessfully(): void {
     setShowModalForLoginSuccessfully(false);
     dispatch(getUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情漸: 登入成功
@@ -307,8 +303,6 @@ export default function LoginPage() {
   function handleCancelOpForLoginSuccessfully(): void {
     setShowModalForLoginSuccessfully(false);
     dispatch(getUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情境: 發送 API 過程有異常

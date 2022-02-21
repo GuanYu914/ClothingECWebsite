@@ -15,8 +15,6 @@ import { CTAPrimaryButton, GhostPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
 import { useEffect } from "react";
 import { logoutUser } from "../../redux/reducers/userSlice";
-import { getCart } from "../../redux/reducers/cartSlice";
-import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
 import { useReduxDispatch } from "../../redux/store";
 
 const PageContainer = styled.div`
@@ -76,8 +74,6 @@ export default function LogoutPage() {
 
   useEffect(() => {
     dispatch(logoutUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     // eslint-disable-next-line
   }, []);
 

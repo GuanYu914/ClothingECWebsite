@@ -25,8 +25,6 @@ import Modal from "../../components/modal";
 import { sendUserRegisterDataApi } from "../../Webapi";
 import { useHistory } from "react-router-dom";
 import { getUser } from "../../redux/reducers/userSlice";
-import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
-import { getCart } from "../../redux/reducers/cartSlice";
 import { useReduxDispatch } from "../../redux/store";
 import { RegisterFormStatePayload } from "./types";
 
@@ -369,8 +367,6 @@ export default function RegisterPage() {
   function handleSubmitOpForRegisterSuccessfully(): void {
     setShowModalForRegisterSuccessfully(false);
     dispatch(getUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情境: 註冊成功
@@ -378,8 +374,6 @@ export default function RegisterPage() {
   function handleCancelOpForRegisterSuccessfully(): void {
     setShowModalForRegisterSuccessfully(false);
     dispatch(getUser());
-    dispatch(getFavoriteItems());
-    dispatch(getCart());
     history.push("/");
   }
   // modal 顯示情境: 發送 API 過程有異常
