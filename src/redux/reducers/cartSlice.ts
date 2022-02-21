@@ -66,7 +66,7 @@ interface AddCartItemPayload {
   quantity: number;
 }
 
-interface UploadCartItemPayload {
+export interface UploadCartItemPayload {
   id: number;
   pid: number;
   size: string;

@@ -42,7 +42,7 @@ interface RemoveFavoriteItemPayload {
   pid: number;
 }
 
-interface UploadFavoriteItemPayload {
+export interface UploadFavoriteItemPayload {
   pid: number;
 }
 

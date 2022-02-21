@@ -7,10 +7,12 @@ import {
   PRODUCTS_QUERY_INIT_LIMIT,
   PRODUCTS_QUERY_INIT_OFFSET,
 } from "./constant";
+import { UploadFavoriteItemPayload } from "./redux/reducers/FavoriteItemsSlice"
+import { UploadCartItemPayload } from "./redux/reducers/cartSlice"
 // 這邊會串接後端 api
 const DevURL = "http://192.168.0.15/clothing_ec";
 // 將來要發佈到前端網站上的網域
-// const ProdURL = "https://emorychen.com/clothing-ec";
+// const ProdURL = "https://emory.work/clothing-ec/api";
 
 // 拿 HomePage 的 Banner
 export const getBannersApi = async function () {
@@ -26,7 +28,7 @@ export const getMainCategoriesApi = async function () {
 // limit  限制多少筆回傳
 // (offset, limit) = (0, 5) => 代表拿一開的 5 筆資料
 // 拿 HomePage 的熱銷品項
-export const getHotItemsApi = async function (offset, limit) {
+export const getHotItemsApi = async function (offset: number, limit: number) {
   if (offset === undefined) {
     offset = HOT_ITEMS_QUERY_INIT_OFFSET;
   }
@@ -42,7 +44,7 @@ export const getHotItemsApi = async function (offset, limit) {
 // limit  限制多少筆回傳
 // (offset, limit) = (0, 5) => 代表拿一開的 5 筆資料
 // 拿 HomePage 的顧客評價
-export const getUserCommentsApi = async function (offset, limit) {
+export const getUserCommentsApi = async function (offset: number, limit: number) {
   if (offset === undefined) {
     offset = COMMENTS_QUERY_INIT_OFFSET;
   }
@@ -61,11 +63,11 @@ export const getAllCategoriesApi = async function () {
 
 // 拿 ProductsPage 的當前分類產品
 export const getProductsByCategoryApi = async function (
-  mainCategory,
-  subCategory,
-  detailedCategory,
-  offset,
-  limit
+  mainCategory: string,
+  subCategory: string | undefined,
+  detailedCategory: string,
+  offset: number,
+  limit: number
 ) {
   if (offset === undefined) {
     offset = PRODUCTS_QUERY_INIT_OFFSET;
@@ -79,15 +81,15 @@ export const getProductsByCategoryApi = async function (
 };
 
 // 拿 SingeProductPage 當前頁面產品
-export const getProductByIDApi = async function (pid) {
+export const getProductByIDApi = async function (pid: number) {
   return await axios(`${DevURL}/handleGetProduct.php?id=${pid}`);
 };
 
 // 發送用戶註冊資訊
 export const sendUserRegisterDataApi = async function (
-  nickname,
-  account,
-  password
+  nickname: string,
+  account: string,
+  password: string
 ) {
   return await axios.post(
     `${DevURL}/handleRegister.php`,
@@ -101,7 +103,7 @@ export const sendUserRegisterDataApi = async function (
 };
 
 // 發送用戶登入資訊
-export const sendUserLoginDataApi = async function (account, password) {
+export const sendUserLoginDataApi = async function (account: string, password: string) {
   return await axios.post(
     `${DevURL}/handleLogin.php`,
     { account, password },
@@ -112,7 +114,7 @@ export const sendUserLoginDataApi = async function (account, password) {
 };
 
 // 修改用戶資訊
-export const sendUpdatedUserDataApi = async function (nickname, password) {
+export const sendUpdatedUserDataApi = async function (nickname: string, password: string) {
   return await axios.post(
     `${DevURL}/handleProfileEdit.php`,
     { nickname, password },
@@ -142,7 +144,7 @@ export const getFavoriteItemsApi = async function () {
 };
 
 // 上傳用戶收藏清單
-export const uploadFavoriteItemsApi = async function (productsInfo) {
+export const uploadFavoriteItemsApi = async function (productsInfo: UploadFavoriteItemPayload[]) {
   return await axios.post(
     `${DevURL}/handleUploadFavoriteItems.php`,
     { productsInfo },
@@ -158,7 +160,7 @@ export const getCartItemsApi = async function () {
 };
 
 // 上傳用戶購買
-export const uploadCartItemsApi = async function (productsInfo) {
+export const uploadCartItemsApi = async function (productsInfo: UploadCartItemPayload[]) {
   return await axios.post(
     `${DevURL}/handleUploadCartItems.php`,
     { productsInfo },
