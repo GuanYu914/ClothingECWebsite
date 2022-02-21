@@ -100,3 +100,9 @@ export const ROOT_DIR = "/";
 export const FOOTER_GITHUB_LINK =
   "https://github.com/GuanYu914/clothing-ec-website";
 export const FOOTER_MAIL_LINK = "mailto:yu.uiux.designer@gmail.com";
+
+// 定義 Products page 的 filter 變數
+export const FILTER_INIT_OPTION = "尚未套用篩選條件";
+export const FILTER_OPTION_1 = "價格低至高";
+export const FILTER_OPTION_2 = "價格高至低";
+export const FILTER_RESET_OPTION = "取消套用篩選";
