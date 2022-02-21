@@ -30,8 +30,8 @@ import {
 } from "../../constant";
 import Modal from "../../components/modal";
 import { useHistory } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
 import { addCartItem } from "../../redux/reducers/cartSlice";
+import { useReduxDispatch, useReduxSelector } from "../../redux/store";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -55,7 +55,10 @@ const ContentContainer = styled.main`
 
 const CartTitle = styled.h1.attrs(() => ({
   className: "fs-h1",
-}))`
+}))<{
+  margin?: string;
+  textAlign?: boolean;
+}>`
   color: ${COLOR_SECONDARY2};
   padding-top: 2rem;
   margin: ${(props) => props.margin || "0 0 4rem 0"};
@@ -216,9 +219,9 @@ const LinkButton = styled(linkIcon)`
 
 export default function CartPage() {
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 從 redux-store拿購物車物品資訊
-  const cartItemsFromStore = useSelector((store) => store.cart.items);
+  const cartItemsFromStore = useReduxSelector((store) => store.cart.items);
   // 透過 react router hook 換頁
   const history = useHistory();
   // pid 不能當作 id 使用，因為合併產品時需要
@@ -285,13 +288,17 @@ export default function CartPage() {
   });
 
   // 使用 useRef 暫存目前需要被合併的產品 id
-  const mergeProductId = useRef(null);
+  interface mergeProductIdObject {
+    mergeParent: number;
+    mergeChild: number;
+  }
+  const mergeProductId = useRef<null | mergeProductIdObject>(null);
 
   // 選擇產品顏色
-  function handleSelectPickerColor(productId, colorId) {
+  function handleSelectPickerColor(productId: number, colorId: number): void {
     mergeProductId.current = checkSameProduct(productId, colorId, null);
     // 如果沒有找到相同的產品需要合併的
-    if (mergeProductId.current === undefined) {
+    if (mergeProductId.current === null) {
       setCartForLocal(
         cartForLocal.map((cartProduct) =>
           cartProduct.id === productId
@@ -316,10 +323,10 @@ export default function CartPage() {
     }
   }
   // 選擇產品尺寸
-  function handleSelectPickerSize(productId, sizeId) {
+  function handleSelectPickerSize(productId: number, sizeId: number): void {
     mergeProductId.current = checkSameProduct(productId, null, sizeId);
     // 如果沒有找到相同的產品需要合併的
-    if (mergeProductId.current === undefined) {
+    if (mergeProductId.current === null) {
       setCartForLocal(
         cartForLocal.map((cartProduct) =>
           cartProduct.id === productId
@@ -344,7 +351,7 @@ export default function CartPage() {
     }
   }
   // 增加產品數量
-  function handleIncreaseQuantity(productId) {
+  function handleIncreaseQuantity(productId: number): void {
     setCartForLocal(
       cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
@@ -360,7 +367,7 @@ export default function CartPage() {
     );
   }
   // 減少產品數量
-  function handleDecreaseQuantity(productId) {
+  function handleDecreaseQuantity(productId: number): void {
     setCartForLocal(
       cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
@@ -379,7 +386,7 @@ export default function CartPage() {
     );
   }
   // 選擇要結帳的產品
-  function handleChangeProductSelectedState(productId) {
+  function handleChangeProductSelectedState(productId: number): void {
     setCartForLocal(
       cartForLocal.map((cartProduct) =>
         cartProduct.id === productId
@@ -389,7 +396,7 @@ export default function CartPage() {
     );
   }
   // 刪除購物車中的產品
-  function handleDeleteSelectedProduct(productId) {
+  function handleDeleteSelectedProduct(productId: number): void {
     setCartForLocal(
       cartForLocal.filter((cartProduct) => cartProduct.id !== productId)
     );
@@ -435,7 +442,7 @@ export default function CartPage() {
     return checkedPrice;
   }, [cartForLocal]);
   // 點選 "全選" 按鈕事件
-  function handleToggleSelectAllProducts() {
+  function handleToggleSelectAllProducts(): void {
     const flagCheckedAll = handleCheckAllSelectedState().allChecked;
     setCartForLocal(
       cartForLocal.map((cartProduct) => ({
@@ -446,9 +453,12 @@ export default function CartPage() {
   }
   // 合併相同規格的產品 => 顏色跟尺寸必須一樣
   // mergeParent 代表合併那方，mergeChild 代表被合併那方
-  function handleMergeSameProduct() {
-    const { mergeParent, mergeChild } = mergeProductId.current;
-    let priceOfChild = cartForLocal.filter(
+  // [注意] 必須保證 mergeProductId.current 一定有 { mergeParent, mergeChild }
+  function handleMergeSameProduct(): void {
+    // 使用型別斷言確定一定有 { mergeParent, mergeChild } 物件傳進來
+    const { mergeParent, mergeChild } =
+      mergeProductId.current as mergeProductIdObject;
+    let quantityOfChild = cartForLocal.filter(
       (product) => product.id === mergeChild
     )[0].picker.quantity;
     let newCartForLocal = cartForLocal
@@ -457,9 +467,10 @@ export default function CartPage() {
         product.id === mergeParent
           ? {
               ...product,
+              // id: cartForLocal.length + 1,
               picker: {
                 ...product.picker,
-                quantity: product.picker.quantity + priceOfChild,
+                quantity: product.picker.quantity + quantityOfChild,
               },
             }
           : { ...product }
@@ -471,8 +482,17 @@ export default function CartPage() {
   // 尋找購物車內是否存在相同的規格的產品 => 顏色跟尺寸必須一樣
   // 如果找到可以合併的產品，回傳 mergeParent 代表合併那方，mergeChild 代表被合併那方
   // 沒有可合併的產品則回傳 undefined
-  function checkSameProduct(productId, selectedColorId, selectedSizeId) {
-    const searchedProduct = {
+  interface searchedProduct {
+    pid: null | number;
+    color: null | string;
+    size: null | string;
+  }
+  function checkSameProduct(
+    productId: number,
+    selectedColorId: number | null,
+    selectedSizeId: number | null
+  ): null | mergeProductIdObject {
+    const searchedProduct: searchedProduct = {
       pid: null,
       color: null,
       size: null,
@@ -522,10 +542,10 @@ export default function CartPage() {
         }
       }
     }
-    return undefined;
+    return null;
   }
   // 導引到產品相關頁面
-  function handleRedirectToProductPage(pid) {
+  function handleRedirectToProductPage(pid: number): void {
     history.push(`/product/${pid}`);
   }
 

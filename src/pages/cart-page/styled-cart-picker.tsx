@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { ReactComponent as minusSquare } from "../../imgs/pages/cart-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/cart-page/plus-square.svg";
-import PropTypes from "prop-types";
 import { COLOR_PRIMARY1, COLOR_SECONDARY2, BR_PRIMARY1 } from "../../constant";
 
 const Container = styled.section``;
@@ -27,7 +26,7 @@ const PickerColors = styled.div`
   margin-top: -0.8rem;
 `;
 
-const PickerColor = styled.div`
+const PickerColor = styled.div<{ color: string; selected?: string }>`
   width: 2.2rem;
   height: 2.2rem;
   // 只有 flex wrapped item 才會套用 margin-top
@@ -66,7 +65,7 @@ const PickerSizes = styled.div`
 
 const PickerSize = styled.h3.attrs(() => ({
   className: "fs-h2",
-}))`
+}))<{ selected: string }>`
   color: ${COLOR_SECONDARY2};
   // 只有 flex wrapped item 才會套用 margin-top
   margin-top: 0.8rem;
@@ -130,6 +129,28 @@ const PickerPriceNumber = styled.h3.attrs(() => ({
   color: ${COLOR_SECONDARY2};
 `;
 
+interface CartPickerProps {
+  productId: number;
+  picker: {
+    colors: {
+      id: number;
+      hexcode: string;
+      selected: boolean;
+    }[];
+    sizes: {
+      id: number;
+      name: string;
+      selected: boolean;
+    }[];
+    quantity: number;
+    unitPrice: number;
+  };
+  handleSelectPickerColor: (productId: number, colorId: number) => void;
+  handleSelectPickerSize: (productId: number, sizeId: number) => void;
+  handleIncreaseQuantity: (productId: number) => void;
+  handleDecreaseQuantity: (productId: number) => void;
+}
+
 export default function CartPicker({
   picker,
   productId,
@@ -137,7 +158,7 @@ export default function CartPicker({
   handleSelectPickerSize,
   handleIncreaseQuantity,
   handleDecreaseQuantity,
-}) {
+}: CartPickerProps) {
   return (
     <Container>
       <PickerColorContainer>
@@ -196,32 +217,3 @@ export default function CartPicker({
     </Container>
   );
 }
-
-/**
- *  props 屬性
- *  picker: {
- *   color: object array (required)
- *   sizes: object array (required)
- *   quantity: number    (required)
- *   unitPrice: number   (required)
- *  }
- *  productId: number    (required)
- *  handleSelectPickerColor:  function (required)
- *  handleSelectPickerSize:   function (required)
- *  handleIncreaseQuantity:   function (required)
- *  handleDecreaseQuantity:   function (required)
- */
-
-CartPicker.propTypes = {
-  picker: PropTypes.shape({
-    colors: PropTypes.arrayOf(PropTypes.object).isRequired,
-    sizes: PropTypes.arrayOf(PropTypes.object).isRequired,
-    quantity: PropTypes.number.isRequired,
-    unitPrice: PropTypes.number.isRequired,
-  }),
-  productId: PropTypes.number.isRequired,
-  handleSelectPickerColor: PropTypes.func.isRequired,
-  handleSelectPickerSize: PropTypes.func.isRequired,
-  handleIncreaseQuantity: PropTypes.func.isRequired,
-  handleDecreaseQuantity: PropTypes.func.isRequired,
-};

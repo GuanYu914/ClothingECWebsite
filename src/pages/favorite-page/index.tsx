@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import Header from "../../components/header";
 import Footer from "../../components/footer";
@@ -18,7 +19,7 @@ import Modal from "../../components/modal";
 import { CTAPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
 import { addFavoriteItem } from "../../redux/reducers/FavoriteItemsSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useReduxDispatch, useReduxSelector } from "../../redux/store";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -68,13 +69,13 @@ export default function FavoritePage() {
   // 透過 history hook 換頁
   const history = useHistory();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 從 redux-store 拿喜好清單
-  const favoriteItemsFromStore = useSelector(
+  const favoriteItemsFromStore = useReduxSelector(
     (store) => store.favoriteItems.items
   );
   // 用來暫存要被刪除的收藏產品
-  const tmpRemovingItem = useRef(null);
+  const tmpRemovingItem = useRef<null | number>(null);
   // 頁面的產品收藏清單
   const [items, setItems] = useState(favoriteItemsFromStore);
   // 是否顯示移除收藏產品的 modal 提示
@@ -90,25 +91,26 @@ export default function FavoritePage() {
   });
 
   // 點擊愛心圖示事件
-  function handleLiked(id) {
+  function handleLiked(id: number): void {
     setShowModalForRemovingFavoriteItem(true);
     tmpRemovingItem.current = id;
   }
   // modal 顯示情境: 要否要刪除收藏產品
   // 處理點選按鈕事件
-  function handleSubmitOpForRemovingFavoriteItem() {
+  function handleSubmitOpForRemovingFavoriteItem(): void {
     setShowModalForRemovingFavoriteItem(false);
     const id = tmpRemovingItem.current;
     setItems(items.filter((item) => item.id !== id));
   }
   // modal 顯示情境: 是否要刪除收藏產品
   // 處理點選按鈕以外的事件
-  function handleCancelOpForRemovingFavoriteItem() {
+  function handleCancelOpForRemovingFavoriteItem(): void {
     setShowModalForRemovingFavoriteItem(false);
   }
   // 導引到相對應產品的畫面
-  function handleRedirectToProductPage(e) {
-    const id = e.target.getAttribute("data-id");
+  function handleRedirectToProductPage(e: React.MouseEvent<HTMLElement>): void {
+    const el = e.target as HTMLElement;
+    const id = el.getAttribute("data-id");
     history.push(`/product/${id}`);
   }
 

@@ -1,7 +1,7 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 import styled from "styled-components";
-import { useState } from "react";
+import React, { useState } from "react";
 import Form from "../../components/form";
 import {
   BG_SECONDARY3,
@@ -24,9 +24,10 @@ import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
 import { sendUserLoginDataApi } from "../../Webapi";
 import { getUser } from "../../redux/reducers/userSlice";
-import { useDispatch } from "react-redux";
 import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
 import { getCart } from "../../redux/reducers/cartSlice";
+import { useReduxDispatch } from "../../redux/store";
+import { FormStatePayload } from "./types";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -109,9 +110,9 @@ const BrandSlogan = styled.h2.attrs(() => ({
 export default function LoginPage() {
   const history = useHistory();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 表單欄位狀態資訊
-  const [form, setForm] = useState([
+  const [form, setForm] = useState<FormStatePayload[]>([
     {
       id: 1,
       type: "text",
@@ -119,6 +120,7 @@ export default function LoginPage() {
       field: "帳號",
       inputValue: "",
       isValid: false,
+      helperMsg: "",
     },
     {
       id: 2,
@@ -127,6 +129,7 @@ export default function LoginPage() {
       field: "密碼",
       inputValue: "",
       isValid: false,
+      helperMsg: "",
     },
   ]);
   // 是否要顯示登入失敗 modal 提示訊息
@@ -156,7 +159,10 @@ export default function LoginPage() {
   });
 
   // 處理輸入框改變事件
-  function handleInputChange(id, e) {
+  function handleInputChange(
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void {
     setForm(
       form.map((formData) =>
         formData.id === id
@@ -166,7 +172,7 @@ export default function LoginPage() {
     );
   }
   // 處理登入按鈕，送出資料事件
-  function handleSubmit() {
+  function handleSubmit(): void {
     // check all field's validation state
     let postData = {
       account: form.filter((formData) => formData.field === "帳號")[0]
@@ -193,11 +199,19 @@ export default function LoginPage() {
     }
   }
   // 當用戶切換到其他欄位觸發事件
-  function handleFocusOut(fieldName, e) {
+  function handleFocusOut(
+    fieldName: string,
+    e: React.FocusEvent<HTMLInputElement, Element>
+  ): void {
     checkFieldValidation(fieldName, e.target.value);
   }
   // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
-  function setFieldState(fieldName, helperMsg, helperColor, validationState) {
+  function setFieldState(
+    fieldName: string,
+    helperMsg: string,
+    helperColor: string,
+    validationState: boolean
+  ): void {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
       return prevForm.map((formData) =>
@@ -213,7 +227,7 @@ export default function LoginPage() {
     });
   }
   // 檢查每個欄位的資料，有符合條件才給過
-  function checkFieldValidation(fieldName, fieldValue) {
+  function checkFieldValidation(fieldName: string, fieldValue: string): void {
     if (fieldName === "帳號") {
       if (fieldValue === "") {
         setFieldState("帳號", "帳號不得為空", COLOR_PRIMARY2, false);
@@ -249,7 +263,7 @@ export default function LoginPage() {
     }
   }
   // 送出登入資料到後端 API
-  function sendUserLoginDataFromApi(account, password) {
+  function sendUserLoginDataFromApi(account: string, password: string): void {
     sendUserLoginDataApi(account, password)
       .then((resp) => {
         const json_data = resp.data;
@@ -271,17 +285,17 @@ export default function LoginPage() {
   }
   // modal 顯示情境: 登入失敗
   // 處理點選按鈕事件
-  function handleSubmitOpForLoginFailed() {
+  function handleSubmitOpForLoginFailed(): void {
     setShowModalForLoginFailed(false);
   }
   // modal顯示情境: 登入失敗
   // 處理點選按鈕之外事件
-  function handleCancelOpForLoginFailed() {
+  function handleCancelOpForLoginFailed(): void {
     setShowModalForLoginFailed(false);
   }
   // modal 顯示情境: 登入成功
   // 處理點選按鈕事件
-  function handleSubmitOpForLoginSuccessfully() {
+  function handleSubmitOpForLoginSuccessfully(): void {
     setShowModalForLoginSuccessfully(false);
     dispatch(getUser());
     dispatch(getFavoriteItems());
@@ -290,7 +304,7 @@ export default function LoginPage() {
   }
   // modal 顯示情漸: 登入成功
   // 處理點選按鈕以外事件
-  function handleCancelOpForLoginSuccessfully() {
+  function handleCancelOpForLoginSuccessfully(): void {
     setShowModalForLoginSuccessfully(false);
     dispatch(getUser());
     dispatch(getFavoriteItems());
@@ -299,12 +313,12 @@ export default function LoginPage() {
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: 發送 API 過程中有異常
   // 處理點選按鈕以外事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
 

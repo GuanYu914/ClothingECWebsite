@@ -3,7 +3,6 @@ import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/sq
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { CTAPrimaryButton, CTASecondaryButton } from "../../components/button";
 import { BG_SECONDARY3, COLOR_SECONDARY2, Z_INDEX_LV1 } from "../../constant";
-import PropTypes from "prop-types";
 
 const Container = styled.section`
   background-color: ${BG_SECONDARY3};
@@ -56,13 +55,21 @@ export const SharedNoneCheckedButton = styled(NoneCheckedAllButton)``;
 export const SharedCheckedAllButton = styled(CheckedAllButton)``;
 export const SharedTotalPriceShower = styled(TotalPriceShower)``;
 
+interface FixedOffcanvaProps {
+  totalPrice: number;
+  singleCheckedState: boolean;
+  allCheckedState: boolean;
+  handleToggleSelectAllProducts: () => void;
+  handleCheckOut: () => void;
+}
+
 export default function FixedOffcanva({
   totalPrice,
   singleCheckedState,
   allCheckedState,
   handleToggleSelectAllProducts,
   handleCheckOut,
-}) {
+}: FixedOffcanvaProps) {
   return (
     <Container>
       <SelectionHeader>
@@ -90,11 +97,3 @@ export default function FixedOffcanva({
     </Container>
   );
 }
-
-FixedOffcanva.propTypes = {
-  totalPrice: PropTypes.number.isRequired,
-  singleCheckedState: PropTypes.bool.isRequired,
-  allCheckedState: PropTypes.bool.isRequired,
-  handleToggleSelectAllProducts: PropTypes.func.isRequired,
-  handleCheckOut: PropTypes.func.isRequired,
-};

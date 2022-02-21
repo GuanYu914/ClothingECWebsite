@@ -30,7 +30,7 @@ export const CategoriesContainer = styled.section`
 
 export const Category = styled.section.attrs(() => ({
   className: "fs-h1",
-}))`
+}))<{ img: string }>`
   color: ${COLOR_SECONDARY3};
   background-image: url(${(props) => props.img});
   background-size: cover;

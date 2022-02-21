@@ -1,5 +1,5 @@
-import Header from "../../components/header/";
-import Footer from "../../components/footer/";
+import Header from "../../components/header";
+import Footer from "../../components/footer";
 import styled from "styled-components";
 import BSCarousel from "../../components/bs-carousel";
 import CardContainer from "../../components/card-container";
@@ -34,7 +34,7 @@ import { getProductByIDApi } from "../../Webapi";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
 import { isEmptyObj } from "../../util";
-import { useSelector, useDispatch } from "react-redux";
+// import { useSelector, useDispatch } from "react-redux";
 import {
   addWatchedItem,
   toggleItemLikedState,
@@ -44,6 +44,15 @@ import {
   addFavoriteItem,
   removeFavoriteItem,
 } from "../../redux/reducers/FavoriteItemsSlice";
+import { useReduxDispatch, useReduxSelector } from "../../redux/store";
+import {
+  ProductSlidesStatePayload,
+  ProductStatePayload,
+  ProductByIdAPIRespPayload,
+  SizesOfProductByIdAPIRespPayload,
+  ColorsOfProductByIdAPIRespPayload,
+  UseParamsHookPayload,
+} from "./types";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -245,40 +254,63 @@ const ReminderMsg = styled.h2.attrs(() => ({
 
 export default function SingleProductPage() {
   // 產生 redux-dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 從 redux-store 撈出產品觀看歷史紀錄清單
-  const watchedItemsFromStore = useSelector(
+  const watchedItemsFromStore = useReduxSelector(
     (store) => store.watchedItems.items
   );
   // 從 redux-store 拿出購物車物品清單
-  const cartItemsFromStore = useSelector((store) => store.cart.items);
+  const cartItemsFromStore = useReduxSelector((store) => store.cart.items);
   // 從 redux-store 拿喜好清單
-  const favoriteItemsFromStore = useSelector(
+  const favoriteItemsFromStore = useReduxSelector(
     (store) => store.favoriteItems.items
   );
   // 透過 React router hook 拿到特定網址資訊
-  const { productID } = useParams();
+  const { productID } = useParams<UseParamsHookPayload>();
   // 透過此 hook 換頁
   const history = useHistory();
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   //  產品資訊讀取狀態
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
   const [isLoadingWatchedProducts, setIsLoadingWatchedProducts] =
     useState(false);
   // 頁面產品資訊
-  const [productInfo, setProductInfo] = useState({});
-  // 產品幻燈片，根據螢幕寬度給不同 props 到 BSCarousel 元件
-  const [slidesForMobile, setSlidesForMobile] = useState({
-    useForBanner: false,
-    frame: {
-      maxHeight: "30rem",
-      borderRadius: "2rem",
+  const [productInfo, setProductInfo] = useState<ProductStatePayload>({
+    id: 0,
+    category: {
+      base: "",
+      main: "",
+      sub: "",
+      detailed: "",
     },
-    slide: [],
+    name: "",
+    detail: {
+      size: "",
+      shipment: "",
+      cleanness: "",
+    },
+    imgs: [],
+    picker: {
+      sizes: [],
+      colors: [],
+      quantity: 0,
+      unitPrice: 0,
+    },
+    isLiked: false,
   });
-  const [slidesForPad, setSlidesForPad] = useState({
+  // 產品幻燈片，根據螢幕寬度給不同 props 到 BSCarousel 元件
+  const [slidesForMobile, setSlidesForMobile] =
+    useState<ProductSlidesStatePayload>({
+      useForBanner: false,
+      frame: {
+        maxHeight: "30rem",
+        borderRadius: "2rem",
+      },
+      slide: [],
+    });
+  const [slidesForPad, setSlidesForPad] = useState<ProductSlidesStatePayload>({
     useForBanner: false,
     frame: {
       maxHeight: "40rem",
@@ -287,13 +319,13 @@ export default function SingleProductPage() {
     slide: [],
   });
   // 顯示產品分類路徑名稱
-  const [displayedCategoryPath, setDisplayedCategoryPath] = useState();
+  const [displayedCategoryPath, setDisplayedCategoryPath] = useState("");
   // mobile 裝置底下， product-picker 元件啟用狀態
   const [mobilePickerState, setMobilePickerState] = useState(false);
   // 當前頁面可以被執行有關購物車相關的操作狀態
   const [activeOpState, setActiveOpState] = useState(false);
   // 加入購物車動畫時間
-  const showCartReminderDuration = 500;
+  const showCartReminderDuration: number = 500;
   // 是否要顯示加入購物車的動畫
   const [showCartReminder, setShowCartReminder] = useState(false);
   // 加入購物車訊息動畫
@@ -315,7 +347,7 @@ export default function SingleProductPage() {
   });
 
   // mobile 裝置下，點選 "選擇商品規格" 事件
-  function handleSelectProductSpecOnMobile() {
+  function handleSelectProductSpecOnMobile(): void {
     // 重設所有先前用戶點選的選項
     setProductInfo({
       ...productInfo,
@@ -336,7 +368,7 @@ export default function SingleProductPage() {
     setMobilePickerState(true);
   }
   // 更新當前頁面愛心狀態
-  function handleAddToLikedItems() {
+  function handleAddToLikedItems(): void {
     // 更新當前頁面愛心狀態
     setProductInfo({ ...productInfo, isLiked: !productInfo.isLiked });
     // 透過當前頁面愛心狀態，更新用戶收藏清單跟產品觀看歷史紀錄清單的愛心狀態
@@ -365,7 +397,7 @@ export default function SingleProductPage() {
     );
   }
   // 選擇商品顏色
-  function handleSelectPickerColor(id) {
+  function handleSelectPickerColor(id: number): void {
     setProductInfo({
       ...productInfo,
       picker: {
@@ -379,7 +411,7 @@ export default function SingleProductPage() {
     });
   }
   // 選擇商品尺寸
-  function handleSelectPickerSize(id) {
+  function handleSelectPickerSize(id: number): void {
     setProductInfo({
       ...productInfo,
       picker: {
@@ -393,7 +425,7 @@ export default function SingleProductPage() {
     });
   }
   // 增加購買數量
-  function handleIncreaseQuantity() {
+  function handleIncreaseQuantity(): void {
     setProductInfo({
       ...productInfo,
       picker: {
@@ -403,7 +435,7 @@ export default function SingleProductPage() {
     });
   }
   // 減少購買數量
-  function handleDecreaseQuantity() {
+  function handleDecreaseQuantity(): void {
     if (productInfo.picker.quantity === 1) return;
     setProductInfo({
       ...productInfo,
@@ -414,7 +446,7 @@ export default function SingleProductPage() {
     });
   }
   // 檢查當前狀態使否可以點選 "直接購買" 跟 "加入購物車" 按鈕
-  function checkActiveState() {
+  function checkActiveState(): boolean {
     let colorChecked = false;
     let sizeChecked = false;
     for (let i = 0; i < productInfo.picker.colors.length; i++) {
@@ -432,7 +464,10 @@ export default function SingleProductPage() {
     return colorChecked && sizeChecked;
   }
   // 點選 "加入購物車" 按鈕
-  function handleAddToCart(selectedPickerColor, selectedPickerSize) {
+  function handleAddToCart(
+    selectedPickerColor: string,
+    selectedPickerSize: string
+  ): void {
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
     for (let i = 0; i < cartItemsFromStore.length; i++) {
@@ -468,31 +503,46 @@ export default function SingleProductPage() {
     }
     // 未找到相同規格的產品，新增到購物車頂端
     if (!flagFind) {
+      // 尋找購物車產品最大的 id
+      let maxProductId = cartItemsFromStore.length
+        ? cartItemsFromStore[0].id
+        : cartItemsFromStore.length;
+      for (let i = 0; i < cartItemsFromStore.length; i++) {
+        if (cartItemsFromStore[i].id > maxProductId) {
+          maxProductId = cartItemsFromStore[i].id;
+        }
+      }
       // 複製 cart 內容，但 ref 不一樣，造成 react 去更新
-      const newCartItemsFromStore = [...cartItemsFromStore];
-      newCartItemsFromStore.unshift({
-        id: cartItemsFromStore.length + 1,
-        pid: productInfo.id,
-        name: productInfo.name,
-        urls: productInfo.imgs,
-        colors: productInfo.picker.colors,
-        sizes: productInfo.picker.sizes,
-        quantity: productInfo.picker.quantity,
-        unitPrice: productInfo.picker.unitPrice,
-      });
-      dispatch(addCartItem(newCartItemsFromStore));
+      dispatch(
+        addCartItem([
+          {
+            id: maxProductId + 1,
+            pid: productInfo.id,
+            name: productInfo.name,
+            urls: productInfo.imgs,
+            colors: productInfo.picker.colors,
+            sizes: productInfo.picker.sizes,
+            quantity: productInfo.picker.quantity,
+            unitPrice: productInfo.picker.unitPrice,
+          },
+          ...cartItemsFromStore,
+        ])
+      );
     }
     // 顯示加入購物車訊息動畫
     setShowCartReminder(true);
   }
   // 點選 "直接購買" 按鈕
-  function handleCheckout(selectedPickerColor, selectedPickerSize) {
+  function handleCheckout(
+    selectedPickerColor: string,
+    selectedPickerSize: string
+  ): void {
     // 加入到購物車且導引到 cart page
     handleAddToCart(selectedPickerColor, selectedPickerSize);
     history.push("/cart");
   }
   // 更新 watchedItems 裡面物件的 isLiked 屬性
-  function handleUpdateItemLikedState(id) {
+  function handleUpdateItemLikedState(id: number): void {
     // 更新 watchedItems 裡面物件的 isLiked 屬性
     dispatch(
       toggleItemLikedState({
@@ -524,7 +574,7 @@ export default function SingleProductPage() {
     });
   }
   // 拿產品相關資訊，並設置相關狀態
-  function getProductInfoFromApi(id) {
+  function getProductInfoFromApi(id: number): void {
     setIsLoadingProduct(true);
     setIsLoadingWatchedProducts(true);
     getProductByIDApi(id)
@@ -535,7 +585,8 @@ export default function SingleProductPage() {
           setShowModalForApiError(true);
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
-          const json_data_for_product = resp.data.data[0];
+          const json_data_for_product: ProductByIdAPIRespPayload =
+            resp.data.data[0];
           setProductInfo({
             id: json_data_for_product.pid, // 將 pid 當作 productInfo.id
             category: JSON.parse(json_data_for_product.category),
@@ -543,14 +594,18 @@ export default function SingleProductPage() {
             detail: JSON.parse(json_data_for_product.detail),
             imgs: JSON.parse(json_data_for_product.imgs),
             picker: {
-              sizes: JSON.parse(json_data_for_product.sizes).map((size) => ({
-                ...size,
-                selected: false,
-              })),
-              colors: JSON.parse(json_data_for_product.colors).map((color) => ({
-                ...color,
-                selected: false,
-              })),
+              sizes: JSON.parse(json_data_for_product.sizes).map(
+                (size: SizesOfProductByIdAPIRespPayload) => ({
+                  ...size,
+                  selected: false,
+                })
+              ),
+              colors: JSON.parse(json_data_for_product.colors).map(
+                (color: ColorsOfProductByIdAPIRespPayload) => ({
+                  ...color,
+                  selected: false,
+                })
+              ),
               quantity: 1,
               unitPrice: json_data_for_product.price,
             },
@@ -606,22 +661,25 @@ export default function SingleProductPage() {
     return categoryPath;
   }
   // 導引到相對應的產品頁面
-  function handleRedirectToProductPage(e) {
-    const id = e.target.getAttribute("data-id");
+  function handleRedirectToProductPage(
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ): void {
+    const el = e.target as HTMLElement;
+    const id = el.getAttribute("data-id");
     history.push(`/product/${id}`);
   }
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕之外事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
-  function checkIfUserLikeTheProduct(id) {
+  function checkIfUserLikeTheProduct(id: number): boolean {
     if (isEmptyObj(userFromStore)) return false;
     for (let i = 0; i < favoriteItemsFromStore.length; i++) {
       if (favoriteItemsFromStore[i].id === id) return true;
@@ -660,7 +718,7 @@ export default function SingleProductPage() {
   // URL 格式 : /product/:productID
   // 如果頁面的 productID 變動時，則抓取相對應的產品資訊
   useEffect(() => {
-    getProductInfoFromApi(productID);
+    getProductInfoFromApi(Number(productID));
     // eslint-disable-next-line
   }, [productID]);
 
@@ -669,7 +727,7 @@ export default function SingleProductPage() {
       <Header />
       <ContentContainer>
         {isLoadingProduct ? (
-          <Loader />
+          <Loader marginTop={"0"} />
         ) : (
           <>
             <ProductCategoryPath>{displayedCategoryPath}</ProductCategoryPath>
@@ -768,7 +826,7 @@ export default function SingleProductPage() {
           </>
         )}
         {isLoadingWatchedProducts ? (
-          <Loader />
+          <Loader marginTop={"0"} />
         ) : (
           <WatchedItemsContainer>
             <WatchedItemsTitle>近期看過的商品</WatchedItemsTitle>

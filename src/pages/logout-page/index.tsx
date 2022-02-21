@@ -15,9 +15,9 @@ import { CTAPrimaryButton, GhostPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
 import { useEffect } from "react";
 import { logoutUser } from "../../redux/reducers/userSlice";
-import { useDispatch } from "react-redux";
 import { getCart } from "../../redux/reducers/cartSlice";
 import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
+import { useReduxDispatch } from "../../redux/store";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -72,7 +72,7 @@ export default function LogoutPage() {
   // 使用 react history hook 引導頁面
   const history = useHistory();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
 
   useEffect(() => {
     dispatch(logoutUser());

@@ -2,7 +2,7 @@ import Header from "../../components/header";
 import Footer from "../../components/footer";
 import styled from "styled-components";
 import Form from "../../components/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BG_SECONDARY3,
   MAX_CONTAINER_WIDTH,
@@ -23,7 +23,9 @@ import {
 import Modal from "../../components/modal";
 import { sendUpdatedUserDataApi } from "../../Webapi";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
+import { useReduxSelector } from "../../redux/store";
+import { FormStatePayload } from "./types";
+import { isEmptyObj } from "../../util";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -101,17 +103,17 @@ const BrandSlogan = styled.h2.attrs(() => ({
 
 export default function ProfileEditPage() {
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   // 透過 useHistory 換頁
   const history = useHistory();
   // 表單欄位狀態資訊
-  const [form, setForm] = useState([
+  const [form, setForm] = useState<FormStatePayload[]>([
     {
       id: 1,
       type: "text",
       maxLength: 10,
       field: "暱稱",
-      inputValue: userFromStore.nickname,
+      inputValue: userFromStore.nickname as string,
       helperColor: COLOR_SECONDARY1,
       helperMsg: "最多 10 個字",
       isValid: true,
@@ -122,7 +124,7 @@ export default function ProfileEditPage() {
       maxLength: 12,
       readOnly: true,
       field: "帳號",
-      inputValue: userFromStore.account,
+      inputValue: userFromStore.account as string,
       helperColor: COLOR_PRIMARY2,
       helperMsg: "您不可更改帳號名稱",
       isValid: true,
@@ -167,7 +169,10 @@ export default function ProfileEditPage() {
   });
 
   // 處理輸入框改變事件
-  function handleInputChange(id, e) {
+  function handleInputChange(
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void {
     setForm(
       form.map((formData) =>
         formData.id === id
@@ -177,7 +182,7 @@ export default function ProfileEditPage() {
     );
   }
   // 處理修改按鈕，送出資料事件
-  function handleSubmit() {
+  function handleSubmit(): void {
     // check all field's validation state
     let postData = {
       nickname: form.filter((formData) => formData.field === "暱稱")[0]
@@ -222,11 +227,14 @@ export default function ProfileEditPage() {
     }
   }
   // 當用戶切換到其他欄位的觸發事件
-  function handleFocusOut(fieldName, e) {
+  function handleFocusOut(
+    fieldName: string,
+    e: React.FocusEvent<HTMLInputElement, Element>
+  ): void {
     checkFieldValidation(fieldName, e.target.value);
   }
   // 檢查每個輸入欄位的資料，有符合條件才給過
-  function checkFieldValidation(fieldName, fieldValue) {
+  function checkFieldValidation(fieldName: string, fieldValue: string): void {
     if (fieldName === "暱稱") {
       if (fieldValue === "") {
         setFieldState("暱稱", "暱稱不能為空", COLOR_PRIMARY2, false);
@@ -256,7 +264,7 @@ export default function ProfileEditPage() {
         setFieldState("目前密碼", "密碼不得為空", COLOR_PRIMARY2, false);
       }
       // 解碼從 server 來的 Base64 編碼資料
-      else if (fieldValue === window.atob(userFromStore.pass)) {
+      else if (fieldValue === window.atob(userFromStore.pass as string)) {
         setFieldState("目前密碼", "密碼輸入正確", COLOR_PRIMARY3, true);
       } else {
         setFieldState(
@@ -272,7 +280,7 @@ export default function ProfileEditPage() {
         setFieldState("新的密碼", "密碼不得為空", COLOR_PRIMARY2, false);
       }
       // 解碼從 server 來的 Base64 編碼資料
-      else if (fieldValue === window.atob(userFromStore.pass)) {
+      else if (fieldValue === window.atob(userFromStore.pass as string)) {
         setFieldState(
           "新的密碼",
           "目前新設的密碼與原本密碼相同，如果您不想變更，則忽略此訊息",
@@ -294,7 +302,12 @@ export default function ProfileEditPage() {
     }
   }
   // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
-  function setFieldState(fieldName, helperMsg, helperColor, validationState) {
+  function setFieldState(
+    fieldName: string,
+    helperMsg: string,
+    helperColor: string,
+    validationState: boolean
+  ): void {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
       return prevForm.map((formData) =>
@@ -311,24 +324,32 @@ export default function ProfileEditPage() {
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕的事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕以外的事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: 修改用戶資料成功
   // 處理點選按鈕的事件
-  function handleSubmitOpForUpdatedSuccessfully() {
+  function handleSubmitOpForUpdatedSuccessfully(): void {
     history.push("/logout");
   }
   // modal 顯示情境: 修改用戶資料成功
   // 處理點選按鈕以外的事件
-  function handleCancelOpForUpdatedSuccessfully() {
+  function handleCancelOpForUpdatedSuccessfully(): void {
     history.push("/logout");
   }
+
+  useEffect(() => {
+    // 如果用戶資訊為空，拋出錯誤
+    if (isEmptyObj(userFromStore)) {
+      throw new Error("can't use empty user info");
+    }
+    // eslint-disable-next-line
+  }, []);
   return (
     <PageContainer>
       <Header />

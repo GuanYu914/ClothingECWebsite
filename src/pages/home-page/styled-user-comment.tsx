@@ -61,7 +61,7 @@ export const UserComment = styled.section.attrs(() => ({
 
 export const UserAvatar = styled.div.attrs(() => ({
   className: "bg-secondary3 box-shadow-light",
-}))`
+}))<{ url: string }>`
   border-radius: 50%;
   width: 4.2rem;
   height: 4.2rem;

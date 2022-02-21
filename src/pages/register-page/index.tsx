@@ -24,10 +24,11 @@ import {
 import Modal from "../../components/modal";
 import { sendUserRegisterDataApi } from "../../Webapi";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { getUser } from "../../redux/reducers/userSlice";
 import { getFavoriteItems } from "../../redux/reducers/FavoriteItemsSlice";
 import { getCart } from "../../redux/reducers/cartSlice";
+import { useReduxDispatch } from "../../redux/store";
+import { RegisterFormStatePayload } from "./types";
 
 const PageContainer = styled.div`
   background-color: ${BG_PRIMARY1};
@@ -111,9 +112,9 @@ export default function RegisterPage() {
   // 透過 history hook 換頁
   const history = useHistory();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 表單欄位狀態資訊
-  const [form, setForm] = useState([
+  const [form, setForm] = useState<RegisterFormStatePayload[]>([
     {
       id: 1,
       type: "text",
@@ -184,7 +185,10 @@ export default function RegisterPage() {
   });
 
   // 處理輸入框改變事件
-  function handleInputChange(id, e) {
+  function handleInputChange(
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void {
     setForm(
       form.map((formData) =>
         formData.id === id
@@ -194,7 +198,7 @@ export default function RegisterPage() {
     );
   }
   // 處理註冊按鈕，送出資料事件
-  function handleSubmit() {
+  function handleSubmit(): void {
     // check all field's validation state
     let postData = {
       nickname: form.filter((formData) => formData.field === "暱稱")[0]
@@ -231,7 +235,12 @@ export default function RegisterPage() {
     }
   }
   // 更新 form 狀態，並傳入 function 拿到最新的 state，防止被 batch
-  function setFieldState(fieldName, helperMsg, helperColor, validationState) {
+  function setFieldState(
+    fieldName: string,
+    helperMsg: string,
+    helperColor: string,
+    validationState: boolean
+  ): void {
     // 防止多次呼叫造成 state 資料被 overwrite
     setForm((prevForm) => {
       return prevForm.map((formData) =>
@@ -247,7 +256,7 @@ export default function RegisterPage() {
     });
   }
   // 檢查每個輸入欄位的資料，有符合條件才給過
-  function checkFieldValidation(fieldName, fieldValue) {
+  function checkFieldValidation(fieldName: string, fieldValue: string): void {
     if (fieldName === "暱稱") {
       if (fieldValue === "") {
         setFieldState("暱稱", "暱稱不能為空", COLOR_PRIMARY2, false);
@@ -314,11 +323,18 @@ export default function RegisterPage() {
     }
   }
   // 當用戶切換到其他欄位的觸發事件
-  function handleFocusOut(fieldName, e) {
+  function handleFocusOut(
+    fieldName: string,
+    e: React.FocusEvent<HTMLInputElement, Element>
+  ): void {
     checkFieldValidation(fieldName, e.target.value);
   }
   // 送出用戶的資訊到後端 API
-  function sendUserRegisterDataFromApi(nickname, account, password) {
+  function sendUserRegisterDataFromApi(
+    nickname: string,
+    account: string,
+    password: string
+  ): void {
     sendUserRegisterDataApi(nickname, account, password)
       .then((resp) => {
         const json_data = resp.data;
@@ -340,17 +356,17 @@ export default function RegisterPage() {
   }
   // modal 顯示情境: 資料庫有相同帳號
   // 處理點選按鈕的事件
-  function handleSubmitOpForSameAccount() {
+  function handleSubmitOpForSameAccount(): void {
     setShowModalForSameAccount(false);
   }
   // modal 顯示情境: 資料庫有相同帳號
   // 處理點選按鈕以外的事件
-  function handleCancelOpForSameAccount() {
+  function handleCancelOpForSameAccount(): void {
     setShowModalForSameAccount(false);
   }
   // modal 顯示情境: 註冊成功
   // 處理點選按鈕的事件
-  function handleSubmitOpForRegisterSuccessfully() {
+  function handleSubmitOpForRegisterSuccessfully(): void {
     setShowModalForRegisterSuccessfully(false);
     dispatch(getUser());
     dispatch(getFavoriteItems());
@@ -359,7 +375,7 @@ export default function RegisterPage() {
   }
   // modal 顯示情境: 註冊成功
   // 處理點選按鈕以外的事件
-  function handleCancelOpForRegisterSuccessfully() {
+  function handleCancelOpForRegisterSuccessfully(): void {
     setShowModalForRegisterSuccessfully(false);
     dispatch(getUser());
     dispatch(getFavoriteItems());
@@ -368,12 +384,12 @@ export default function RegisterPage() {
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕的事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: 發送 API 過程有異常
   // 處理點選按鈕以外的事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
 

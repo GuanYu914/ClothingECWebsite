@@ -13,7 +13,7 @@ import {
   API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import BSCarousel from "../../components/bs-carousel";
 import {
   CategoryBlock,
@@ -21,7 +21,6 @@ import {
   CategoriesContainer,
   Category,
 } from "./styled-category";
-
 import {
   UserCommentBlock,
   UserCommentTitle,
@@ -57,7 +56,17 @@ import {
   addFavoriteItem,
   removeFavoriteItem,
 } from "../../redux/reducers/FavoriteItemsSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useReduxDispatch, useReduxSelector } from "../../redux/store";
+import {
+  BannersStatePayload,
+  BannerAPIRespPayload,
+  CategoriesStatePayload,
+  CategoriesAPIRespPayload,
+  HotItemsStatePayload,
+  HotItemsAPIRespPayload,
+  CommentsStatePayload,
+  CommentsAPIRespPayload,
+} from "./types";
 
 const PageContainer = styled.div`
   background-color: ${BG_SECONDARY4};
@@ -103,11 +112,11 @@ const HotSellingItemsContainer = styled.div`
 export default function HomePage() {
   let history = useHistory();
   // 產生 dispatch
-  const dispatch = useDispatch();
+  const dispatch = useReduxDispatch();
   // 從 redux-store 拿用戶資訊
-  const userFromStore = useSelector((store) => store.user.info);
+  const userFromStore = useReduxSelector((store) => store.user.info);
   // 從 redux-store 拿喜好清單
-  const favoriteItemsFromStore = useSelector(
+  const favoriteItemsFromStore = useReduxSelector(
     (store) => store.favoriteItems.items
   );
   // 透過 context 拿到目前 introductionModal 是否有被顯示
@@ -125,14 +134,14 @@ export default function HomePage() {
   const [isHotItemsButtonClicked, setIsHotItemsButtonClicked] = useState(false);
   const [isCommentsButtonClicked, setIsCommentsButtonClicked] = useState(false);
   // 每個區塊的狀態
-  const [banners, setBanners] = useState({
+  const [banners, setBanners] = useState<BannersStatePayload>({
     useForBanner: true,
     frame: {},
     slide: [],
   });
-  const [categories, setCategories] = useState([{}]);
-  const [hotItems, SetHotItems] = useState([{}]);
-  const [comments, setComments] = useState([{}]);
+  const [categories, setCategories] = useState<CategoriesStatePayload[]>([]);
+  const [hotItems, SetHotItems] = useState<HotItemsStatePayload[]>([]);
+  const [comments, setComments] = useState<CommentsStatePayload[]>([]);
   // 用來實現載入部分商品跟評價
   // offset -> 代表略過幾筆資料
   // limit  -> 代表限制回傳資料筆數
@@ -156,11 +165,16 @@ export default function HomePage() {
   const [showModalForIntroductionLocally, setShowModalForIntroductionLocally] =
     useState(false);
   // introduction modal 相關資訊
-  const [modalInfoForIntroductionLocally, setModalInfoForIntroductionLocally] =
-    useState({});
+  const [modalInfoForIntroductionLocally] = useState({
+    selectionMode: false,
+    title: `歡迎光臨, ${
+      isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname
+    }`,
+    content: `使用網站前須注意事項 🔔\n\n• 註冊會員就可以有專屬的收藏清單，將喜歡的產品一網打盡\n\n• 目前版本尚不開放結帳金流服務，敬請期待\n\n很開心見到您，祝您購物愉快 😘`,
+  });
 
   // 更新 hotItems 裡面物件的 isLiked 屬性
-  function handleUpdateItemLikedState(id) {
+  function handleUpdateItemLikedState(id: number): void {
     SetHotItems(
       hotItems.map((item) =>
         item.id === id ? { ...item, isLiked: !item.isLiked } : { ...item }
@@ -187,7 +201,7 @@ export default function HomePage() {
     });
   }
   // 拿 banner 資訊，並設定相關的狀態
-  function getBannersFromApi() {
+  function getBannersFromApi(): void {
     getBannersApi()
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -199,7 +213,12 @@ export default function HomePage() {
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setBanners({
             ...banners,
-            slide: json_data.data,
+            slide: json_data.data.map((el: BannerAPIRespPayload) => ({
+              id: el.id,
+              src: el.src,
+              link: el.link,
+              alt: el.alt,
+            })),
           });
           setIsLoadingBanner(false);
         }
@@ -210,7 +229,7 @@ export default function HomePage() {
       });
   }
   // 拿商品分類，並設定相關的狀態
-  function getCategoriesFromApi() {
+  function getCategoriesFromApi(): void {
     getMainCategoriesApi()
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -221,7 +240,7 @@ export default function HomePage() {
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setCategories(
-            json_data.data.map((el) => ({
+            json_data.data.map((el: CategoriesAPIRespPayload) => ({
               id: el.id,
               name: el.name,
               img: el.src,
@@ -236,7 +255,7 @@ export default function HomePage() {
       });
   }
   // 拿熱銷品項資訊，並設定相關的狀態
-  function getHotItemsFromApi(offset, limit) {
+  function getHotItemsFromApi(offset: number, limit: number): void {
     getHotItemsApi(offset, limit)
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -247,7 +266,7 @@ export default function HomePage() {
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           SetHotItems(
-            json_data.data.map((el) => ({
+            json_data.data.map((el: HotItemsAPIRespPayload) => ({
               id: el.id,
               product: {
                 name: el.name,
@@ -275,7 +294,7 @@ export default function HomePage() {
       });
   }
   // 拿顧客評價資訊，並設定相關的狀態
-  function getUserCommentsFromApi(offset, limit) {
+  function getUserCommentsFromApi(offset: number, limit: number): void {
     getUserCommentsApi(offset, limit)
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -286,7 +305,7 @@ export default function HomePage() {
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           setComments(
-            json_data.data.map((el) => ({
+            json_data.data.map((el: CommentsAPIRespPayload) => ({
               id: el.id,
               avatar: el.avatar,
               comment: el.comment,
@@ -309,14 +328,14 @@ export default function HomePage() {
       });
   }
   // 用戶點擊 "熱銷品項"、"顧客評價" 的 "載入更多" 按鈕
-  function handleGetHotItemsFromButtonEvent() {
+  function handleGetHotItemsFromButtonEvent(): void {
     setHotItemsIndicator({
       offset: hotItemsIndicator.offset,
       limit: hotItemsIndicator.limit + HOT_ITEMS_QUERY_LIMIT,
     });
     setIsHotItemsButtonClicked(true);
   }
-  function handleGetCommentsFromButtonEvent() {
+  function handleGetCommentsFromButtonEvent(): void {
     setCommentsIndicator({
       offset: commentsIndicator.offset,
       limit: commentsIndicator.limit + COMMENTS_QUERY_LIMIT,
@@ -324,22 +343,23 @@ export default function HomePage() {
     setIsCommentsButtonClicked(true);
   }
   // 導引到相對應產品頁面
-  function handleRedirectToProductPage(e) {
-    const id = e.target.getAttribute("data-id");
+  function handleRedirectToProductPage(e: React.MouseEvent<HTMLElement>): void {
+    const el = e.target as HTMLElement;
+    const id = el.getAttribute("data-id");
     history.push(`/product/${id}`);
   }
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕事件
-  function handleSubmitOpForApiError() {
+  function handleSubmitOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // modal 顯示情境: api 發送過程中有誤
   // 處理點選按鈕之外事件
-  function handleCancelOpForApiError() {
+  function handleCancelOpForApiError(): void {
     setShowModalForApiError(false);
   }
   // 傳入 product 的 id，並根據當前用戶的收藏清單，回傳是否喜歡此產品
-  function checkIfUserLikeTheProduct(id) {
+  function checkIfUserLikeTheProduct(id: number): boolean {
     if (isEmptyObj(userFromStore)) return false;
     for (let i = 0; i < favoriteItemsFromStore.length; i++) {
       if (favoriteItemsFromStore[i].id === id) return true;
@@ -352,19 +372,6 @@ export default function HomePage() {
   useEffect(() => {
     getBannersFromApi();
     getCategoriesFromApi();
-    // 如果 context 顯示還沒被看過，則設置相關訊息
-    if (!introductionModalIsDisplayed) {
-      setModalInfoForIntroductionLocally({
-        selectionMode: false,
-        title: `歡迎光臨, ${
-          isEmptyObj(userFromStore) ? "訪客" : userFromStore.nickname
-        }`,
-        content: `使用網站前須注意事項 🔔\n
-• 註冊會員就可以有專屬的收藏清單，將喜歡的產品一網打盡\n
-• 目前版本尚不開放結帳金流服務，敬請期待\n
-很開心見到您，祝您購物愉快 😘`,
-      });
-    }
     // eslint-disable-next-line
   }, []);
   // hotItemsIndicator 改變時執行
@@ -394,12 +401,16 @@ export default function HomePage() {
     <PageContainer>
       <Header />
       <ContentContainer>
-        {isLoadingBanner ? <Loader /> : <BSCarousel slides={banners} />}
+        {isLoadingBanner ? (
+          <Loader marginTop="0" />
+        ) : (
+          <BSCarousel slides={banners} />
+        )}
         <CategoryBlock>
           <CategoryTitle>商品分類</CategoryTitle>
           <CategoriesContainer>
             {isLoadingCategories ? (
-              <Loader />
+              <Loader marginTop="0" />
             ) : (
               <>
                 {categories.map((category) => (
@@ -421,7 +432,7 @@ export default function HomePage() {
           <HotSellingItemTitle>熱賣品項</HotSellingItemTitle>
           <HotSellingItemsContainer>
             {isLoadingHotItems ? (
-              <Loader />
+              <Loader marginTop={"0"} />
             ) : (
               <CardContainer
                 items={hotItems}
@@ -452,7 +463,7 @@ export default function HomePage() {
           <UserCommentTitle>顧客評價</UserCommentTitle>
           <UserCommentsContainer>
             {isLoadingComments ? (
-              <Loader />
+              <Loader marginTop={"0"} />
             ) : (
               <>
                 {comments.map((comment) => (
