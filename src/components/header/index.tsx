@@ -183,9 +183,7 @@ export default function Header() {
   // 如果 user 有更新的話，則更新用戶選單 (dropdown & offcanva)
   useEffect(() => {
     setDropDownForProfile({
-      width: "12rem",
-      useForLinks: true,
-      zIndex: Z_INDEX_LV1,
+      ...dropDownForProfile,
       options: isEmptyObj(userFromStore)
         ? [
             { id: 1, name: "登入", url: "/login" },
@@ -198,7 +196,7 @@ export default function Header() {
           ],
     });
     setOffcanvaInfo({
-      displayUserInfo: true,
+      ...offcanvaInfo,
       user: {
         isLogin: isEmptyObj(userFromStore) ? false : true,
         name: isEmptyObj(userFromStore)
@@ -218,6 +216,7 @@ export default function Header() {
             { id: 4, name: "登出", url: "/logout" },
           ],
     });
+    // eslint-disable-next-line
   }, [userFromStore]);
   // 如果 cart 有更新的話，則更新購物車 dropdown 元件
   useEffect(() => {
