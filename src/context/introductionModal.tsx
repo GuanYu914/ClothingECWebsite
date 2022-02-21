@@ -2,7 +2,7 @@ import React, { createContext } from "react";
 
 interface IntroductionModalContextPayload {
   introductionModalIsDisplayed: boolean;
-  setIntroductionModalIsDisplayed?: React.Dispatch<
+  setIntroductionModalIsDisplayed: React.Dispatch<
     React.SetStateAction<boolean>
   >;
 }
@@ -10,4 +10,5 @@ interface IntroductionModalContextPayload {
 export const IntroductionModalContext =
   createContext<IntroductionModalContextPayload>({
     introductionModalIsDisplayed: false,
+    setIntroductionModalIsDisplayed: () => {},
   });
