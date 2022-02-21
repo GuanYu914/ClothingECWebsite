@@ -835,6 +835,7 @@ export default function SingleProductPage() {
               handleLiked={handleUpdateItemLikedState}
               handleOnClick={handleRedirectToProductPage}
               marginLeft={"0"}
+              useForLikedItem={true}
             />
           </WatchedItemsContainer>
         )}

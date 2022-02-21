@@ -109,8 +109,9 @@ interface CardContainerProps {
       price: string;
       img: string;
     };
-    isLiked: boolean;
+    isLiked?: boolean;
   }[];
+  useForLikedItem?: boolean;
   horizontalAlign?: string;
   marginTop?: string;
   marginLeft?: string;
@@ -120,6 +121,7 @@ interface CardContainerProps {
 
 export default function CardContainer({
   items,
+  useForLikedItem,
   handleLiked,
   handleOnClick,
   horizontalAlign,
@@ -143,23 +145,27 @@ export default function CardContainer({
               <ItemName data-id={item.id}>{item.product.name}</ItemName>
               <ItemPrice data-id={item.id}>NTD {item.product.price}</ItemPrice>
             </ItemInfo>
-            {!isEmptyObj(userFromStore) && (
+            {useForLikedItem && (
               <>
-                {item.isLiked && (
-                  <FavoriteFilledIcon
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLiked(item.id);
-                    }}
-                  />
-                )}
-                {!item.isLiked && (
-                  <FavoriteIcon
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLiked(item.id);
-                    }}
-                  />
+                {!isEmptyObj(userFromStore) && (
+                  <>
+                    {item.isLiked && (
+                      <FavoriteFilledIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLiked(item.id);
+                        }}
+                      />
+                    )}
+                    {!item.isLiked && (
+                      <FavoriteIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLiked(item.id);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               </>
             )}

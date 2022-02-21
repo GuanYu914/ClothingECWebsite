@@ -439,6 +439,7 @@ export default function HomePage() {
                 horizontalAlign={"center"}
                 handleLiked={handleUpdateItemLikedState}
                 handleOnClick={handleRedirectToProductPage}
+                useForLikedItem={true}
               />
             )}
           </HotSellingItemsContainer>

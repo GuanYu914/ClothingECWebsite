@@ -142,6 +142,7 @@ export default function FavoritePage() {
             items={items}
             handleLiked={handleLiked}
             handleOnClick={handleRedirectToProductPage}
+            useForLikedItem={true}
           ></CardContainer>
         )}
         {showModalForRemovingFavoriteItem && (

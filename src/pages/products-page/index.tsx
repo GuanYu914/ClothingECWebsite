@@ -869,6 +869,7 @@ export default function ProductsPage() {
                   horizontalAlign={"center"}
                   handleLiked={handleUpdateProductLikeState}
                   handleOnClick={handleRedirectToProductPage}
+                  useForLikedItem={true}
                 ></CardContainer>
               </CardContainerForMobile>
               <CardContainerForPad>
@@ -878,6 +879,7 @@ export default function ProductsPage() {
                   marginLeft={"0"}
                   handleLiked={handleUpdateProductLikeState}
                   handleOnClick={handleRedirectToProductPage}
+                  useForLikedItem={true}
                 ></CardContainer>
               </CardContainerForPad>
             </>
