@@ -45,3 +45,13 @@ export interface UseParamsHookPayload {
   subCategoryFromRouter: string;
   detailedCategoryFromRouter: string;
 }
+
+export interface NoneFilteredProductsPayload {
+  id: number;
+  product: {
+    name: string;
+    price: string;
+    img: string;
+  };
+  isLiked: boolean;
+}

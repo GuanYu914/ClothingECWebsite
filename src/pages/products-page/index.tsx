@@ -47,6 +47,7 @@ import {
   CategoriesInfoAPIRespPayload,
   ProductsByCategoryInfoAPIRespPayload,
   UseParamsHookPayload,
+  NoneFilteredProductsPayload,
 } from "./types";
 
 const PageContainer = styled.div`
@@ -296,7 +297,9 @@ export default function ProductsPage() {
   // 控制 filter 是否要顯示
   const [showFilter, setShowFilter] = useState(false);
   // 儲存還沒有被 filtered 的 productsList
-  const [noneFilteredProducts, setNoneFilteredProducts] = useState([]);
+  const [noneFilteredProducts, setNoneFilteredProducts] = useState<
+    NoneFilteredProductsPayload[]
+  >([]);
   // 用來控制顯示更多產品的相關參數
   const [productsListIndicator, setProductsListIndicator] = useState({
     offset: PRODUCTS_QUERY_INIT_OFFSET,
@@ -382,7 +385,7 @@ export default function ProductsPage() {
                 price: `${el.price}`,
                 img: JSON.parse(el.imgs)[0].src,
               },
-              isLiked: false,
+              isLiked: checkIfUserLikeTheProduct(el.id),
             }))
           );
           // 傳入 function 拿到最新的 state
@@ -466,6 +469,7 @@ export default function ProductsPage() {
   }
   // 添加為喜歡的產品
   function handleUpdateProductLikeState(id: number): void {
+    // 依照點選的產品 id 更新喜歡狀態
     setProductsInfo({
       ...productsInfo,
       productsList: productsInfo.productsList.map((product) =>
@@ -474,6 +478,12 @@ export default function ProductsPage() {
           : { ...product }
       ),
     });
+    setNoneFilteredProducts(
+      noneFilteredProducts.map((product) => ({
+        ...product,
+        isLiked: product.id === id ? !product.isLiked : product.isLiked,
+      }))
+    );
     // 拿到目前用戶點擊的產品，並根據喜歡狀態添加到收藏清單
     productsInfo.productsList.forEach((el) => {
       if (el.id === id) {
