@@ -147,7 +147,7 @@ interface DropDownProps {
     options?: {
       id: number;
       name: string;
-      url: string;
+      url?: string;
     }[];
     products?: {
       id: number;
@@ -159,7 +159,9 @@ interface DropDownProps {
       quantity: number;
     }[];
   };
-  handleOptionSelection?: () => void;
+  handleOptionSelection?: (
+    e: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => void;
   children: React.ReactChild;
 }
 

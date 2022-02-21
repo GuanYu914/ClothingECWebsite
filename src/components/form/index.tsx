@@ -98,6 +98,16 @@ const LoginButton = styled.a.attrs(() => ({
   }
 `;
 
+export interface ExternalFormProps {
+  id: number;
+  field: string;
+  type?: string;
+  readOnly?: boolean;
+  inputValue: string;
+  maxLength: number;
+  helperColor?: string;
+  helperMsg: string;
+}
 interface FormProps {
   width?: string;
   formState: {
@@ -117,7 +127,10 @@ interface FormProps {
     id: number,
     e: React.ChangeEvent<HTMLInputElement>
   ) => void;
-  handleFocusOut: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFocusOut: (
+    id: string,
+    e: React.FocusEvent<HTMLInputElement, Element>
+  ) => void;
   handleSubmit: () => void;
 }
 

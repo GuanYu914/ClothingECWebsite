@@ -115,7 +115,7 @@ interface CardContainerProps {
   marginTop?: string;
   marginLeft?: string;
   handleLiked: (id: number) => void;
-  handleOnClick: () => void;
+  handleOnClick: (e: React.MouseEvent<HTMLElement>) => void;
 }
 
 export default function CardContainer({

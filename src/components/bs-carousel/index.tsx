@@ -21,6 +21,21 @@ const StyledCarousel = styled(Carousel)<{ width?: string }>`
   height: fit-content;
 `;
 
+export interface ExternalBSCarouselProps {
+  useForBanner: boolean;
+  frame: {
+    width?: boolean;
+    maxHeight?: string;
+    borderRadius?: string;
+  };
+  slide: {
+    id: number;
+    src: string;
+    alt?: string;
+    link?: string;
+  }[];
+}
+
 interface BSCarouselProps {
   slides: {
     useForBanner: boolean;
@@ -33,7 +48,7 @@ interface BSCarouselProps {
       id: number;
       src: string;
       alt?: string;
-      link: string;
+      link?: string;
     }[];
   };
 }
@@ -64,7 +79,7 @@ export default function BSCarousel({ slides }: BSCarouselProps) {
                   if (typeof slide.link === "string") {
                     history.push(slide.link);
                   } else {
-                    throw new Error("BSCarousel Component: Pass wrong type");
+                    throw new Error("need to pass link prop");
                   }
                 }}
                 maxHeight={slides.frame.maxHeight}
