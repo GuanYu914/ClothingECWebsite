@@ -770,7 +770,7 @@ export default function CartPage() {
           handleCancelOp={() => setShowCheckOutMsg(false)}
         />
       )}
-      <Footer bgColor={BG_PRIMARY1} marginBottom={"10rem"} />
+      <Footer marginBottom={"10rem"} />
     </PageContainer>
   );
 }

@@ -19,6 +19,7 @@ import {
   API_RESP_FAILED_MSG,
   API_RESP_SUCCESSFUL_MSG,
   API_RESP_REQ_REJECT_ERR_MSG,
+  COLOR_PRIMARY1,
 } from "../../constant";
 import Modal from "../../components/modal";
 import { sendUpdatedUserDataApi } from "../../Webapi";
@@ -399,7 +400,11 @@ export default function ProfileEditPage() {
           />
         )}
       </ContentContainer>
-      <Footer marginTop={"0"} bgColor={BG_SECONDARY3} />
+      <Footer
+        marginTop={"0"}
+        bgColor={BG_SECONDARY3}
+        textColor={COLOR_PRIMARY1}
+      />
     </PageContainer>
   );
 }

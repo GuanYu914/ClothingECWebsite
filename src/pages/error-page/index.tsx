@@ -78,7 +78,7 @@ export default function ErrorPage() {
           返回首頁
         </CTAPrimaryButton>
       </ContentContainer>
-      <Footer bgColor={BG_PRIMARY1} />
+      <Footer />
     </PageContainer>
   );
 }

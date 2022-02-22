@@ -4,7 +4,6 @@ import { ReactComponent as mail } from "../../imgs/components/footer/mailbox2.sv
 import {
   BG_PRIMARY1,
   BG_SECONDARY1,
-  COLOR_PRIMARY1,
   COLOR_SECONDARY3,
   FOOTER_GITHUB_LINK,
   FOOTER_MAIL_LINK,
@@ -38,7 +37,7 @@ const GithubLink = styled(github)<{ color?: string }>`
   width: 2.4rem;
   height: 2.4rem;
   margin: 0 0.4rem;
-  color: ${(props) => props.color || COLOR_PRIMARY1};
+  color: ${(props) => props.color || COLOR_SECONDARY3};
 
   &:hover {
     cursor: pointer;
@@ -49,7 +48,7 @@ const MailLink = styled(mail)<{ color?: string }>`
   width: 2.4rem;
   height: 2.4rem;
   margin: 0 0.4rem;
-  color: ${(props) => props.color || COLOR_PRIMARY1};
+  color: ${(props) => props.color || COLOR_SECONDARY3};
 
   &:hover {
     cursor: pointer;
@@ -59,7 +58,7 @@ const MailLink = styled(mail)<{ color?: string }>`
 const ProjectDescription = styled.h3.attrs(() => ({
   className: "fs-h3",
 }))<{ color?: string }>`
-  color: ${(props) => props.color || COLOR_PRIMARY1};
+  color: ${(props) => props.color || COLOR_SECONDARY3};
   padding-top: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
@@ -69,12 +68,14 @@ interface FooterProps {
   marginTop?: string;
   marginBottom?: string;
   bgColor?: string;
+  textColor?: string;
 }
 
 export default function Footer({
   marginTop,
   marginBottom,
   bgColor,
+  textColor,
 }: FooterProps) {
   return (
     <Container
@@ -84,22 +85,22 @@ export default function Footer({
     >
       <IconsContainer>
         <GithubLink
-          color={bgColor}
+          color={textColor}
           onClick={() => {
             window.open(FOOTER_GITHUB_LINK);
           }}
         />
         <MailLink
-          color={bgColor}
+          color={textColor}
           onClick={() => {
             window.open(FOOTER_MAIL_LINK);
           }}
         />
       </IconsContainer>
-      <ProjectDescription color={bgColor}>
+      <ProjectDescription color={textColor}>
         透過點擊上方圖示，查看原始碼或跟我 Say 哈囉
       </ProjectDescription>
-      <ProjectDescription color={bgColor}>
+      <ProjectDescription color={textColor}>
         專案為個人練習，素材部分為 CCO 授權，且不做任何商業營利用途
       </ProjectDescription>
     </Container>

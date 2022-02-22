@@ -153,7 +153,7 @@ export default function FavoritePage() {
           />
         )}
       </ContentContainer>
-      <Footer bgColor={BG_PRIMARY1} />
+      <Footer />
     </PageContainer>
   );
 }

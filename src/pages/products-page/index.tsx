@@ -924,7 +924,7 @@ export default function ProductsPage() {
           />
         )}
       </ContentContainer>
-      <Footer bgColor={BG_PRIMARY1} />
+      <Footer />
     </PageContainer>
   );
 }

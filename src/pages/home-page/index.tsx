@@ -512,7 +512,7 @@ export default function HomePage() {
           />
         )}
       </ContentContainer>
-      <Footer bgColor={BG_PRIMARY1} marginTop={"6rem"} />
+      <Footer marginTop={"6rem"} />
     </PageContainer>
   );
 }

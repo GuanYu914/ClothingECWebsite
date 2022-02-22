@@ -878,7 +878,7 @@ export default function SingleProductPage() {
           handleCancelOp={handleCancelOpForApiError}
         />
       )}
-      <Footer bgColor={BG_PRIMARY1} marginTop="6rem" marginBottom="4rem" />
+      <Footer marginTop="6rem" marginBottom="4rem" />
     </PageContainer>
   );
 }

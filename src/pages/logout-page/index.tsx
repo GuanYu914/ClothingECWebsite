@@ -9,7 +9,6 @@ import {
   HEADER_HEIGHT_PAD,
   COLOR_SECONDARY2,
   BG_SECONDARY4,
-  BG_PRIMARY1,
 } from "../../constant";
 import { CTAPrimaryButton, GhostPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";
@@ -104,7 +103,7 @@ export default function LogoutPage() {
           </GhostPrimaryButton>
         </ButtonContainer>
       </ContentContainer>
-      <Footer bgColor={BG_PRIMARY1} />
+      <Footer />
     </PageContainer>
   );
 }

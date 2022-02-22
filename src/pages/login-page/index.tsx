@@ -19,6 +19,7 @@ import {
   API_RESP_USER_NOT_FOUND_MSG,
   API_RESP_SUCCESSFUL_MSG,
   API_RESP_REQ_REJECT_ERR_MSG,
+  COLOR_PRIMARY1,
 } from "../../constant";
 import { useHistory } from "react-router-dom";
 import Modal from "../../components/modal";
@@ -368,7 +369,11 @@ export default function LoginPage() {
           />
         )}
       </ContentContainer>
-      <Footer marginTop={"0"} bgColor={BG_SECONDARY3} />
+      <Footer
+        marginTop={"0"}
+        bgColor={BG_SECONDARY3}
+        textColor={COLOR_PRIMARY1}
+      />
     </PageContainer>
   );
 }
