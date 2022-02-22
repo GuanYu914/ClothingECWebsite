@@ -9,7 +9,6 @@ import {
   HEADER_HEIGHT_PAD,
   COLOR_SECONDARY2,
   BG_SECONDARY4,
-  BG_PRIMARY1,
 } from "../../constant";
 import { CTAPrimaryButton } from "../../components/button";
 import { useHistory } from "react-router";

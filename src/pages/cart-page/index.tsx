@@ -17,7 +17,6 @@ import { ReactComponent as checkNoneFilled } from "../../imgs/pages/cart-page/sq
 import { ReactComponent as checkFilled } from "../../imgs/pages/cart-page/check-square-fill.svg";
 import { ReactComponent as linkIcon } from "../../imgs/pages/cart-page/link-45deg.svg";
 import {
-  BG_PRIMARY1,
   BG_SECONDARY1,
   BG_SECONDARY4,
   BREAKPOINT_MOBILE,
