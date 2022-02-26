@@ -7,7 +7,6 @@ import ProductPicker from "../../components/product-picker";
 import { useEffect, useState } from "react";
 import { ReactComponent as heart } from "../../imgs/pages/single-product-page/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/pages/single-product-page/heart-fill.svg";
-import { ReactComponent as cart } from "../../imgs/pages/single-product-page/cart.svg";
 import {
   BREAKPOINT_MOBILE,
   BREAKPOINT_LAPTOP,
@@ -16,8 +15,6 @@ import {
   HEADER_HEIGHT_PAD,
   MAX_CONTAINER_WIDTH,
   Z_INDEX_LV2,
-  Z_INDEX_LV6,
-  COLOR_PRIMARY1,
   COLOR_SECONDARY2,
   COLOR_SECONDARY3,
   BG_PRIMARY1,
@@ -28,13 +25,12 @@ import {
   API_RESP_SUCCESSFUL_MSG,
   API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
-import { useTransition, animated } from "react-spring";
 import { useHistory, useParams } from "react-router";
 import { getProductByIDApi } from "../../Webapi";
 import Loader from "../../components/loader";
 import Modal from "../../components/modal";
+import FlashModal from "../../components/flash-modal";
 import { isEmptyObj } from "../../util";
-// import { useSelector, useDispatch } from "react-redux";
 import {
   addWatchedItem,
   toggleItemLikedState,
@@ -222,36 +218,6 @@ const ProductAddButton = styled.div.attrs(() => ({
   }
 `;
 
-const AddToCartReminderMsg = styled(animated.div).attrs(() => ({
-  className: "box-shadow-dark",
-}))`
-  position: fixed;
-  // 為了讓 .svg 檔案能夠水平居中
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: ${Z_INDEX_LV6};
-  background-color: ${COLOR_PRIMARY1};
-  padding: 1.5rem;
-  border-radius: 0.8rem;
-`;
-
-const CartIcon = styled(cart)`
-  color: ${COLOR_SECONDARY3};
-  width: 4rem;
-  height: 4rem;
-  margin-bottom: 1rem;
-`;
-
-const ReminderMsg = styled.h2.attrs(() => ({
-  className: "fs-h3",
-}))`
-  color: ${COLOR_SECONDARY3};
-`;
-
 export default function SingleProductPage() {
   // 產生 redux-dispatch
   const dispatch = useReduxDispatch();
@@ -324,19 +290,11 @@ export default function SingleProductPage() {
   const [mobilePickerState, setMobilePickerState] = useState(false);
   // 當前頁面可以被執行有關購物車相關的操作狀態
   const [activeOpState, setActiveOpState] = useState(false);
-  // 加入購物車動畫時間
-  const showCartReminderDuration: number = 500;
   // 是否要顯示加入購物車的動畫
-  const [showCartReminder, setShowCartReminder] = useState(false);
-  // 加入購物車訊息動畫
-  const showCartReminderAnimation = useTransition(showCartReminder, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-    config: {
-      duration: showCartReminderDuration,
-    },
-  });
+  const [showAddToCartReminder, setShowAddToCartReminder] = useState(false);
+  // // 是否要顯示選擇顏色跟尺寸的動畫
+  const [showSelectNecessaryOptions, setShowSelectNecessaryOptions] =
+    useState(false);
   // 是否要顯示 api 發送錯誤的 modal
   const [showModalForApiError, setShowModalForApiError] = useState(false);
   // api 發送錯誤的 modal 資訊
@@ -465,9 +423,15 @@ export default function SingleProductPage() {
   }
   // 點選 "加入購物車" 按鈕
   function handleAddToCart(
-    selectedPickerColor: string,
-    selectedPickerSize: string
+    isSelected: boolean,
+    selectedPickerColor?: string,
+    selectedPickerSize?: string
   ): void {
+    if (!isSelected) {
+      // 顯示選擇 color & size 動畫
+      setShowSelectNecessaryOptions(true);
+      return;
+    }
     // 找尋購物車內是否有一樣產品規格
     let flagFind = false;
     for (let i = 0; i < cartItemsFromStore.length; i++) {
@@ -530,15 +494,29 @@ export default function SingleProductPage() {
       );
     }
     // 顯示加入購物車訊息動畫
-    setShowCartReminder(true);
+    setShowAddToCartReminder(true);
   }
   // 點選 "直接購買" 按鈕
   function handleCheckout(
-    selectedPickerColor: string,
-    selectedPickerSize: string
+    isSelected: boolean,
+    selectedPickerColor?: string,
+    selectedPickerSize?: string
   ): void {
+    if (!isSelected) {
+      // 顯示加入 color & size 動畫
+      setShowSelectNecessaryOptions(true);
+      return;
+    }
+    // 檢查目前用戶有沒有選擇顏色跟尺寸
+    const isUserSelectSize = productInfo.picker.sizes.filter(
+      (size) => size.selected === true
+    ).length;
+    const isUserSelectColor = productInfo.picker.colors.filter(
+      (color) => color.selected === true
+    ).length;
+    console.log(isUserSelectColor, isUserSelectSize);
     // 加入到購物車且導引到 cart page
-    handleAddToCart(selectedPickerColor, selectedPickerSize);
+    handleAddToCart(true, selectedPickerColor, selectedPickerSize);
     history.push("/cart");
   }
   // 更新 watchedItems 裡面物件的 isLiked 屬性
@@ -687,20 +665,6 @@ export default function SingleProductPage() {
     return false;
   }
 
-  // 若重複點擊，則暫緩顯示購物車訊息
-  useEffect(() => {
-    let isCancelled = false;
-    if (showCartReminder) {
-      setTimeout(() => {
-        if (!isCancelled) {
-          setShowCartReminder(false);
-        }
-      }, showCartReminderDuration * 3);
-    }
-    return () => {
-      isCancelled = true;
-    };
-  }, [showCartReminder]);
   // 如果 picker 有被點選，且不是正在讀取中，則更新目前購物操作狀態
   useEffect(() => {
     if (!isLoadingProduct) {
@@ -862,15 +826,21 @@ export default function SingleProductPage() {
         />
       )}
       {/* 這是用來提醒用戶商品被加入購物車的訊息 */}
-      {showCartReminderAnimation(
-        (props, item) =>
-          item && (
-            <AddToCartReminderMsg style={props}>
-              <CartIcon />
-              <ReminderMsg>已加入購物車</ReminderMsg>
-            </AddToCartReminderMsg>
-          )
-      )}
+      <FlashModal
+        showReminderFromProp={showAddToCartReminder}
+        msg={"已經加入購物車"}
+        handleSyncPropState={(value: boolean) =>
+          setShowAddToCartReminder(value)
+        }
+      />
+      {/* 這是用來提醒用戶還沒點選顏色跟尺寸的訊息 */}
+      <FlashModal
+        showReminderFromProp={showSelectNecessaryOptions}
+        msg={"請先選擇顏色跟尺寸"}
+        handleSyncPropState={(value: boolean) =>
+          setShowSelectNecessaryOptions(value)
+        }
+      />
       {showModalForApiError && (
         <Modal
           modalInfo={modalInfoForApiError}
