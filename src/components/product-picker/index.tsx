@@ -273,12 +273,14 @@ interface ProductPickerProps {
   setMobilePickerState: (boolValue: boolean) => void;
   handleAddToLikedItems: () => void;
   handleAddToCart: (
-    selectedColorHexcode: string,
-    selectedSizeName: string
+    isSelected: boolean,
+    selectedColorHexcode?: string,
+    selectedSizeName?: string
   ) => void;
   handleCheckout: (
-    selectedColorHexcode: string,
-    selectedSizeName: string
+    isSelected: boolean,
+    selectedColorHexcode?: string,
+    selectedSizeName?: string
   ) => void;
 }
 
@@ -401,6 +403,7 @@ export default function ProductPicker({
                 <PickerGhostPrimaryButton
                   onClick={() => {
                     handleAddToCart(
+                      true,
                       picker.colors.filter((color) => color.selected)[0]
                         .hexcode,
                       picker.sizes.filter((size) => size.selected)[0].name
@@ -412,6 +415,7 @@ export default function ProductPicker({
                 <PickerCTAPrimaryButton
                   onClick={() => {
                     handleCheckout(
+                      true,
                       picker.colors.filter((color) => color.selected)[0]
                         .hexcode,
                       picker.sizes.filter((size) => size.selected)[0].name
@@ -425,10 +429,20 @@ export default function ProductPicker({
             {/* 不可以操作 "加入購物車" 跟 "直接購買" 等操作 */}
             {!activeOpState && (
               <PickerOPButtons>
-                <PickerGhostSecondaryButton>
+                <PickerGhostSecondaryButton
+                  onClick={() => {
+                    handleAddToCart(false);
+                  }}
+                >
                   加入購物車
                 </PickerGhostSecondaryButton>
-                <PickerCTASecondaryButton>直接購買</PickerCTASecondaryButton>
+                <PickerCTASecondaryButton
+                  onClick={() => {
+                    handleCheckout(false);
+                  }}
+                >
+                  直接購買
+                </PickerCTASecondaryButton>
               </PickerOPButtons>
             )}
           </PickerContainerForMobile>
@@ -498,6 +512,7 @@ export default function ProductPicker({
                 isRounded={true}
                 onClick={() => {
                   handleCheckout(
+                    true,
                     picker.colors.filter((color) => color.selected)[0].hexcode,
                     picker.sizes.filter((size) => size.selected)[0].name
                   );
@@ -510,6 +525,7 @@ export default function ProductPicker({
                 isRounded={true}
                 onClick={() => {
                   handleAddToCart(
+                    true,
                     picker.colors.filter((color) => color.selected)[0].hexcode,
                     picker.sizes.filter((size) => size.selected)[0].name
                   );
@@ -521,10 +537,21 @@ export default function ProductPicker({
           )}
           {!activeOpState && (
             <PickerOPButtons>
-              <CTASecondaryButton isRounded={true} margin={"0 0.4rem 0 0"}>
+              <CTASecondaryButton
+                isRounded={true}
+                margin={"0 0.4rem 0 0"}
+                onClick={() => {
+                  handleCheckout(false);
+                }}
+              >
                 直接購買
               </CTASecondaryButton>
-              <GhostSecondaryButton isRounded={true}>
+              <GhostSecondaryButton
+                isRounded={true}
+                onClick={() => {
+                  handleAddToCart(false);
+                }}
+              >
                 加入購物車
               </GhostSecondaryButton>
             </PickerOPButtons>
