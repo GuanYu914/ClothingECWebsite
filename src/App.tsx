@@ -15,8 +15,7 @@ import { IntroductionModalContext } from "./context/introductionModal";
 import ScrollToTop from "./components/scroll-to-top";
 import AsyncComponent from "./components/async-component";
 import { useEffect } from "react";
-import { setCookie } from "./util";
-import { isEmptyObj } from "./util";
+import { setCookie, isEmptyObj, detectWebpSupport } from "./util";
 import { getCart, uploadCart } from "./redux/reducers/cartSlice";
 import {
   getFavoriteItems,
@@ -25,6 +24,7 @@ import {
 import { getUser, logoutUser } from "./redux/reducers/userSlice";
 import { COOKIE_GUEST_CART_NAME } from "./constant";
 import { useReduxDispatch, useReduxSelector } from "./redux/store";
+import { initApiExtraConfig } from "./Webapi";
 
 function App(): React.ReactElement {
   // 從 react-router 拿 URL 資訊
@@ -127,6 +127,12 @@ function App(): React.ReactElement {
   }, [cartItemsFromStore, dispatch]);
   // 第一次 render 後執行
   useEffect(() => {
+    // detect webp support
+    detectWebpSupport(() => {
+      initApiExtraConfig({
+        useWebp: true,
+      });
+    });
     if (location.pathname === "/logout") {
       dispatch(logoutUser());
       return;
