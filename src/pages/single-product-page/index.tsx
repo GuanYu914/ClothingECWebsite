@@ -507,14 +507,6 @@ export default function SingleProductPage() {
       setShowSelectNecessaryOptions(true);
       return;
     }
-    // 檢查目前用戶有沒有選擇顏色跟尺寸
-    const isUserSelectSize = productInfo.picker.sizes.filter(
-      (size) => size.selected === true
-    ).length;
-    const isUserSelectColor = productInfo.picker.colors.filter(
-      (color) => color.selected === true
-    ).length;
-    console.log(isUserSelectColor, isUserSelectSize);
     // 加入到購物車且導引到 cart page
     handleAddToCart(true, selectedPickerColor, selectedPickerSize);
     history.push("/cart");

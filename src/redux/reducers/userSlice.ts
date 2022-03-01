@@ -98,7 +98,7 @@ const userSlice = createSlice({
         try {
           parsed_json = JSON.parse(action.payload);
         } catch {
-          state.req.isProcessing = false; // bug 修正 master
+          state.req.isProcessing = false;
           state.err.isShow = true;
           state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
           return;

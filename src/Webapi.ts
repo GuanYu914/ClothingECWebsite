@@ -14,13 +14,33 @@ const DevURL = "http://192.168.0.15/clothing_ec";
 // 將來要發佈到前端網站上的網域
 // const ProdURL = "https://emory.work/clothing-ec/api";
 
+const apiExtraConfig = {
+  useWebp: false
+}
+
+interface initApiExtraConfigPayload {
+  useWebp?: boolean;
+}
+
+export const initApiExtraConfig = function (config: initApiExtraConfigPayload): void {
+  if (config.useWebp) {
+    apiExtraConfig.useWebp = true;
+  }
+}
+
 // 拿 HomePage 的 Banner
 export const getBannersApi = async function () {
+  if (apiExtraConfig.useWebp) {
+    return await axios(`${DevURL}/handleGetBanners.php?webp=true`)
+  }
   return await axios(`${DevURL}/handleGetBanners.php`);
 };
 
 // 拿 HomePage 的商品分類
 export const getMainCategoriesApi = async function () {
+  if (apiExtraConfig.useWebp) {
+    return await axios(`${DevURL}/handleGetCategories.php?type=main&&webp=true`);
+  }
   return await axios(`${DevURL}/handleGetCategories.php?type=main`);
 };
 
@@ -34,6 +54,11 @@ export const getHotItemsApi = async function (offset: number, limit: number) {
   }
   if (limit === undefined) {
     limit = HOT_ITEMS_QUERY_INIT_LIMIT;
+  }
+  if (apiExtraConfig.useWebp) {
+    return await axios(
+      `${DevURL}/handleGetHotItems.php?offset=${offset}&&limit=${limit}&&webp=true`
+    );
   }
   return await axios(
     `${DevURL}/handleGetHotItems.php?offset=${offset}&&limit=${limit}`
@@ -50,6 +75,11 @@ export const getUserCommentsApi = async function (offset: number, limit: number)
   }
   if (limit === undefined) {
     limit = COMMENTS_QUERY_INIT_LIMIT;
+  }
+  if (apiExtraConfig.useWebp) {
+    return await axios(
+      `${DevURL}/handleGetUserComments.php?offset=${offset}&&limit=${limit}&&webp=true`
+    );
   }
   return await axios(
     `${DevURL}/handleGetUserComments.php?offset=${offset}&&limit=${limit}`
@@ -75,6 +105,11 @@ export const getProductsByCategoryApi = async function (
   if (limit === undefined) {
     limit = PRODUCTS_QUERY_INIT_LIMIT;
   }
+  if (apiExtraConfig.useWebp) {
+    return await axios(
+      `${DevURL}/handleGetProducts.php?main=${mainCategory}&&sub=${subCategory}&&detailed=${detailedCategory}&&offset=${offset}&&limit=${limit}&&webp=true`
+    );
+  }
   return await axios(
     `${DevURL}/handleGetProducts.php?main=${mainCategory}&&sub=${subCategory}&&detailed=${detailedCategory}&&offset=${offset}&&limit=${limit}`
   );
@@ -82,6 +117,9 @@ export const getProductsByCategoryApi = async function (
 
 // 拿 SingeProductPage 當前頁面產品
 export const getProductByIDApi = async function (pid: number) {
+  if (apiExtraConfig.useWebp) {
+    return await axios(`${DevURL}/handleGetProduct.php?id=${pid}&&webp=true`);
+  }
   return await axios(`${DevURL}/handleGetProduct.php?id=${pid}`);
 };
 
@@ -138,6 +176,11 @@ export const LogoutApi = async function () {
 
 // 取得用戶收藏清單
 export const getFavoriteItemsApi = async function () {
+  if (apiExtraConfig.useWebp) {
+    return await axios(`${DevURL}/handleGetFavoriteItems.php?webp=true`, {
+      withCredentials: true,
+    });
+  }
   return await axios(`${DevURL}/handleGetFavoriteItems.php`, {
     withCredentials: true,
   });
@@ -154,6 +197,11 @@ export const uploadFavoriteItemsApi = async function (productsInfo: UploadFavori
 
 // 取得用戶購物車清單
 export const getCartItemsApi = async function () {
+  if (apiExtraConfig.useWebp) {
+    return await axios(`${DevURL}/handleGetCartItems.php?webp=true`, {
+      withCredentials: true,
+    });
+  }
   return await axios(`${DevURL}/handleGetCartItems.php`, {
     withCredentials: true,
   });

@@ -125,15 +125,20 @@ const favoriteItemsSlice = createSlice({
           state.err.msg = API_RESP_SERVER_REJECT_OP_MSG;
         }
         if (parsed_json.data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
-          state.items = parsed_json.data.data.map((item: RespFavoriteItem) => ({
-            id: item.id,
-            product: {
-              name: item.name,
-              price: `${item.price}`,
-              img: JSON.parse(item.imgs)[0].src,
-            },
-            isLiked: true,
-          }));
+          try {
+            state.items = parsed_json.data.data.map((item: RespFavoriteItem) => ({
+              id: item.id,
+              product: {
+                name: item.name,
+                price: `${item.price}`,
+                img: JSON.parse(item.imgs)[0].src,
+              },
+              isLiked: true,
+            }));
+          } catch (e) {
+            state.err.isShow = true;
+            state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
+          }
         }
         state.req.isProcessing = false;
       }
@@ -155,7 +160,7 @@ const favoriteItemsSlice = createSlice({
         try {
           parsed_json = JSON.parse(action.payload);
         } catch {
-          state.req.isProcessing = false; // 修正 master
+          state.req.isProcessing = false;
           state.err.isShow = true;
           state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
           return;

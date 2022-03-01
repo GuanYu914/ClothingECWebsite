@@ -43,3 +43,30 @@ export const isEmptyObj = function (obj: object): boolean {
   }
   return false;
 };
+
+// 試圖在 DOM 放上 1x1 webp 檔案
+// 如果瀏覽器載入成功，則 resolve true，相反 resolve false
+async function loadWebpImg(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const imgSrc = 'data:image/webp;base64,UklGRiQAAABXRUJQVlA4IBgAAAAwAQCdASoBAAEAAgA0JaQAA3AA/vVSgAA=';
+    const pixel = new Image();
+    pixel.addEventListener('load', () => {
+      const isSuccess = (pixel.width > 0) && (pixel.height > 0);
+      resolve(isSuccess)
+    })
+    pixel.addEventListener('error', () => { resolve(false) })
+    pixel.setAttribute('src', imgSrc);
+  })
+}
+
+// 根據 loadWebpImg function 結果，執行相對應 callback
+export const detectWebpSupport = async function (supportCallBack: () => void, noneSupportCallBack?: () => void) {
+  const hasSupport: boolean = await loadWebpImg();
+  if (hasSupport) {
+    supportCallBack();
+  } else {
+    if (typeof noneSupportCallBack === 'function') {
+      noneSupportCallBack();
+    }
+  }
+}
