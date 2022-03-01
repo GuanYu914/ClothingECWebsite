@@ -75,13 +75,35 @@ export interface UploadCartItemPayload {
 }
 
 interface RespCartItem {
-  id: number;
   pid: number;
   name: string;
   colors: string;
   sizes: string;
   price: number;
   imgs: string;
+  quantity: number;
+}
+
+interface LocalCartItem {
+  id: number;
+  pid: number;
+  name: string;
+  colors: {
+    id: number;
+    hexcode: string;
+    selected: boolean;
+    aaa: string;
+  }[];
+  sizes: {
+    id: number;
+    name: string;
+    selected: boolean;
+  }[];
+  unitPrice: number;
+  urls: {
+    id: number;
+    src: string;
+  }[];
   quantity: number;
 }
 
@@ -143,7 +165,24 @@ const cartSlice = createSlice({
               setCookie(COOKIE_GUEST_CART_NAME, JSON.stringify([]), 7);
               state.req.isProcessing = false;
             } else {
-              state.items = JSON.parse(localCart);
+              try {
+                state.items = JSON.parse(localCart).map(
+                  (item: LocalCartItem) => ({
+                    id: item.id,
+                    pid: item.pid,
+                    name: item.name,
+                    colors: item.colors,
+                    sizes: item.sizes,
+                    unitPrice: item.unitPrice,
+                    urls: item.urls,
+                    quantity: item.quantity,
+                  })
+                )
+              } catch (e) {
+                state.req.isProcessing = false;
+                state.err.isShow = true;
+                state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
+              }
               state.req.isProcessing = false;
             }
             return;
@@ -152,18 +191,23 @@ const cartSlice = createSlice({
           state.err.msg = API_RESP_SERVER_REJECT_OP_MSG;
         }
         if (parsed_json.data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
-          state.items = parsed_json.data.data.map(
-            (item: RespCartItem, index: number) => ({
-              id: index,
-              pid: item.pid,
-              name: item.name,
-              colors: JSON.parse(item.colors),
-              sizes: JSON.parse(item.sizes),
-              unitPrice: item.price,
-              urls: JSON.parse(item.imgs),
-              quantity: item.quantity,
-            })
-          );
+          try {
+            state.items = parsed_json.data.data.map(
+              (item: RespCartItem, index: number) => ({
+                id: index,
+                pid: item.pid,
+                name: item.name,
+                colors: JSON.parse(item.colors),
+                sizes: JSON.parse(item.sizes),
+                unitPrice: item.price,
+                urls: JSON.parse(item.imgs),
+                quantity: item.quantity,
+              })
+            );
+          } catch (e) {
+            state.err.isShow = true;
+            state.err.msg = API_RESP_PARSE_JSON_ERROR_MSG;
+          }
         }
         state.req.isProcessing = false;
       }
@@ -197,7 +241,6 @@ const cartSlice = createSlice({
       }
     );
     builder.addCase(uploadCart.rejected, (state, action) => {
-      console.log(action);
       state.req.isProcessing = false;
       state.err.isShow = true;
       state.err.msg = `${API_RESP_REQ_REJECT_ERR_MSG} ${action.error.message}`;
