@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import React, { useEffect } from "react";
+import usePrevious from "../../hooks/usePrevious";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";
 import { ReactComponent as heartFilled } from "../../imgs/components/card-container/heart-fill.svg";
 import {
@@ -9,6 +11,8 @@ import {
   BG_SECONDARY1,
   COLOR_SECONDARY2,
   COLOR_PRIMARY2,
+  CARD_CONTAINER_LAZY_LOADING_TAG,
+  CARD_CONTAINER_LAZY_LOADING_CONFIG,
 } from "../../constant";
 import { isEmptyObj } from "../../util";
 import { useReduxSelector } from "../../redux/store";
@@ -26,10 +30,9 @@ const ItemsContainer = styled.section<{
 `;
 
 const ItemContainer = styled.section.attrs(() => ({
-  className: "box-shadow-dark",
+  className: `box-shadow-dark ${CARD_CONTAINER_LAZY_LOADING_TAG}`,
 }))<{
   marginLeft?: string;
-  img: string;
 }>`
   background-color: ${BG_SECONDARY1};
   width: 18rem;
@@ -40,7 +43,6 @@ const ItemContainer = styled.section.attrs(() => ({
   margin-right: 1rem;
   margin-bottom: 2rem;
   cursor: pointer;
-  background-image: url("${(props) => props.img}");
   background-size: cover;
 
   &:last-child {
@@ -117,6 +119,52 @@ interface CardContainerProps {
   marginLeft?: string;
   handleLiked: (id: number) => void;
   handleOnClick: (e: React.MouseEvent<HTMLElement>) => void;
+  handleOnLastItem?: () => void;
+}
+
+// 將帶有 CARD_CONTAINER_LAZY_LOADING_TAG 的 DOM elements 掛上 IntersectionObserver
+function initLazyLoading(lastItemTriggerCallback?: () => void): void {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const element = entry.target as HTMLDivElement;
+          // 如果當前是最後一個，如果有傳入 callback 則執行，否則就不用
+          if (element.dataset.lastItem === "true") {
+            element.style.backgroundImage = `url(${
+              element.dataset.src as string
+            })`;
+            if (typeof lastItemTriggerCallback === "function") {
+              lastItemTriggerCallback();
+            }
+            observer.unobserve(element);
+            return;
+          }
+          // 預設行為，如果出現在 view port 裡面，則從 data-src 欄位載入圖片
+          element.style.backgroundImage = `url(${
+            element.dataset.src as string
+          })`;
+          observer.unobserve(element);
+        }
+      });
+    },
+    {
+      root: CARD_CONTAINER_LAZY_LOADING_CONFIG.root,
+      rootMargin: CARD_CONTAINER_LAZY_LOADING_CONFIG.rootMargin,
+      threshold: CARD_CONTAINER_LAZY_LOADING_CONFIG.threshold,
+    }
+  );
+
+  const observedTargets = document.querySelectorAll(
+    `.${CARD_CONTAINER_LAZY_LOADING_TAG}`
+  );
+  // 如果沒有任何 lazy-loading tag 的物件
+  if (observedTargets.length === 0) {
+    throw new Error(
+      "can't select any lazy-loading items, check selector query"
+    );
+  }
+  Array.from(observedTargets).forEach((target) => observer.observe(target));
 }
 
 export default function CardContainer({
@@ -124,19 +172,36 @@ export default function CardContainer({
   useForLikedItem,
   handleLiked,
   handleOnClick,
+  handleOnLastItem,
   horizontalAlign,
   marginTop,
   marginLeft,
 }: CardContainerProps) {
   // 從 redux-store 拿用戶資訊
   const userFromStore = useReduxSelector((store) => store.user.info);
+  // 拿之前的 items 狀態
+  const prevItems = usePrevious(items);
+
+  // 當 items 有變動時，則重新初始化 lazy-loading
+  useEffect(() => {
+    // 確保 items 裡面 value 為不一致才做，避免不同 ref 相同 value 傳入，掛載重複的 IntersectionObserver
+    if (JSON.stringify(items) === JSON.stringify(prevItems)) return;
+    // 傳入 function 當作 lazy-loading 最後一個物件要觸發的 callback
+    if (typeof handleOnLastItem === "function") {
+      initLazyLoading(handleOnLastItem);
+      return;
+    }
+    initLazyLoading();
+    // eslint-disable-next-line
+  }, [items]);
   return (
     <ItemsContainer horizontalAlign={horizontalAlign} marginTop={marginTop}>
-      {items.map((item) => (
+      {items.map((item, index) => (
         <ItemContainer
           key={item.id}
           marginLeft={marginLeft}
-          img={item.product.img}
+          data-src={item.product.img}
+          data-last-item={index === items.length - 1 ? true : false}
           data-id={item.id}
           onClick={handleOnClick}
         >
