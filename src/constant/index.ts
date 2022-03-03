@@ -64,18 +64,16 @@ export const BG_MASK = "rgba(53, 53, 53, 0.8)";
 
 // 控制 HomePage hotItems 的資料庫相關常數
 export const HOT_ITEMS_QUERY_INIT_OFFSET = 0;
-export const HOT_ITEMS_QUERY_INIT_LIMIT = 5;
-export const HOT_ITEMS_QUERY_LIMIT = 3;
+export const HOT_ITEMS_QUERY_INIT_LIMIT = 20;
 
 // 控制 HomePage comments 的資料庫相關常數
 export const COMMENTS_QUERY_INIT_OFFSET = 0;
-export const COMMENTS_QUERY_INIT_LIMIT = 5;
-export const COMMENTS_QUERY_LIMIT = 3;
+export const COMMENTS_QUERY_INIT_LIMIT = 10;
 
 // 控制 ProductsPage products 的資料庫相關常數
 export const PRODUCTS_QUERY_INIT_OFFSET = 0;
 export const PRODUCTS_QUERY_INIT_LIMIT = 12;
-export const PRODUCTS_QUERY_LIMIT = 3;
+export const PRODUCTS_QUERY_LIMIT = 8;
 
 // 定義錯誤訊息
 export const API_RESP_FAILED_MSG = "failed";
@@ -106,3 +104,17 @@ export const FILTER_INIT_OPTION = "尚未套用篩選條件";
 export const FILTER_OPTION_1 = "價格低至高";
 export const FILTER_OPTION_2 = "價格高至低";
 export const FILTER_RESET_OPTION = "取消套用篩選";
+
+// lazy-loading 相關常數
+export const CARD_CONTAINER_LAZY_LOADING_TAG = 'card-lazy-loading'
+export const CARD_CONTAINER_LAZY_LOADING_CONFIG = {
+  root: null,
+  rootMargin: "0px 0px 0px 0px",
+  threshold: 0,
+}
+export const COMMENT_AVATAR_LAZY_LOADING_TAG = 'avatar-lazing-loading'
+export const COMMENT_AVATAR_LAZY_LOADING_CONFIG = {
+  root: null,
+  rootMargin: "0px 0px 0px 0px",
+  threshold: 0,
+}
