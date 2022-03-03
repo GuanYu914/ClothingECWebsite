@@ -1,7 +1,6 @@
 import Header from "../../components/header";
 import Footer from "../../components/footer";
 import CardContainer from "../../components/card-container";
-import { CTAPrimaryButton } from "../../components/button";
 import styled, { keyframes } from "styled-components";
 import { fadeIn } from "react-animations";
 import {
@@ -276,7 +275,7 @@ export default function ProductsPage() {
   // 儲存分類讀取狀態
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   // 儲存產品讀取狀態
-  const [isLoadingProducts, setIsLoadingProductsBlock] = useState(true);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   // Filter 狀態參數
   const [filter, setFilter] = useState({
     width: "12rem",
@@ -305,11 +304,9 @@ export default function ProductsPage() {
     offset: PRODUCTS_QUERY_INIT_OFFSET,
     limit: PRODUCTS_QUERY_INIT_LIMIT,
   });
-  // 使否要顯示 "載入更多" 按鈕
-  const [disableProductsListButton, setDisableProductsListButton] =
-    useState(false);
   // 使否要顯示載入時動畫
-  const [isLoadingMoreProducts, setIsLoadingMoreProducts] = useState(false);
+  const [productsIsLoadedCompleted, setProductsIsLoadedCompleted] =
+    useState(false);
   // 是否要顯示 api 發送錯誤的 modal
   const [showModalForApiError, setShowModalForApiError] = useState(false);
   // api 發送錯誤的 modal 資訊
@@ -357,8 +354,7 @@ export default function ProductsPage() {
     subCategory: string,
     detailedCategory: string,
     offset: number,
-    limit: number,
-    flagLoadMore = false
+    limit: number
   ): void {
     // 先隱藏 filter
     setShowFilter(false);
@@ -408,19 +404,12 @@ export default function ProductsPage() {
             };
           });
           // 如果資料總筆數小於等於目前 indicator 的限制筆數，則資料已讀取完畢，反之相反
-          if (json_data.totals <= productsListIndicator.limit) {
-            setDisableProductsListButton(true);
-          } else {
-            setDisableProductsListButton(false);
-          }
+          json_data.totals <= productsListIndicator.limit
+            ? setProductsIsLoadedCompleted(true)
+            : setProductsIsLoadedCompleted(false);
           // 顯示 filter，並隱藏相關載入動畫
           setShowFilter(true);
-          // 根據讀取的情境，取消該讀取動畫
-          if (flagLoadMore) {
-            setIsLoadingMoreProducts(false);
-          } else {
-            setIsLoadingProductsBlock(false);
-          }
+          setIsLoadingProducts(false);
         }
       })
       .catch((e) => {
@@ -523,7 +512,9 @@ export default function ProductsPage() {
       // 更新網址
       history.push(`/products/${categoryFromDOM}`);
       // 顯示整個產品清單讀取動畫
-      setIsLoadingProductsBlock(true);
+      setIsLoadingProducts(true);
+      // 假設沒有更多產品需要被讀取
+      setProductsIsLoadedCompleted(true);
       // 重設 ProductsListIndicator，並根據 indicator 的參數重新讀取產品清單
       setProductsListIndicator({
         offset: PRODUCTS_QUERY_INIT_OFFSET,
@@ -553,7 +544,9 @@ export default function ProductsPage() {
       // 更新網址
       history.push(`/products/${categoryFromDOM}`);
       // 顯示整個產品清單讀取動畫
-      setIsLoadingProductsBlock(true);
+      setIsLoadingProducts(true);
+      // 假設沒有更多產品需要被讀取
+      setProductsIsLoadedCompleted(true);
       // 重設 ProductsListIndicator，並根據 indicator 的參數重新讀取產品清單
       setProductsListIndicator({
         offset: PRODUCTS_QUERY_INIT_OFFSET,
@@ -681,15 +674,6 @@ export default function ProductsPage() {
       });
     }
   }
-  // 點擊載入更多事件
-  function handleGetMoreProducts(): void {
-    // 顯示部分產品讀取動畫
-    setIsLoadingMoreProducts(true);
-    setProductsListIndicator({
-      offset: productsListIndicator.offset,
-      limit: productsListIndicator.limit + PRODUCTS_QUERY_LIMIT,
-    });
-  }
   // 點選浮動按鈕，自動上滑到頂端事件
   function handleScrollToTop(): void {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -720,13 +704,17 @@ export default function ProductsPage() {
     }
     return false;
   }
-
+  // 當用戶滑到 lazy-loading 最後一個物件，設定 indicator 去抓取當前以後的資料
+  function handleCallbackOnLastItem() {
+    setProductsListIndicator({
+      offset: PRODUCTS_QUERY_INIT_OFFSET,
+      limit: PRODUCTS_QUERY_INIT_LIMIT + PRODUCTS_QUERY_LIMIT,
+    });
+  }
   // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單
   useEffect(() => {
     getCurrentCategoryPathFromRouter();
     getAllCategoriesFromApi();
-    // 顯示整個產品清單讀取動畫
-    setIsLoadingProductsBlock(true);
     // eslint-disable-next-line
   }, []);
   // 如果分類路徑有變，則更新顯示路徑
@@ -744,15 +732,13 @@ export default function ProductsPage() {
   // 根據 indicator 讀取更多產品
   // 因為 indicator 會被初始化導致開始抓取相對應的產品清單
   useEffect(() => {
-    // 讀取部分產品清單
-    if (isLoadingMoreProducts) {
+    if (!productsIsLoadedCompleted) {
       getProductsByCategoryFromApi(
         mainCategoryFromRouter,
         subCategoryFromRouter,
         detailedCategoryFromRouter,
         productsListIndicator.offset,
-        productsListIndicator.limit,
-        true
+        productsListIndicator.limit
       );
     }
     // 讀取整個產品清單
@@ -762,8 +748,7 @@ export default function ProductsPage() {
         subCategoryFromRouter,
         detailedCategoryFromRouter,
         productsListIndicator.offset,
-        productsListIndicator.limit,
-        false
+        productsListIndicator.limit
       );
     }
     // eslint-disable-next-line
@@ -879,8 +864,10 @@ export default function ProductsPage() {
                   horizontalAlign={"center"}
                   handleLiked={handleUpdateProductLikeState}
                   handleOnClick={handleRedirectToProductPage}
+                  handleOnLastItem={handleCallbackOnLastItem}
                   useForLikedItem={true}
                 ></CardContainer>
+                {!productsIsLoadedCompleted && <Loader marginTop={"0"} />}
               </CardContainerForMobile>
               <CardContainerForPad>
                 <CardContainer
@@ -889,29 +876,14 @@ export default function ProductsPage() {
                   marginLeft={"0"}
                   handleLiked={handleUpdateProductLikeState}
                   handleOnClick={handleRedirectToProductPage}
+                  handleOnLastItem={handleCallbackOnLastItem}
                   useForLikedItem={true}
                 ></CardContainer>
+                {!productsIsLoadedCompleted && <Loader marginTop={"0"} />}
               </CardContainerForPad>
             </>
           )}
         </ProductsContainer>
-        <>
-          {!disableProductsListButton && (
-            <>
-              {isLoadingMoreProducts ? (
-                <Loader marginTop={"0"} />
-              ) : (
-                <CTAPrimaryButton
-                  isRounded={true}
-                  margin={"3rem auto 0"}
-                  onClick={handleGetMoreProducts}
-                >
-                  載入更多
-                </CTAPrimaryButton>
-              )}
-            </>
-          )}
-        </>
         <FloatingButtonForMobileAndPad onClick={handleScrollToTop}>
           <ScrollToTopIcon />
           回到頂端

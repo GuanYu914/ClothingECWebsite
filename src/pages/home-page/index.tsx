@@ -20,25 +20,19 @@ import {
   CategoriesContainer,
   Category,
 } from "./styled-category";
-import {
+import UserComment, {
   UserCommentBlock,
   UserCommentTitle,
-  UserCommentsContainer,
-  UserComment,
-  UserAvatar,
 } from "./styled-user-comment";
 import {
   BREAKPOINT_PAD,
   MAX_CONTAINER_WIDTH,
   HOT_ITEMS_QUERY_INIT_OFFSET,
   HOT_ITEMS_QUERY_INIT_LIMIT,
-  HOT_ITEMS_QUERY_LIMIT,
   COMMENTS_QUERY_INIT_OFFSET,
   COMMENTS_QUERY_INIT_LIMIT,
-  COMMENTS_QUERY_LIMIT,
 } from "../../constant";
 import CardContainer from "../../components/card-container";
-import { CTAPrimaryButton } from "../../components/button";
 import {
   getBannersApi,
   getHotItemsApi,
@@ -126,13 +120,7 @@ export default function HomePage() {
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isLoadingHotItems, setIsLoadingHotItems] = useState(true);
   const [isLoadingComments, setIsLoadingComments] = useState(true);
-  // 表示是否隱藏 "熱銷品項"、"顧客評價" 的 "載入更多" 按鈕
-  const [disableHotItemsButton, setDisableHotItemsButton] = useState(false);
-  const [disableCommentsButton, setDisableCommentsButton] = useState(false);
-  // 表示上述按鈕是否被用戶點擊，藉此來顯示 loading 動畫
-  const [isHotItemsButtonClicked, setIsHotItemsButtonClicked] = useState(false);
-  const [isCommentsButtonClicked, setIsCommentsButtonClicked] = useState(false);
-  // 每個區塊的狀態
+  // 當前頁面所有資訊
   const [banners, setBanners] = useState<BannersStatePayload>({
     useForBanner: true,
     frame: {},
@@ -141,17 +129,6 @@ export default function HomePage() {
   const [categories, setCategories] = useState<CategoriesStatePayload[]>([]);
   const [hotItems, SetHotItems] = useState<HotItemsStatePayload[]>([]);
   const [comments, setComments] = useState<CommentsStatePayload[]>([]);
-  // 用來實現載入部分商品跟評價
-  // offset -> 代表略過幾筆資料
-  // limit  -> 代表限制回傳資料筆數
-  const [hotItemsIndicator, setHotItemsIndicator] = useState({
-    offset: HOT_ITEMS_QUERY_INIT_OFFSET,
-    limit: HOT_ITEMS_QUERY_INIT_LIMIT,
-  });
-  const [commentsIndicator, setCommentsIndicator] = useState({
-    offset: COMMENTS_QUERY_INIT_OFFSET,
-    limit: COMMENTS_QUERY_INIT_LIMIT,
-  });
   // 是否要顯示 api 發送錯誤的 modal
   const [showModalForApiError, setShowModalForApiError] = useState(false);
   // api 發送錯誤的 modal 資訊
@@ -255,6 +232,7 @@ export default function HomePage() {
   }
   // 拿熱銷品項資訊，並設定相關的狀態
   function getHotItemsFromApi(offset: number, limit: number): void {
+    setIsLoadingHotItems(true);
     getHotItemsApi(offset, limit)
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -265,7 +243,7 @@ export default function HomePage() {
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
           SetHotItems(
-            json_data.data.map((el: HotItemsAPIRespPayload) => ({
+            json_data.data.map((el: HotItemsAPIRespPayload, index: number) => ({
               id: el.id,
               product: {
                 name: el.name,
@@ -276,15 +254,7 @@ export default function HomePage() {
               isLiked: checkIfUserLikeTheProduct(el.id),
             }))
           );
-          // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-          // 若資料讀取完畢，則不顯示 "載入更多" 按鈕，反之相反
-          if (json_data.totals <= hotItemsIndicator.limit) {
-            setDisableHotItemsButton(true);
-          } else {
-            setDisableHotItemsButton(false);
-          }
           setIsLoadingHotItems(false);
-          setIsHotItemsButtonClicked(false);
         }
       })
       .catch((e) => {
@@ -294,6 +264,7 @@ export default function HomePage() {
   }
   // 拿顧客評價資訊，並設定相關的狀態
   function getUserCommentsFromApi(offset: number, limit: number): void {
+    setIsLoadingComments(true);
     getUserCommentsApi(offset, limit)
       .then((resp) => {
         // 因為 axios 機制，response.data 才是真正回傳的資料
@@ -310,36 +281,13 @@ export default function HomePage() {
               comment: el.comment,
             }))
           );
-          // 如果資料總筆數小於目前 indicator 的限制筆數，則資料已讀取完畢
-          // 若資料讀取完畢，則不顯示 "載入更多" 按鈕，反之相反
-          if (json_data.totals <= commentsIndicator.limit) {
-            setDisableCommentsButton(true);
-          } else {
-            setDisableCommentsButton(false);
-          }
           setIsLoadingComments(false);
-          setIsCommentsButtonClicked(false);
         }
       })
       .catch((e) => {
         console.log(API_RESP_REQ_REJECT_ERR_MSG, e);
         setShowModalForApiError(true);
       });
-  }
-  // 用戶點擊 "熱銷品項"、"顧客評價" 的 "載入更多" 按鈕
-  function handleGetHotItemsFromButtonEvent(): void {
-    setHotItemsIndicator({
-      offset: hotItemsIndicator.offset,
-      limit: hotItemsIndicator.limit + HOT_ITEMS_QUERY_LIMIT,
-    });
-    setIsHotItemsButtonClicked(true);
-  }
-  function handleGetCommentsFromButtonEvent(): void {
-    setCommentsIndicator({
-      offset: commentsIndicator.offset,
-      limit: commentsIndicator.limit + COMMENTS_QUERY_LIMIT,
-    });
-    setIsCommentsButtonClicked(true);
   }
   // 導引到相對應產品頁面
   function handleRedirectToProductPage(e: React.MouseEvent<HTMLElement>): void {
@@ -371,18 +319,13 @@ export default function HomePage() {
   useEffect(() => {
     getBannersFromApi();
     getCategoriesFromApi();
+    getHotItemsFromApi(HOT_ITEMS_QUERY_INIT_OFFSET, HOT_ITEMS_QUERY_INIT_LIMIT);
+    getUserCommentsFromApi(
+      COMMENTS_QUERY_INIT_OFFSET,
+      COMMENTS_QUERY_INIT_LIMIT
+    );
     // eslint-disable-next-line
   }, []);
-  // hotItemsIndicator 改變時執行
-  useEffect(() => {
-    getHotItemsFromApi(hotItemsIndicator.offset, hotItemsIndicator.limit);
-    // eslint-disable-next-line
-  }, [hotItemsIndicator]);
-  // commentsIndicator 改變時執行
-  useEffect(() => {
-    getUserCommentsFromApi(commentsIndicator.offset, commentsIndicator.limit);
-    // eslint-disable-next-line
-  }, [commentsIndicator]);
   // 當 introduction modal 內容被設置時執行
   useEffect(() => {
     // 如果 context 顯示已經被看過或還在初始值，則跳過
@@ -442,54 +385,13 @@ export default function HomePage() {
               />
             )}
           </HotSellingItemsContainer>
-          {disableHotItemsButton ? (
-            <></>
-          ) : (
-            <>
-              {isHotItemsButtonClicked ? <Loader marginTop={"2rem"} /> : <></>}
-              <CTAPrimaryButton
-                isRounded={true}
-                margin={"3rem auto 0"}
-                onClick={() => {
-                  handleGetHotItemsFromButtonEvent();
-                }}
-              >
-                載入更多
-              </CTAPrimaryButton>
-            </>
-          )}
         </HotSellingItemBlock>
         <UserCommentBlock>
           <UserCommentTitle>顧客評價</UserCommentTitle>
-          <UserCommentsContainer>
-            {isLoadingComments ? (
-              <Loader marginTop={"0"} />
-            ) : (
-              <>
-                {comments.map((comment) => (
-                  <UserComment key={comment.id}>
-                    ＂{comment.comment}＂
-                    <UserAvatar url={comment.avatar}></UserAvatar>
-                  </UserComment>
-                ))}
-              </>
-            )}
-          </UserCommentsContainer>
-          {disableCommentsButton ? (
-            <></>
+          {isLoadingComments ? (
+            <Loader marginTop={"0"} />
           ) : (
-            <>
-              {isCommentsButtonClicked ? <Loader marginTop={"2rem"} /> : <></>}
-              <CTAPrimaryButton
-                isRounded={true}
-                margin={"3rem auto 0"}
-                onClick={() => {
-                  handleGetCommentsFromButtonEvent();
-                }}
-              >
-                載入更多
-              </CTAPrimaryButton>
-            </>
+            <UserComment comments={comments} />
           )}
         </UserCommentBlock>
         {showModalForApiError && (

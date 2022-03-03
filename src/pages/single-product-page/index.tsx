@@ -241,7 +241,7 @@ export default function SingleProductPage() {
   const [isLoadingProduct, setIsLoadingProduct] = useState(true);
   // 已看過產品清單讀取狀態
   const [isLoadingWatchedProducts, setIsLoadingWatchedProducts] =
-    useState(false);
+    useState(true);
   // 頁面產品資訊
   const [productInfo, setProductInfo] = useState<ProductStatePayload>({
     id: 0,
@@ -546,7 +546,6 @@ export default function SingleProductPage() {
   // 拿產品相關資訊，並設置相關狀態
   function getProductInfoFromApi(id: number): void {
     setIsLoadingProduct(true);
-    setIsLoadingWatchedProducts(true);
     getProductByIDApi(id)
       .then((resp) => {
         const json_data = resp.data;
@@ -605,7 +604,6 @@ export default function SingleProductPage() {
             })
           );
           setIsLoadingProduct(false);
-          setIsLoadingWatchedProducts(false);
         }
       })
       .catch((e) => {
@@ -677,7 +675,14 @@ export default function SingleProductPage() {
     getProductInfoFromApi(Number(productID));
     // eslint-disable-next-line
   }, [productID]);
-
+  // 如果產品資訊得取完畢而且 store 裡面的 watchedItems 不為空，就顯示近期看過商品
+  useEffect(() => {
+    if (!isLoadingProduct) {
+      if (watchedItemsFromStore.length) {
+        setIsLoadingWatchedProducts(false);
+      }
+    }
+  }, [isLoadingProduct, watchedItemsFromStore]);
   return (
     <PageContainer>
       <Header />
