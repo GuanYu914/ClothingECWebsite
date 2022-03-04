@@ -418,24 +418,20 @@ export default function ProductsPage() {
   }
   // 從 react router 拿相對應的路徑資訊
   function getCurrentCategoryPathFromRouter(): void {
-    setProductsInfo((prevProductsInfo) => {
-      return {
-        categoryPath: {
-          base: prevProductsInfo.categoryPath.base,
-          main: mainCategoryFromRouter,
-          sub:
-            subCategoryFromRouter === undefined
-              ? prevProductsInfo.categoryPath.sub
-              : subCategoryFromRouter,
-          detailed:
-            detailedCategoryFromRouter === undefined
-              ? prevProductsInfo.categoryPath.detailed
-              : detailedCategoryFromRouter,
-        },
-        categoriesList: prevProductsInfo.categoriesList,
-        productsList: prevProductsInfo.productsList,
-        totalProductsNumber: prevProductsInfo.totalProductsNumber,
-      };
+    setProductsInfo({
+      ...productsInfo,
+      categoryPath: {
+        ...productsInfo.categoryPath,
+        main: mainCategoryFromRouter,
+        sub:
+          subCategoryFromRouter === undefined
+            ? productsInfo.categoryPath.sub
+            : subCategoryFromRouter,
+        detailed:
+          detailedCategoryFromRouter === undefined
+            ? productsInfo.categoryPath.detailed
+            : detailedCategoryFromRouter,
+      },
     });
   }
   // 設置顯示路徑資訊狀態
