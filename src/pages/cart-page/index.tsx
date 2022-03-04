@@ -117,6 +117,11 @@ const CartProduct = styled.section`
   }
 `;
 
+const ProductCarousel = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const ProductHeader = styled.header`
   display: flex;
   justify-content: space-between;
@@ -152,10 +157,8 @@ const NoneCheckedButton = styled(checkNoneFilled)`
   color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
+  margin-right: 0.4rem;
   cursor: pointer;
-  position: absolute;
-  left: 0.8rem;
-  top: 0.8rem;
   z-index: ${Z_INDEX_LV1};
 
   ${BREAKPOINT_PAD} {
@@ -170,10 +173,8 @@ const CheckedButton = styled(checkFilled)`
   color: ${COLOR_SECONDARY2};
   width: 1.6rem;
   height: 1.6rem;
+  margin-right: 0.4rem;
   cursor: pointer;
-  position: absolute;
-  left: 0.8rem;
-  top: 0.8rem;
   z-index: ${Z_INDEX_LV1};
 
   ${BREAKPOINT_PAD} {
@@ -592,21 +593,23 @@ export default function CartPage() {
             <CartProductsForMobile>
               {cartForLocal.map((cartProduct) => (
                 <CartProduct key={cartProduct.id}>
-                  {!cartProduct.selected && (
-                    <NoneCheckedButton
-                      onClick={() => {
-                        handleChangeProductSelectedState(cartProduct.id);
-                      }}
-                    />
-                  )}
-                  {cartProduct.selected && (
-                    <CheckedButton
-                      onClick={() => {
-                        handleChangeProductSelectedState(cartProduct.id);
-                      }}
-                    />
-                  )}
-                  <BSCarousel slides={cartProduct.slidesForMobile} />
+                  <ProductCarousel>
+                    {!cartProduct.selected && (
+                      <NoneCheckedButton
+                        onClick={() => {
+                          handleChangeProductSelectedState(cartProduct.id);
+                        }}
+                      />
+                    )}
+                    {cartProduct.selected && (
+                      <CheckedButton
+                        onClick={() => {
+                          handleChangeProductSelectedState(cartProduct.id);
+                        }}
+                      />
+                    )}
+                    <BSCarousel slides={cartProduct.slidesForMobile} />
+                  </ProductCarousel>
                   <ProductHeader>
                     <ProductName>{cartProduct.name}</ProductName>
                     <ProductButtons>
