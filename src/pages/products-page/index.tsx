@@ -29,7 +29,7 @@ import {
 } from "../../constant";
 import { ReactComponent as filterIcon } from "../../imgs/pages/products-page/caret-down-fill.svg";
 import { ReactComponent as scrollUpIcon } from "../../imgs/pages/products-page/caret-up-fill.svg";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getAllCategoriesApi, getProductsByCategoryApi } from "../../Webapi";
 import DropDown from "../../components/dropdown";
 import Loader from "../../components/loader";
@@ -304,9 +304,11 @@ export default function ProductsPage() {
     offset: PRODUCTS_QUERY_INIT_OFFSET,
     limit: PRODUCTS_QUERY_INIT_LIMIT,
   });
+  // 用來記錄當前 API query 的 offset
+  const currentProductsQueryOffset = useRef(PRODUCTS_QUERY_INIT_OFFSET);
   // 使否要顯示載入時動畫
   const [productsIsLoadedCompleted, setProductsIsLoadedCompleted] =
-    useState(false);
+    useState(true);
   // 是否要顯示 api 發送錯誤的 modal
   const [showModalForApiError, setShowModalForApiError] = useState(false);
   // api 發送錯誤的 modal 資訊
@@ -372,9 +374,8 @@ export default function ProductsPage() {
           setShowModalForApiError(true);
         }
         if (json_data.isSuccessful === API_RESP_SUCCESSFUL_MSG) {
-          // 儲存未被 filter 套用的產品清單，便於 reset 時套用
-          setNoneFilteredProducts(
-            json_data.data.map((el: ProductsByCategoryInfoAPIRespPayload) => ({
+          const resp_data = json_data.data.map(
+            (el: ProductsByCategoryInfoAPIRespPayload) => ({
               id: el.id,
               product: {
                 name: el.name,
@@ -382,31 +383,29 @@ export default function ProductsPage() {
                 img: JSON.parse(el.imgs)[0].src,
               },
               isLiked: checkIfUserLikeTheProduct(el.id),
-            }))
+            })
           );
-          // 傳入 function 拿到最新的 state
+          // 儲存未被 filter 套用的產品清單，便於 reset 時套用
+          setNoneFilteredProducts((prevFilteredProduct) => {
+            // 將之前的狀態跟現在回傳的資料合併
+            return [...prevFilteredProduct, ...resp_data];
+          });
+          // 傳入 function 拿到先前的 state
           setProductsInfo((prevProductsInfo) => {
             return {
               categoryPath: prevProductsInfo.categoryPath,
               categoriesList: prevProductsInfo.categoriesList,
-              totalProductsNumber: resp.data.totals,
-              productsList: json_data.data.map(
-                (el: ProductsByCategoryInfoAPIRespPayload) => ({
-                  id: el.id,
-                  product: {
-                    name: el.name,
-                    price: `${el.price}`,
-                    img: JSON.parse(el.imgs)[0].src,
-                  },
-                  isLiked: checkIfUserLikeTheProduct(el.id),
-                })
-              ),
+              totalProductsNumber: json_data.totals,
+              // 將之前的狀態跟現在回傳的資料合併
+              productsList: [...prevProductsInfo.productsList, ...resp_data],
             };
           });
-          // 如果資料總筆數小於等於目前 indicator 的限制筆數，則資料已讀取完畢，反之相反
-          json_data.totals <= productsListIndicator.limit
+          // 如果資料總筆數小於等於目前傳入的 offset + limit 筆數，則資料已讀取完畢，反之相反
+          json_data.totals <= offset + limit
             ? setProductsIsLoadedCompleted(true)
             : setProductsIsLoadedCompleted(false);
+          // 將目前 offset 數值保存起來，便於下次使用
+          currentProductsQueryOffset.current = offset + limit;
           // 顯示 filter，並隱藏相關載入動畫
           setShowFilter(true);
           setIsLoadingProducts(false);
@@ -521,8 +520,10 @@ export default function ProductsPage() {
         limit: PRODUCTS_QUERY_INIT_LIMIT,
       });
       // 重新設定分類路徑，標示顏色
+      // 需要讀取不同類型的產品，清空 productsList
       setProductsInfo({
         ...productsInfo,
+        productsList: [],
         categoryPath: {
           base: "分類",
           main: categoryFromDOMArray[0],
@@ -553,8 +554,10 @@ export default function ProductsPage() {
         limit: PRODUCTS_QUERY_INIT_LIMIT,
       });
       // 重新設定分類路徑，標示顏色
+      // 需要讀取不同類型的產品，清空 productsList
       setProductsInfo({
         ...productsInfo,
+        productsList: [],
         categoryPath: {
           base: "分類",
           main: categoryFromDOMArray[0],
@@ -707,8 +710,8 @@ export default function ProductsPage() {
   // 當用戶滑到 lazy-loading 最後一個物件，設定 indicator 去抓取當前以後的資料
   function handleCallbackOnLastItem() {
     setProductsListIndicator({
-      offset: PRODUCTS_QUERY_INIT_OFFSET,
-      limit: PRODUCTS_QUERY_INIT_LIMIT + PRODUCTS_QUERY_LIMIT,
+      offset: currentProductsQueryOffset.current,
+      limit: PRODUCTS_QUERY_LIMIT,
     });
   }
   // 第一次 render，拿到目前路徑名稱、拿到分類列表、根據目前路徑名稱拿到相對應產品清單
@@ -732,7 +735,8 @@ export default function ProductsPage() {
   // 根據 indicator 讀取更多產品
   // 因為 indicator 會被初始化導致開始抓取相對應的產品清單
   useEffect(() => {
-    if (!productsIsLoadedCompleted) {
+    // 讀取目前選擇分類產品
+    if (isLoadingProducts) {
       getProductsByCategoryFromApi(
         mainCategoryFromRouter,
         subCategoryFromRouter,
@@ -741,8 +745,8 @@ export default function ProductsPage() {
         productsListIndicator.limit
       );
     }
-    // 讀取整個產品清單
-    if (isLoadingProducts) {
+    // 已經讀取完目前選擇分類產品，但用戶下滑來讀取更多產品
+    if (!isLoadingProducts && !productsIsLoadedCompleted) {
       getProductsByCategoryFromApi(
         mainCategoryFromRouter,
         subCategoryFromRouter,
