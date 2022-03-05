@@ -808,6 +808,7 @@ export default function SingleProductPage() {
       {mobilePickerState && (
         // 適用於 mobile breakpoint
         <ProductPicker
+          name={productInfo.name}
           picker={productInfo.picker}
           usedOnMobile={true}
           handleSelectPickerColor={handleSelectPickerColor}

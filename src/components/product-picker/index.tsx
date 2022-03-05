@@ -248,6 +248,7 @@ const PickerOPButtons = styled.section`
 `;
 
 interface ProductPickerProps {
+  name?: string;
   picker: {
     colors: {
       id: number;
@@ -285,6 +286,7 @@ interface ProductPickerProps {
 }
 
 export default function ProductPicker({
+  name,
   picker,
   usedOnMobile,
   usedOnPad,
@@ -308,7 +310,7 @@ export default function ProductPicker({
           <PickerContainerForMobile>
             <PickerPaddingContainer>
               <PickerHeader>
-                <PickerProductName>女版襯衫</PickerProductName>
+                <PickerProductName>{name}</PickerProductName>
                 <PickerHeaderButton>
                   {!isEmptyObj(userFromStore) ? (
                     <>
