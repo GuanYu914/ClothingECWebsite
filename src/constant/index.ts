@@ -118,3 +118,9 @@ export const COMMENT_AVATAR_LAZY_LOADING_CONFIG = {
   rootMargin: "0px 0px 0px 0px",
   threshold: 0,
 }
+export const CAROUSEL_LAZY_LOADING_TAG = 'carousel-lazy-loading'
+export const CAROUSEL_LAZY_LOADING_CONFIG = {
+  root: null,
+  rootMargin: '0px 0px 0px 0px',
+  threshold: 0
+}
