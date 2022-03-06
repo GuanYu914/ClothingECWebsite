@@ -13,6 +13,7 @@ import {
   COLOR_PRIMARY2,
   CARD_CONTAINER_LAZY_LOADING_TAG,
   CARD_CONTAINER_LAZY_LOADING_CONFIG,
+  BREAKPOINT_MOBILE,
 } from "../../constant";
 import { isEmptyObj } from "../../util";
 import { useReduxSelector } from "../../redux/store";
@@ -27,6 +28,14 @@ const ItemsContainer = styled.section<{
   justify-content: ${(props) => props.horizontalAlign || "flex-start"};
   flex-wrap: wrap;
   align-self: baseline;
+
+  ${BREAKPOINT_MOBILE} {
+    justify-content: ${(props) => props.horizontalAlign || "center"};
+  }
+
+  ${BREAKPOINT_PAD} {
+    justify-content: ${(props) => props.horizontalAlign || "flex-start"};
+  }
 `;
 
 const ItemContainer = styled.section.attrs(() => ({

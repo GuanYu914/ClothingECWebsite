@@ -198,26 +198,6 @@ const CategoryDetailTitle = styled.li.attrs(() => ({
   }
 `;
 
-const CardContainerForMobile = styled.section`
-  ${BREAKPOINT_MOBILE} {
-    display: block;
-  }
-
-  ${BREAKPOINT_PAD} {
-    display: none;
-  }
-`;
-
-const CardContainerForPad = styled.section`
-  ${BREAKPOINT_MOBILE} {
-    display: none;
-  }
-
-  ${BREAKPOINT_PAD} {
-    display: block;
-  }
-`;
-
 const FloatingButtonForMobileAndPad = styled.button.attrs(() => ({
   className: "box-shadow-light fs-h3",
 }))`
@@ -857,31 +837,13 @@ export default function ProductsPage() {
           {isLoadingProducts ? (
             <Loader marginTop={"0"} />
           ) : (
-            <>
-              <CardContainerForMobile>
-                <CardContainer
-                  items={productsInfo.productsList}
-                  horizontalAlign={"center"}
-                  handleLiked={handleUpdateProductLikeState}
-                  handleOnClick={handleRedirectToProductPage}
-                  handleOnLastItem={handleCallbackOnLastItem}
-                  useForLikedItem={true}
-                ></CardContainer>
-                {!productsIsLoadedCompleted && <Loader marginTop={"0"} />}
-              </CardContainerForMobile>
-              <CardContainerForPad>
-                <CardContainer
-                  items={productsInfo.productsList}
-                  marginTop={"0"}
-                  marginLeft={"0"}
-                  handleLiked={handleUpdateProductLikeState}
-                  handleOnClick={handleRedirectToProductPage}
-                  handleOnLastItem={handleCallbackOnLastItem}
-                  useForLikedItem={true}
-                ></CardContainer>
-                {!productsIsLoadedCompleted && <Loader marginTop={"0"} />}
-              </CardContainerForPad>
-            </>
+            <CardContainer
+              items={productsInfo.productsList}
+              handleLiked={handleUpdateProductLikeState}
+              handleOnClick={handleRedirectToProductPage}
+              handleOnLastItem={handleCallbackOnLastItem}
+              useForLikedItem={true}
+            ></CardContainer>
           )}
         </ProductsContainer>
         <FloatingButtonForMobileAndPad onClick={handleScrollToTop}>
