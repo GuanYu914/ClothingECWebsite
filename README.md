@@ -15,6 +15,10 @@
 樣式主要為 styled-components 組成，並透過 react-spring 完成動畫  
 後端為 lamp server，並使用 php 實作相對應 api  
 
+## 優化
+偵測瀏覽器是否支援 webp，自動加載 webp 檔案  
+使用 lazy-loading 減少照片讀取導致網站變慢  
+
 ## 主要涵式庫
 - styled-components
 - reactjs
