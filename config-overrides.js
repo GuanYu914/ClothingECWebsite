@@ -5,8 +5,8 @@ const rewireWebpackBundleAnalyzer = require("react-app-rewire-webpack-bundle-ana
 /* config-overrides.js */
 module.exports = function override(config, env) {
   config = rewireStyledComponents(config, env, {
-    // 開啟 styled-component 的模組名稱，方便 debug
-    displayName: false,
+    // 開發時啟用，產生 build 版本時停用
+    displayName: env !== "production",
   });
   if (env === "production") {
     config = rewireWebpackBundleAnalyzer(config, env, {
