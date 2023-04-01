@@ -10,7 +10,7 @@ import {
 import { UploadFavoriteItemPayload } from "./redux/reducers/FavoriteItemsSlice"
 import { UploadCartItemPayload } from "./redux/reducers/cartSlice"
 // 這邊會串接後端 api
-const DevURL = "http://192.168.0.15/clothing_ec";
+const DevURL = "http://localhost/clothing_ec";
 // 將來要發佈到前端網站上的網域
 // const ProdURL = "https://emory.work/clothing-ec/api";
 
