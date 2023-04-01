@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useTransition, animated } from "react-spring";
 import { ReactComponent as closeIcon } from "../../imgs/components/modal/x-lg.svg";
 import {

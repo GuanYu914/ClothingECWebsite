@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { CTAPrimaryButton } from "../button";
 import { useHistory } from "react-router-dom";
 import {

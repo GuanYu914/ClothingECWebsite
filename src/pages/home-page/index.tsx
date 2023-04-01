@@ -11,7 +11,7 @@ import {
   API_RESP_SUCCESSFUL_MSG,
   API_RESP_REQ_REJECT_ERR_MSG,
 } from "../../constant";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import React, { useState, useEffect } from "react";
 import BSCarousel from "../../components/bs-carousel";
 import {

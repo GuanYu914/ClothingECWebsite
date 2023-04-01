@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useTransition, useChain, useSpringRef, animated } from "react-spring";
 import { ReactComponent as close } from "../../imgs/components/offcanva/x-lg.svg";
 import { ReactComponent as list } from "../../imgs/components/offcanva/list.svg";

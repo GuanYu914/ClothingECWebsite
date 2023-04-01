@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { animated, useTransition } from "react-spring";
 import { COLOR_PRIMARY1, COLOR_SECONDARY3, Z_INDEX_LV6 } from "../../constant";
 import { ReactComponent as warningIcon } from "../../imgs/components/flash-modal/chat-dots-fill.svg";

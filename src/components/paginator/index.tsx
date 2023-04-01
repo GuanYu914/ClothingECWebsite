@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { ReactComponent as arrowLeft } from "../../imgs/components/paginator/arrow-left.svg";
 import { ReactComponent as arrowRight } from "../../imgs/components/paginator/arrow-right.svg";
 import { COLOR_PRIMARY1, COLOR_SECONDARY2 } from "../../constant";

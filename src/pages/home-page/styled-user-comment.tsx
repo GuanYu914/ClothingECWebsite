@@ -8,7 +8,7 @@ import {
   COMMENT_AVATAR_LAZY_LOADING_TAG,
   COMMENT_AVATAR_LAZY_LOADING_CONFIG,
 } from "../../constant";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useEffect } from "react";
 
 export const UserCommentBlock = styled.section`

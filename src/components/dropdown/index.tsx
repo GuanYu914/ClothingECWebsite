@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import {
   BG_PRIMARY1,
   BG_SECONDARY4,

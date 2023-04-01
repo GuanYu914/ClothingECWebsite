@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import React, { useEffect } from "react";
 import usePrevious from "../../hooks/usePrevious";
 import { ReactComponent as heart } from "../../imgs/components/card-container/heart.svg";

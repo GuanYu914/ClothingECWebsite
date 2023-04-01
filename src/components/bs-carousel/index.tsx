@@ -1,5 +1,5 @@
 import { Carousel } from "react-bootstrap";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import {

@@ -1,5 +1,5 @@
 import { useSpring, animated } from "react-spring";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 const Container = styled.div<{
   width?: string;

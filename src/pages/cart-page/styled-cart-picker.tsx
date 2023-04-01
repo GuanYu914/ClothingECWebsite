@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from "styled-components/macro";
 import { ReactComponent as minusSquare } from "../../imgs/pages/cart-page/dash-square.svg";
 import { ReactComponent as plusSquare } from "../../imgs/pages/cart-page/plus-square.svg";
 import { COLOR_PRIMARY1, COLOR_SECONDARY2, BR_PRIMARY1 } from "../../constant";
